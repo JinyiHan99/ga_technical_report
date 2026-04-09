@@ -1,0 +1,9 @@
+Autonomous agents built on large language models face a fundamental bottleneck: as tasks extend over long horizons, redundant and low-value information accumulates within the finite context window, progressively degrading reasoning quality and decision accuracy.
+This problem demands a principled approach to managing what information occupies the context at each reasoning step.
+We present GenericAgent (GA), a general-purpose LLM agent system designed around the principle of \emph{context information density maximization}, supporting three complementary operating modes---Interactive, Task, and Reflect---for sustained autonomous operation.
+GA makes four main contributions:
+(1)~an L0--L3 hierarchical memory architecture that loads information on demand and validates updates through action-level verification;
+(2)~a reflection-driven self-evolution mechanism that progressively compresses experiential knowledge from natural-language experience to structured SOPs to executable code and reusable skills;
+(3)~a minimal set of seven atomic tools whose principled composition achieves full environmental control;
+and (4)~a simplified HTML browser control scheme with incremental DOM monitoring for efficient web interaction.
+We release GenericAgent as an open-source system to facilitate research on long-term autonomous agents.

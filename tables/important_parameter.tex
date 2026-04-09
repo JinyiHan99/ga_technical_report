@@ -1,0 +1,61 @@
+% \begin{table*}[ht]
+% \centering
+% \def\arraystretch{1.1} % 调整行高
+% \setlength{\tabcolsep}{5.7pt} % 调整列间距
+% \resizebox{0.8\linewidth}{!}{
+% \begin{tabular}{ll BdBdB}
+% \toprule
+% \textbf{Stage} & \textbf{Settings} & \textbf{Math500} & \textbf{AIME24} & \textbf{AIME25} & \textbf{Olympiad} & \textbf{AMC} & \textbf{AVG} \\
+% \midrule
+% % --- Stage I 部分 ---
+% \multirow{3}{*}{\method-Stage I} 
+% & \(\beta=1.0,\gamma=1.0\) & 65.20 & 4.33 & 2.00 & 29.04 & 29.16 & 25.95 \\
+% & \(\beta=0.5,\gamma=1.0\) & 40.20 & 1.33 & 0.33 & 13.48 & 10.24 & 13.12 \\
+% & \(\beta=1.0,\gamma=0.5\) & 65.00 & 6.33 & 4.00 & 30.81 & 32.53 & 27.73 \\
+% \midrule
+
+% % --- Stage II 部分 ---
+% \multirow{3}{*}{\method-Stage II} 
+% & \(\eta=1.0,\varphi=1.0\) & 70.40 & 7.33 & 4.00 & 37.03 & 36.02 & 30.96 \\
+% & \(\eta=1.0,\varphi=2.0\) & 68.20 & 7.67 & 4.00 & 32.30 & 37.11 & 29.86 \\
+% & \(\eta=2.0,\varphi=1.0\) & 68.40 & 7.00 & 5.33 & 32.89 & 34.94 & 29.71 \\
+
+% \bottomrule
+% \end{tabular}
+% }
+% \caption{\textbf{ Performance comparison of different settings in Stage I and Stage II.}}
+% \label{tab:parameter}
+% \end{table*}
+
+
+\begin{table*}[ht]
+\centering
+\def\arraystretch{1.2} % 稍微增加行高，数学公式看起来更舒服
+\setlength{\tabcolsep}{5pt} % 调整列间距以适应页面
+\resizebox{0.8\linewidth}{!}{
+% 修改重点：这里改为了 8 列 (l l c c c c c c)
+% \begin{tabular}{ll cccccc}
+\begin{tabular}{lc PYPYPY}
+\toprule
+\textbf{Stage} & \textbf{Settings} & \textbf{Math500} & \textbf{AIME24} & \textbf{AIME25} & \textbf{Olympiad} & \textbf{AMC} & \textbf{AVG} \\
+\midrule
+% --- Stage I 部分 ---
+\multirow{3}{*}{\method-Stage I} 
+& \(\beta=1.0, \gamma=1.0\) & 65.20 & 4.33 & 2.00 & 29.04 & 29.16 & 25.95 \\
+& \(\beta=0.5, \gamma=1.0\) & 40.20 & 1.33 & 0.33 & 13.48 & 10.24 & 13.12 \\
+& \(\beta=1.0, \gamma=0.5\) & 65.00 & 6.33 & 4.00 & 30.81 & 32.53 & 27.73 \\
+\midrule
+
+% --- Stage II 部分 ---
+\multirow{3}{*}{\method-Stage II} 
+& \(\eta=1.0, \varphi=1.0\) & 70.40 & 7.33 & 4.00 & 37.03 & 36.02 & 30.96 \\
+& \(\eta=1.0, \varphi=2.0\) & 68.20 & 7.67 & 4.00 & 32.30 & 37.11 & 29.86 \\
+& \(\eta=2.0, \varphi=1.0\) & 68.40 & 7.00 & 5.33 & 32.89 & 34.94 & 29.71 \\
+
+\bottomrule
+\end{tabular}
+}
+\caption{\textbf{Impact of reward weight coefficients on performance during Stage I and Stage II training.}}
+\label{tab:parameter}
+\end{table*}
+

@@ -1,0 +1,204 @@
+\usepackage{natbib}
+% Standard package includes
+% \usepackage{times}
+\usepackage{latexsym}
+
+% For proper rendering and hyphenation of words containing Latin characters (including in bib files)
+% \usepackage[T1]{fontenc}
+% For Vietnamese characters
+% \usepackage[T5]{fontenc}
+% See https://www.latex-project.org/help/documentation/encguide.pdf for other character sets
+% 基础设置
+\usepackage[utf8]{inputenc}    % UTF-8编码支持
+\usepackage[T1]{fontenc}       % 字体编码
+\usepackage{microtype}         % 微排版优化
+
+% 数学与符号
+\usepackage{amssymb}           % 数学符号
+\usepackage{amsmath}           % 数学环境
+\usepackage{amsfonts}          % 黑板粗体
+\usepackage{amsthm}            % 定理环境
+
+% 表格增强
+\usepackage{booktabs}          % 专业表格线
+\usepackage{multirow}          % 跨行表格单元格
+\usepackage{makecell}          % 自定义表格单元格
+\usepackage{colortbl}          % 表格颜色
+\usepackage[dvipsnames]{xcolor}           % 扩展颜色支持
+%\usepackage{longtable}        % 跨页长表格（已注释，避免重复）
+
+% 图形与绘图
+\usepackage{graphicx}          % 插入图片
+\usepackage{tikz}              % 绘制图形
+\usepackage{pgfplots}          % 绘制图表
+\usepgfplotslibrary{groupplots} % 组合图表
+\usepackage[edges]{forest}     % 绘制树状图
+\usepackage{subcaption} 
+%\usepackage{subfigure}         % 子图环境
+
+% 算法伪代码
+\usepackage{algorithm}         % 算法环境
+% \usepackage{algorithmic}       % 算法伪代码
+
+% 浮动体与布局
+\usepackage{wrapfig}           % 文字环绕图形
+\usepackage{caption}           % 自定义标题
+\usepackage{adjustbox}         % 调整盒子大小
+
+% 列表增强
+\usepackage{paralist}          % 紧凑列表
+
+% 特殊符号
+\usepackage{pifont}            % 特殊符号字体
+
+% 超链接
+\usepackage{hyperref}          % 超链接支持
+\usepackage{url}               % URL处理
+
+% 附录设置
+\usepackage[toc,page,header]{appendix} % 附录设置
+
+% 其他
+\usepackage{xspace}            % 智能空格
+\usepackage{nicefrac}          % 美观的分数表示
+
+
+% \hypersetup{
+%     colorlinks,
+%     linkcolor={blue!80!black},
+%     citecolor={blue!80!black},
+%     urlcolor={blue!80!black}
+% }
+\usepackage{hyperref}
+% \hypersetup{
+%     colorlinks,
+%     linkcolor={blue!80!black},
+%     citecolor={blue!80!black},
+%     urlcolor={blue!80!black}
+% }
+\usepackage{url}
+\usepackage{amssymb}
+\usepackage{pifont} 
+\usepackage{subcaption}
+\usepackage{xspace}
+
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{xcolor}
+\usepackage{algpseudocode}
+% \usepackage[normalem]{ulem}
+% \usepackage{cuted}          % 用于 strip 环境
+% \usepackage{setspace}
+% \usepackage[most]{tcolorbox}
+% \tcbuselibrary{breakable}  
+
+     
+\usepackage{amsmath, amsfonts}
+\usepackage{nicefrac}
+\PassOptionsToPackage{table}{xcolor}
+\usepackage{booktabs}
+\usepackage{colortbl}  
+\usepackage{multirow}
+\usepackage{adjustbox}
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{hhline}
+\usepackage{makecell}
+\usepackage{arydshln}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{wrapfig}
+\usepackage{caption}
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{setspace}
+
+\usepackage{placeins}
+\definecolor{light_origin}{RGB}{207, 117, 58}
+\definecolor{cell_purple}{RGB}{76, 141, 187}
+\definecolor{small_blue}{RGB}{27, 63, 125}
+\definecolor{small_origin}{RGB}{94, 41, 16}
+\definecolor{mypink}{HTML}{D92879}
+
+\definecolor{light_purple}{RGB}{235,236,242}
+\newcommand{\bg}[1]{\cellcolor{light_purple}{#1}} % 数据单元格背景色
+
+\definecolor{light_blue}{RGB}{244,249,254}
+\newcommand{\bk}[1]{\cellcolor{light_blue}{#1}} % 数据单元格背景色
+
+\newcounter{tcbtable}
+\newcommand{\head}[2][c]{\multicolumn{1}{#1}{\textbf{#2}}} % 表头格式
+
+\newcolumntype{B}{>{\columncolor{blue!4}}c}
+\newcolumntype{d}{>{\columncolor{brown!4}}c}
+\newcolumntype{q}{>{\columncolor{green!2}}c}
+\newcolumntype{R}{>{\columncolor{red!4}}l}     % 浅红色列
+\newcolumntype{P}{>{\columncolor{purple!4}}c}   % 浅紫色列
+\newcolumntype{Y}{>{\columncolor{yellow!4}}c}   % 浅黄色列
+\newcommand{\coloredtexttt}[1]{\textcolor{customcolor}{\textbf{\texttt{#1}}}}
+\newcommand{\coloredtextttobj}[1]{\textcolor{customcolor2}{\textbf{\texttt{#1}}}}
+\definecolor{bgcolor}{RGB}{242, 243, 245} % This is defined but not used in the modified table for row backgrounds
+\makeatletter
+\def\adl@drawiv#1#2#3{%
+        \hskip.5\tabcolsep
+        \xleaders#3{#2.5\@tempdimb #1{1}#2.5\@tempdimb}%
+                #2\z@ plus1fil minus1fil\relax
+        \hskip.5\tabcolsep}
+\newcommand{\cdashlinelr}[1]{%
+  \noalign{\vskip\aboverulesep
+            \global\let\@dashdrawstore\adl@draw
+            \global\let\adl@draw\adl@drawiv}
+  \cdashline{#1}
+  \noalign{\global\let\adl@draw\@dashdrawstore
+            \vskip\belowrulesep}}
+
+% \usepackage[most]{tcolorbox}
+\tcbset{
+  aibox/.style={
+    width=\linewidth,
+    top=8pt,
+    bottom=4pt,
+    colback=blue!6!white,
+    colframe=black,
+    colbacktitle=black,
+    enhanced,
+    center,
+    attach boxed title to top left={yshift=-0.1in,xshift=0.15in},
+    boxed title style={boxrule=0pt,colframe=white,},
+  }
+}
+\newtcolorbox{AIbox}[2][]{aibox,title=#2,#1}
+\definecolor{lightblue}{rgb}{0.22,0.45,0.70}%
+\newcommand{\hl}[1]{\begingroup\setlength{\fboxsep}{3pt}\colorbox{yellow!25}{#1}\endgroup}
+
+
+\PassOptionsToPackage{table}{xcolor}
+\usepackage{booktabs}
+\usepackage{placeins}
+\definecolor{light_origin}{RGB}{207, 117, 58}
+\definecolor{cell_purple}{RGB}{76, 141, 187}
+\definecolor{small_blue}{RGB}{27, 63, 125}
+\definecolor{small_origin}{RGB}{94, 41, 16}
+\definecolor{mypink}{HTML}{D92879}
+
+% name
+\newcommand{\method}{\textsc{SCR}\xspace}
+%  scale the front in the main table
+\newcommand{\chg}[1]{\scalebox{0.7}{(#1)}}
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+\tcbset{
+    training_data/.style={
+        colback=blue!5,      % 浅蓝色背景
+        colframe=black,      % 黑色边框
+        sharp corners,       % 直角
+        left=3pt, right=3pt, top=3pt, bottom=3pt,
+        boxrule=1pt,
+        fontupper=\normalsize,
+        parbox=false,        % 允许换行
+        enhanced,
+        borderline={0.5pt}{0pt}{black}
+    }
+}

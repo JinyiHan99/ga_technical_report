@@ -1,0 +1,18 @@
+We have presented GenericAgent (GA), a general-purpose LLM agent system whose architecture is organized around a single guiding principle: \emph{context information density maximization}.
+Every design decision---from the L0--L3 hierarchical memory that loads only task-relevant information on demand, through the reflection-driven self-evolution pipeline that compresses experiential knowledge into increasingly compact representations, to the seven minimal atomic tools and the simplified HTML browser control---serves to ensure that each token in the finite context window carries maximal value for the current reasoning step.
+Together, these four contributions form a coherent system that enables sustained, long-horizon autonomous operation across interactive, task-driven, and event-triggered scenarios.
+
+A key insight underlying GA is that self-evolution operates entirely at inference time, requiring no fine-tuning of the base model.
+By progressively transforming free-form experience into structured SOPs, then into executable code, and ultimately into reusable skills, the system achieves order-of-magnitude reductions in the number of tokens needed to represent recurring operational knowledge, directly realizing the density maximization objective.
+
+Several limitations merit discussion.
+First, the effectiveness of GA is ultimately bounded by the reasoning and instruction-following capabilities of the underlying language model; advances in base model quality translate directly into improved agent performance, but current ceilings remain binding for the most complex tasks.
+Second, the hierarchical memory taxonomy, while general in design, requires initial configuration effort to align with new application domains.
+Third, the self-evolution mechanism yields the most pronounced gains for tasks exhibiting regular, repeatable structure; highly novel or one-shot tasks benefit less from experience compression.
+Finally, the browser control subsystem assumes the availability of a Chrome extension for DOM observation, which introduces a deployment dependency.
+
+Looking ahead, we identify several promising directions for future work.
+Multi-agent collaboration with shared hierarchical memory pools could enable teams of GA instances to pool experience and divide labor on complex workflows.
+Cross-task knowledge transfer---automatically migrating skills and SOPs across related but distinct domains---would further amplify the returns of self-evolution.
+Formal evaluation metrics for context information density, beyond proxy measures such as token counts, are needed to rigorously benchmark density-driven agent designs.
+Finally, integration with emerging agent communication protocols would allow GA to interoperate seamlessly within broader multi-agent ecosystems.

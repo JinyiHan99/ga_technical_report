@@ -1,0 +1,49 @@
+
+\begin{table*}[ht]
+\centering
+\def\arraystretch{1.1} % 调整行高
+\setlength{\tabcolsep}{5.7pt} % 调整列间距
+\resizebox{1.0\linewidth}{!}{
+\begin{tabular}{l BBBB dddd BBBB dddd}
+\toprule
+ \multirow{2}{*}{\textbf{Method}} 
+& \multicolumn{4}{c}{\textbf{Math500}} & \multicolumn{4}{c}{\textbf{AIME24}} & \multicolumn{4}{c}{\textbf{Olympiad}} & \multicolumn{4}{c}{\textbf{AMC}} \\
+\cmidrule(lr){2-5} \cmidrule(lr){6-9} \cmidrule(lr){10-13} \cmidrule(lr){14-17}
+& Acc. & Pre. & Rec. & F1 & Acc. & Pre. & Rec. & F1 & Acc. & Pre. & Rec. & F1 & Acc. & Pre. & Rec. & F1 \\ 
+\midrule
+
+% --- Qwen2.5-7B-Instruct ---
+% \multirow{3}{*}{\textbf{Qwen2.5-7B-Instruct}} 
+& \multicolumn{13}{c}{\textbf{Qwen2.5-7B-Instruct}} \\
+Base  & 76.95 & 79.91 & 92.84 & 85.89 & 52.33 & 18.75 & 100.00 & 31.58 & 56.15 & 47.41 & 95.52 & 63.37 & 59.64 & 51.10 & 93.12 & 65.99 \\
+
+\method-SFT     & 87.35 & 87.28 & 99.43 & 92.96 & 69.53 & 29.17 & 73.68 & 41.79 & 62.29 & 57.72 & 99.07 & 72.95 & 69.51 & 61.35 & 78.28 & 68.79 \\
+
+\method-Stage I & 87.02 & 90.82 & 93.13 & 91.96 & 92.86 & 65.71 & 71.88 & 68.66 & 84.14 & 81.31 & 83.04 & 82.17 & 82.40 & 80.81 & 80.16 & 80.48 \\
+
+\midrule
+
+% --- Qwen2.5-3B-Instruct ---
+& \multicolumn{13}{c}{\textbf{Qwen2.5-3B-Instruct}} \\
+Base & 71.80 & 71.92 & 94.59 & 81.71 & 52.00 & 9.80  & 71.43 & 17.24 & 50.37 & 36.51 & 89.11 & 51.80 & 53.37 & 35.62 & 82.76 & 49.81 \\
+
+\method-SFT  & 78.57 & 78.16 & 100.00& 87.74 & 65.00 & 5.00  & 33.33 & 8.70  & 58.70 & 55.12 & 100.00& 71.07 & 57.08 & 37.60 & 71.21 & 49.21 \\
+
+\method-Stage I & 80.63 & 82.55 & 90.85 & 86.50 & 96.61 & 40.00 & 50.00 & 44.44 & 82.76 & 73.63 & 75.51 & 74.56 & 83.15 & 72.37 & 68.75 & 70.51 \\
+\midrule
+
+% --- Llama3.1-8B-Instruct ---
+% \multirow{3}{*}{\textbf{Llama3.1-8B-Instruct}} 
+& \multicolumn{13}{c}{\textbf{Llama3.1-8B-Instruct}} \\
+Base        & 68.75 & 59.86 & 82.63 & 69.43 & 55.67 & 2.96  & 66.67 & 5.67  & 71.13 & 32.95 & 80.19 & 46.70 & 57.19 & 20.00 & 79.05 & 31.92 \\
+
+\method-SFT     & 69.83 & 68.32 & 98.86 & 80.81 & 63.79 & 7.14  & 50.00 & 12.50 & 48.03 & 38.41 & 96.80 & 55.00 & 59.66 & 28.71 & 76.92 & 41.81 \\
+
+\method-Stage I & 78.36 & 79.93 & 85.66 & 82.70 & 94.33 & 50.00 & 35.29 & 41.38 & 81.87 & 69.01 & 62.42 & 65.55 & 81.39 & 85.43 & 93.75 & 89.40 \\
+
+\bottomrule
+\end{tabular}
+}
+\caption{\textbf{The detailed performance of self-evaluation capability on math tasks.} \method maintains strong self-evaluation ability even on challenging problems. }
+\label{tab:self-verification_appendix}
+\end{table*}

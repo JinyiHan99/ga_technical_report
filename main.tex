@@ -1,0 +1,85 @@
+\PassOptionsToPackage{dvipsnames}{xcolor}
+\documentclass[]{kw_latex_template}
+
+% single-column: \documentclass[]{bytedance_seed},
+%Please prioritize using single-column.
+
+% twocolumn: \documentclass[twocolumn]{bytedance_seed}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{minitoc}
+\usepackage{cleveref}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\input{macro}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\title{GenericAgent: A Context-Density-Driven LLM Agent System for Long-Term Autonomous Operation}
+% \author[*]{Jinyi Han$^{1,2}$}
+% \author[*]{Zixiang Di$^{1,2}$}
+% \author{Zishang Jiang$^{3}$}
+% \author{Ying Liao$^{3}$}
+% \author{Jiaqing Liang$^{3}$}
+% \author{Jie Wang$^{2}$}
+% \author{Zheming Yang$^{2}$}
+% \author{Zhi Li$^{2}$}
+% \author{Yongqi Wang$^{2}$}
+% \author{Xiaofeng Ji$^{2}$}
+% \author[\dagger]{Yanghua Xiao$^{3}$}
+% \author[\dagger]{Miao Liu$^{2}$}
+
+
+% \contribution[*]{Equal Contribution}
+% \contribution[\dagger]{Corresponding Authors}
+
+% \affiliation[1]{East China Normal University}
+% \affiliation[2]{ByteDance}
+% \affiliation[3]{Fudan University}
+
+
+
+\abstract{
+\input{latex/section/0abstract}
+}
+
+
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+\input{latex/section/1intro}
+
+\section{Related Work}
+\input{latex/section/2related}
+
+
+\section{GenericAgent}
+\input{latex/section/3method}
+
+
+\section{Conclusion}
+\input{latex/section/5conclusion}
+
+
+
+\clearpage
+
+\bibliographystyle{unsrt}
+% \bibliographystyle{plainnat}
+\bibliography{main}
+
+\clearpage
+
+\beginappendix
+
+\input{latex/section/6appendix}
+
+\end{document}

@@ -1,0 +1,18 @@
+\onecolumn
+
+\begin{tcolorbox}
+[title=Prompt Used in \method, colback=white, colframe=black!75!white, breakable]
+\begin{spacing}{1.1}
+\refstepcounter{tcbtable}
+\label{prompt:scr}
+You are a helpful AI assistant.\\
+
+For each question, you must first solve the problem and put your complete solution inside <answer>...</answer>. The final result must be wrapped in \textit{\textbackslash \textbackslash boxed\{\}}.\\
+
+Then you must evaluate your own solution inside <critic>...</critic>. In this block, you must first give your evaluation and reasoning. At the end of the <critic>, you must give the final judgment using only one single symbol: T or F. T means the answer is correct. F means the answer is incorrect. \\
+
+If the final judgment is F, you must give a corrected solution inside <revised>...</revised>, and the final result must also be wrapped in \textit{\textbackslash \textbackslash boxed\{\}}. \\
+
+If the final judgment is T, you must stop and give no further output.
+\end{spacing}
+\end{tcolorbox}

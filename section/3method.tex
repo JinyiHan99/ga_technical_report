@@ -1,0 +1,189 @@
+
+\subsection{Overview of GenericAgent}
+\label{sec:overview}
+
+GenericAgent (GA) is a general-purpose LLM agent system designed for long-term autonomous operation.
+Unlike conversational models that target single-turn task completion, GA is architected as a persistent, cross-session execution agent that accumulates experience over time and completes open-ended tasks with minimal user intervention.
+The system supports three complementary operating modes:
+\textbf{Interactive Mode}, in which GA responds to real-time user commands---file manipulation, code execution, information retrieval, and the like;
+\textbf{Task Mode}, in which GA acts as a sub-agent that receives delegated tasks from a parent agent, carries them out independently via a file-based I/O protocol, and returns structured results;
+and \textbf{Reflect Mode}, in which GA is triggered by external events or scheduled cron scripts to autonomously perform self-maintenance activities such as monitoring, summarization, and optimization, without any user-initiated request.
+All three modes share the same execution kernel, are driven by a unified Agent Loop, and support flexible switching among mainstream LLM backends including Claude, OpenAI, and Gemini.
+
+The core capabilities of GA can be summarized along four dimensions.
+\emph{First}, \textbf{structured memory management}: GA maintains a hierarchical, cross-session persistent memory system that stores environmental facts, task-level experience, and execution norms, enabling the agent to accumulate and reuse knowledge across sessions.
+\emph{Second}, \textbf{tool-driven environmental interaction}: GA achieves comprehensive control over the file system, code execution environment, and web browser through seven atomic tools, complemented by a TMWebDriver component that performs JavaScript injection and page-state monitoring on the user's browser.
+\emph{Third}, \textbf{experience self-evolution}: GA distills recurring task experience into standard operating procedures (SOPs), and further consolidates mature SOPs into directly callable code programs, progressively reducing the execution cost of similar tasks over time.
+\emph{Fourth}, \textbf{autonomous reflection}: GA defines trigger conditions through programmable reflection scripts that automatically initiate tasks and record results when conditions are met, enabling sustained operation without human intervention.
+
+\begin{figure}[t]
+\centering
+\fbox{\parbox{0.9\linewidth}{\centering\vspace{2cm}\textbf{[Figure 1: The Agent Loop architecture of GenericAgent]}\vspace{2cm}}}
+\caption{Overview of the GenericAgent Agent Loop. At task start, global memory is loaded and merged with the system prompt. The LLM then enters a reasoning loop: if its response contains tool calls, each call is dispatched to the corresponding handler and the result is appended as a new user message for the next reasoning turn; if no tool call is present, the task terminates. After task completion, a memory distillation step optionally extracts valuable facts and experience into long-term storage.}
+\label{fig:agent_loop}
+\end{figure}
+
+The runtime flow of GA is centered on the Agent Loop, illustrated in Figure~\ref{fig:agent_loop}.
+At the start of each task, the system loads global memory from persistent storage, merges it with the system prompt, and constructs the session-level System Prompt.
+The user input is then combined with this System Prompt and submitted to the LLM for the first round of reasoning.
+If the LLM's response contains tool calls, the Agent Loop sequentially parses and dispatches each call to its corresponding tool handler; the tool's return value is appended to the conversation as a new user message, driving the next reasoning round.
+If the response contains no tool calls, the current task is deemed complete and the loop exits.
+A hard cap of 40 reasoning turns per task prevents runaway loops.
+As an additional safety measure, the system issues a warning against ineffective retries every 7 turns and forces a user confirmation via \texttt{ask\_user} every 35 turns.
+Tool schemas are refreshed every 10 turns to ensure consistency.
+Upon task completion, GA optionally triggers a memory distillation pipeline in which a dedicated sub-agent extracts valuable facts and experience from the current execution context and persists them to long-term memory.
+This flow is identical across all operating modes; the only differences lie in how tasks are sourced and how outputs are routed.
+
+Every technical design decision in GA is governed by a single core principle: \emph{context information density maximization}.
+The essence of this principle is to fill the finite context window with the highest-density content possible, ensuring task success at the minimal prompt cost.
+Given that the requisite information is already complete, a longer prompt will only degrade performance---every superfluous token dilutes attention and introduces noise.
+Hierarchical memory, the self-evolution mechanism, the minimal tool set, and browser-level page compression are all manifestations of this unified principle, and are detailed in the subsections that follow.
+
+
+\subsection{Core Technical Design}
+\label{sec:core_design}
+
+Guided by the principle of context information density maximization, GA's technical design spans four tightly coupled dimensions: memory organization, experience evolution, tool design, and browser control.
+These four dimensions are mutually reinforcing.
+The memory system governs the quality of knowledge admitted into the context; the self-evolution mechanism continuously compresses the token cost of execution; the minimal tool set controls the prompt overhead of tool definitions themselves; and browser control targets the high-noise scenario of web interaction with specialized page-level compression.
+
+
+\subsubsection{Hierarchical Memory System}
+\label{sec:memory}
+
+The memory system constitutes the first line of defense for context information density optimization.
+GA employs a four-layer memory architecture that, through hierarchical distillation and taxonomy-based management, ensures only the highest-density knowledge enters the context window.
+The governing principle is: \emph{retain only the critical information that the model cannot derive through reasoning alone, so as to alter model behavior at minimal token cost}.
+
+\paragraph{L0: Meta-Rule Layer.}
+The L0 layer stores the system's core behavioral norms and adheres to a strict minimalism principle.
+Each meta-rule is highly condensed---for example, the action-verification principle is expressed in a single sentence: ``Only information that has been empirically verified through actual execution may be written to long-term memory,'' thereby preventing hallucination contamination at the root.
+These rules are loaded into the System Prompt at every agent startup, establishing foundational behavioral guidance at an extremely low token cost.
+
+\paragraph{L1: Index Layer.}
+The L1 layer provides rapid localization of relevant memories through a memory taxonomy.
+It stores only metadata---file paths, brief descriptions, and applicability conditions---rather than full content, avoiding unnecessary loading of complete memory entries.
+Before executing a task, the agent first consults the L1 index and selectively loads only the memories genuinely needed into the context.
+Even as the memory store grows large, the context contains only task-relevant information, achieving precise retrieval with minimal token expenditure.
+In practice, the L1 index is maintained under a hard limit of 30 lines (fewer than 1{,}000 tokens), ensuring that the retrieval overhead remains negligible regardless of the total memory volume.
+
+\paragraph{L2: Fact Store.}
+The L2 layer stores verified environmental information, organized thematically and condensed through progressive summarization.
+Only incremental information that the model cannot infer on its own is retained---project directory structures, API endpoints, configuration parameters, and the like.
+Every fact is validated through tool execution before being committed, ensuring reliability.
+Topic-based organization prevents information fragmentation and improves retrieval efficiency.
+
+\paragraph{L3: Task-Level SOP Layer.}
+The L3 layer crystallizes long-term memory into reusable \emph{Skills}: highly refined records of key steps and caveats distilled from multiple task executions.
+Only the portions where the model is prone to error or cannot easily reason---exception handling sequences, tool invocation orderings, and common failure avoidance strategies---are included.
+SOP refinement is carried out automatically through the Reflect mode, transforming raw experience into reusable knowledge that guides future tasks at minimal prompt cost.
+
+\paragraph{Working Memory and Update Mechanisms.}
+Working memory further optimizes context density by storing temporary information relevant to the current task.
+At each reasoning turn, an anchor prompt injects a \texttt{[WORKING MEMORY]} block containing the current turn number, stored key information from the session, and pointers to related SOPs.
+Upon task completion, a distillation step extracts valuable information and writes it to L2 or L3, after which working memory is cleared to prevent context pollution in subsequent sessions.
+Long-term memory updates employ two complementary strategies: \emph{precision editing}, which modifies only the changed portions, and \emph{reflective distillation}, which compresses accumulated experience.
+Together, these ensure the memory system is continuously compressed and optimized over time, steadily reducing prompt cost.
+
+
+\subsubsection{Reflection-Driven Self-Evolution}
+\label{sec:evolution}
+
+The self-evolution mechanism is the core driver behind GA's continuous improvement in token efficiency.
+Its central insight is that \emph{experience should be progressively compressed from natural language into directly invocable code, so that complex tasks can be completed with the fewest tokens possible}.
+The system distills experience through the Reflect mode, consolidates high-density knowledge into SOPs and then into code, and finally registers the results as reusable Skills, realizing a self-driven evolutionary cycle.
+
+\paragraph{Stage 1: Experience Distillation into SOPs.}
+Through scheduled Reflect-mode sessions, the system autonomously analyzes task execution logs, focusing on the highest-density segments: effective strategies from successful tasks and recurring errors from failed ones.
+The agent extracts key steps and caveats from multi-turn tool calls and LLM reasoning traces, compressing lengthy execution trajectories into L3 SOPs.
+Only the portions where the model is error-prone or unable to reason independently are retained; routine steps and information that can be reconstructed are omitted, achieving information compression and knowledge distillation.
+
+\paragraph{Stage 2: SOP Codification.}
+For tasks that have been validated multiple times and exhibit a highly structured execution pattern, the system evaluates whether the corresponding SOP can be implemented as a Python script.
+For fixed-step, highly parameterized tasks---data transformation, batch file processing, periodic API calls---codification compresses what originally required multiple rounds of reasoning and tool invocation into a single \texttt{code\_run} execution, yielding an order-of-magnitude reduction in token consumption.
+
+\paragraph{Stage 3: Code Registration as Skills.}
+Codified scripts are registered as Skills in the L3 layer and the L1 index is updated accordingly.
+When the agent subsequently encounters a similar task, it can invoke the relevant Skill directly without re-deriving the solution.
+The system continuously monitors the effectiveness of SOPs and Skills, optimizing underperforming workflows---simplifying steps, reordering tool calls, and updating caveats---so that execution efficiency and information density improve over time.
+
+\medskip
+
+These three stages form a closed loop: reflection distills experience $\rightarrow$ SOPs accumulate $\rightarrow$ codification lowers execution cost $\rightarrow$ Skills support exploration of new tasks.
+Through this mechanism, GA achieves a steadily decreasing token cost for recurring task types as experience accumulates, while the freed token budget is redirected toward more complex tasks.
+
+
+\subsubsection{Minimal Atomic Tool Set}
+\label{sec:tools}
+
+Tool definitions must be injected into the context on every LLM call, making tool design a direct determinant of context information density.
+To minimize the overhead introduced by tool schemas, GA adopts a \emph{minimal atomic tool set} comprising only seven base tools, achieving complex task completion through principled composition.
+Table~\ref{tab:tools} summarizes the complete set.
+
+\begin{table}[t]
+\centering
+\caption{The seven atomic tools in GenericAgent.}
+\label{tab:tools}
+\begin{tabular}{ll}
+\toprule
+\textbf{Tool} & \textbf{Description} \\
+\midrule
+\texttt{code\_run}       & Execute Python/Shell scripts with timeout control and abort signals. \\
+\texttt{file\_read}      & Read files by line range with keyword-based location support. \\
+\texttt{file\_write}     & Create or overwrite files. \\
+\texttt{file\_patch}     & Precise local replacement via unique old/new content pairs; \\
+                          & forces \texttt{file\_read} confirmation on mismatch. \\
+\texttt{web\_scan}       & Extract the current browser page as simplified HTML, returning \\
+                          & compressed Markdown and a tab list. \\
+\texttt{web\_execute\_js}& Inject and execute JavaScript in the user's browser, capturing \\
+                          & return values and DOM changes automatically. \\
+\texttt{ask\_user}       & Synchronous blocking request for user input; the Agent Loop \\
+                          & immediately exits the current turn upon invocation. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+GA's tool design adheres to an \emph{atomicity} principle: each tool provides an irreducible primitive capability---code execution, file read/write/patch, web content retrieval, browser-side execution, and user interaction.
+This minimal yet complete set covers every essential pathway for agent--environment interaction while avoiding the redundancy inherent in domain-specific tools.
+
+The minimal tool set yields two direct benefits.
+First, it \textbf{significantly reduces tool-description overhead} in the context.
+In multi-turn interaction scenarios, tool definitions are repeatedly injected; fewer tools translate into a sustained reduction in cumulative token consumption across turns.
+Second, it \textbf{lowers the model's decision complexity}.
+A small, clearly bounded tool set reduces selection ambiguity, enabling the model to make more stable tool-call decisions and thereby reducing errors and retries.
+
+In terms of expressiveness, GA does not rely on specialized tools to extend functionality but instead achieves complex operations through atomic-tool composition.
+File updates, for instance, follow a ``read--modify--write'' pattern; web data extraction is accomplished via ``content retrieval--structural analysis--browser execution.''
+This approach trades a small number of additional steps for a substantial gain in overall context efficiency.
+External capabilities such as MCP integrations are encapsulated as Skills that are invoked indirectly through the atomic tools and loaded into the context only on demand.
+Memory management is likewise implemented through sub-agents that operate the file-oriented tools, avoiding the introduction of additional tool types.
+Tool interfaces are kept minimal, retaining only the parameters strictly necessary, further reducing invocation complexity and token overhead.
+
+
+\subsubsection{Context-Compressed Browser Control}
+\label{sec:browser}
+
+Browser interaction is one of the most severe sources of information redundancy in agent systems.
+Conventional approaches typically return the full web page content, including vast amounts of task-irrelevant structure, styling, and script information, resulting in extremely low context information density.
+GA redefines the core objective of browser control as \emph{minimum necessary information retrieval}, systematically compressing page content, interaction traces, and execution paths to prevent low-value information from entering the context.
+
+\paragraph{Content Layer: Simplified HTML.}
+GA introduces a \emph{simplified HTML} (simp HTML) mechanism that performs structural parsing and filtering of web pages, retaining only semantic information and key structural elements before converting them into a compact Markdown representation.
+The process operates in two stages: a first-stage JavaScript-side DOM analysis that classifies every node by relevance (e.g., primary content, secondary content, or covered/redundant), followed by a second-stage Python-side cleanup using BeautifulSoup that strips residual noise.
+Compared with raw HTML, this method eliminates styling, scripts, and redundant nesting, dramatically reducing token overhead while preserving informational completeness.
+Large lists are detected and automatically truncated to a representative sample (e.g., three items), and a smart budget-allocation mechanism ensures that token consumption stays within predefined limits.
+Hidden elements are expanded on demand, enabling the agent to access potentially critical information that would otherwise be lost due to page-visibility constraints.
+
+\paragraph{Interaction Layer: Incremental DOM Updates.}
+Rather than returning the full page after every operation, GA performs incremental updates based on DOM changes, extracting only the content that was added or modified by the most recent action.
+This strategy avoids the repeated transmission of large volumes of unchanged information during multi-step interactions, keeping the context size stable as the task progresses and significantly improving the efficiency of long-chain browser workflows.
+
+\paragraph{Execution Layer: TMWebDriver.}
+The TMWebDriver component provides stable browser control through a dual-channel communication architecture: a WebSocket channel (port 18765) for real-time bidirectional messaging and an HTTP long-polling channel (port 18766) for reliable delivery, both interfacing with a Chrome extension.
+Adaptive communication and multi-tab parallel execution reduce unnecessary interaction rounds.
+The system further leverages the Chrome DevTools Protocol (CDP) to access network requests directly, allowing certain tasks to bypass page parsing entirely and retrieve results at a lower information-transfer cost.
+
+\medskip
+
+Taken together, GA transforms browser control from ``page-level information retrieval'' into ``task-relevant information extraction.''
+Through the coordinated design of content compression, incremental updates, and execution-layer optimization, the system effectively maximizes context information density and interaction efficiency in web-based scenarios.

@@ -1,0 +1,30 @@
+Large language model (LLM) based autonomous agents have advanced rapidly in recent years, demonstrating remarkable capabilities in code generation, web browsing, and complex task automation~\cite{react,cot,gpt4}.
+Systems such as Claude Code~\cite{claudecode}, Codex~\cite{codex}, and OpenHands~\cite{openhands} can now interpret high-level instructions and execute multi-step plans that span dozens of tool invocations.
+Yet the vast majority of these systems are architected for \emph{single-session} task completion: an agent receives a request, carries it out, and terminates without retaining any knowledge for future sessions.
+This design assumption breaks down when agents are expected to operate autonomously over extended time horizons---managing personal workflows, monitoring evolving environments, or accumulating domain expertise across hundreds of interactions.
+In such long-term settings, the context window becomes the fundamental bottleneck rather than model capability itself~\cite{anthropic_context}.
+Tool definitions, historical memory, retrieved documents, and raw web content all compete for the same finite token budget, continuously expanding the prompt while squeezing the space available for effective reasoning.
+Empirical evidence consistently shows that, given the same informational requirements, longer prompts degrade model performance: attention becomes diluted, irrelevant tokens introduce noise, and critical instructions are more likely to be overlooked.
+This tension between the growing information demands of long-term operation and the fixed capacity of the context window constitutes the central challenge that motivates our work.
+
+We identify four concrete dimensions along which context information density is eroded in existing agent systems, each representing a distinct source of what we term \emph{context pollution}.
+First, \textbf{memory retrieval}: as an agent accumulates knowledge across sessions, its memory store grows without bound, yet each decision typically requires only a small, precise subset of that knowledge---retrieving too much wastes context, while retrieving too little causes the agent to forget critical facts.
+Second, \textbf{experience reuse}: when an agent encounters a task similar to one it has solved before, the ideal behavior is to leverage prior experience; however, raw reasoning traces are verbose, filled with exploratory dead ends and redundant deliberation that are costly to re-inject into the prompt.
+Third, \textbf{tool overhead}: standard agent frameworks inject the full schema of every available tool into the system prompt on every LLM call, imposing a persistent, per-turn token cost that scales linearly with the size of the tool library~\cite{react}.
+Fourth, \textbf{web interaction}: when agents browse the web, raw HTML pages contain navigation bars, advertisements, scripts, and boilerplate that vastly outnumber the task-relevant content, yet conventional approaches pass this entire payload to the model.
+Existing systems have addressed these challenges in isolation---MemGPT~\cite{memgpt} proposes OS-inspired virtual memory but lacks mechanisms for self-evolution, Voyager~\cite{voyager} introduces a skill library but is confined to Minecraft, and multi-agent architectures such as Manus~\cite{manus} distribute complexity across specialized sub-agents without fundamentally reducing per-agent context consumption.
+No prior system has addressed all four dimensions under a unified design principle.
+
+In this paper, we present \textbf{GenericAgent}, a general-purpose LLM agent system designed from the ground up around the principle of \emph{context information density maximization}: within the finite context window available to each LLM call, the system should pack the highest-density, most task-relevant information so as to maximize the probability of task success while minimizing total prompt cost.
+The corollary of this principle is equally important: when the information required for a decision is already complete, a shorter prompt will yield better performance than a longer one, because every superfluous token is a source of distraction rather than signal.
+GenericAgent instantiates this principle through four tightly integrated subsystems---hierarchical memory, reflection-driven self-evolution, minimal atomic tools, and context-compressed browser control---each targeting one of the four information density challenges identified above.
+All subsystems are unified under a single \emph{Agent Loop} that drives three complementary operating modes: \textbf{Interactive} mode for direct user commands, \textbf{Task} mode for sub-agent coordination via structured file I/O, and \textbf{Reflect} mode for event- or cron-triggered autonomous operation.
+The entire system is implemented in approximately 3,000 lines of core code, supports multiple LLM backends including Claude, OpenAI, and Gemini, and is publicly available at \url{https://github.com/lsdefine/GenericAgent}.
+
+Our main contributions are as follows:
+\begin{itemize}[leftmargin=*]
+    \item A \textbf{hierarchical memory system} (L0--L3) with taxonomy-based indexing and action-verified updates, ensuring that only the minimal, validated information needed for each decision is retrieved into the context window.
+    \item A \textbf{reflection-driven self-evolution} mechanism that progressively compresses raw experience into standard operating procedures, then into executable code, and ultimately into composable skills---each stage reducing the context cost of reusing past knowledge by an order of magnitude.
+    \item A set of \textbf{seven minimal atomic tools} whose compact definitions occupy a fraction of the prompt budget consumed by conventional tool libraries, yet achieve full environmental control through principled composition~\cite{reflexion}.
+    \item A \textbf{context-compressed browser control} scheme based on simplified HTML rendering and incremental DOM monitoring, which strips web pages down to their task-relevant semantic content before injection into the context window.
+\end{itemize}
