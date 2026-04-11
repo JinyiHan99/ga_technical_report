@@ -3,9 +3,10 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
 The style file: unsrt.bst
 Database file #1: main.bib
+Warning--I didn't find a database entry for "openclaw"
 You've used 30 entries,
             1791 wiz_defined-function locations,
-            564 strings with 8263 characters,
+            565 strings with 8271 characters,
 and the built_in function-call counts, 5948 in all, are:
 = -- 405
 > -- 448
@@ -44,3 +45,4 @@ warning$ -- 0
 while$ -- 35
 width$ -- 32
 write$ -- 309
+(There was 1 warning)

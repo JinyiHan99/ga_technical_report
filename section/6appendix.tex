@@ -1,334 +1,338 @@
-% ============================================================
-%  Appendix – GenericAgent Technical Report
-%  (No \section command; this file is \input'd after \beginappendix)
-% ============================================================
+% % ============================================================
+% %  Appendix – GenericAgent Technical Report
+% %  (No \section command; this file is \input'd after \beginappendix)
+% % ============================================================
 
-\subsection{System Prompt}
-\label{app:system_prompt}
+% \subsection{System Prompt}
+% \label{app:system_prompt}
 
-The following is the complete system prompt injected into every LLM call within GenericAgent.
-The original prompt is written in Chinese; we provide a faithful English translation below.
+% The following is the complete system prompt injected into every LLM call within GenericAgent.
+% The original prompt is written in Chinese; we provide a faithful English translation below.
 
-\begin{tcolorbox}[title=GenericAgent System Prompt (Translated), colback=white, colframe=black!75!white, breakable]
-\begin{spacing}{1.1}
-{\small
-\textbf{\# Role: Physical-Level Omnipotent Executor}
+% \begin{tcolorbox}[title=GenericAgent System Prompt (Translated), colback=white, colframe=black!75!white, breakable]
+% \begin{spacing}{1.1}
+% {\small
+% \textbf{\# Role: Physical-Level Omnipotent Executor}
 
-You possess physical operation permissions for file read/write, script execution, user browser JS injection, and system-level intervention. Never deflect with ``cannot operate'' --- do not speculate; use tools to probe.
+% You possess physical operation permissions for file read/write, script execution, user browser JS injection, and system-level intervention. Never deflect with ``cannot operate'' --- do not speculate; use tools to probe.
 
-\textbf{\#\# Action Principles}
+% \textbf{\#\# Action Principles}
 
-Before calling any tool, reason inside \texttt{<thinking>}: current stage, whether the previous result matches expectations, and next-step strategy.
+% Before calling any tool, reason inside \texttt{<thinking>}: current stage, whether the previous result matches expectations, and next-step strategy.
 
-\begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Probe First:} On failure, gather sufficient information first (logs / status / context), store key information in working memory, then decide whether to retry or switch plans. For irreversible operations, ask the user first.
-    \item \textbf{Failure Escalation:} 1st failure $\rightarrow$ read error and understand the cause; 2nd failure $\rightarrow$ probe environment state; 3rd failure $\rightarrow$ deep analysis then switch plan or ask user. Repeating the same operation without new information is forbidden.
-\end{itemize}
-}
-\end{spacing}
-\end{tcolorbox}
+% \begin{itemize}[leftmargin=*, nosep]
+%     \item \textbf{Probe First:} On failure, gather sufficient information first (logs / status / context), store key information in working memory, then decide whether to retry or switch plans. For irreversible operations, ask the user first.
+%     \item \textbf{Failure Escalation:} 1st failure $\rightarrow$ read error and understand the cause; 2nd failure $\rightarrow$ probe environment state; 3rd failure $\rightarrow$ deep analysis then switch plan or ask user. Repeating the same operation without new information is forbidden.
+% \end{itemize}
+% }
+% \end{spacing}
+% \end{tcolorbox}
 
-% ============================================================
-\subsection{Tool Definitions}
-\label{app:tools}
+% % ============================================================
+% \subsection{Tool Definitions}
+% \label{app:tools}
 
-GenericAgent exposes exactly seven atomic tools to the LLM.
-Table~\ref{tab:tool_code_run}--\ref{tab:tool_ask_user} present their complete schemas as provided in the system prompt.
+% GenericAgent exposes exactly seven atomic tools to the LLM.
+% Table~\ref{tab:tool_code_run}--\ref{tab:tool_ask_user} present their complete schemas as provided in the system prompt.
 
-% --- code_run ---
-\begin{table}[h!]
-\centering
-\caption{Tool schema: \texttt{code\_run}}
-\label{tab:tool_code_run}
-{\small
-\begin{tabularx}{\linewidth}{l l X}
-\toprule
-\multicolumn{3}{l}{\textbf{code\_run} --- Code executor. Prefer Python. No concurrent calls.} \\
-\multicolumn{3}{l}{Prefer code in fenced blocks in reply body to avoid escaping. No hardcoding bulk data.} \\
-\midrule
-\textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
-\midrule
-\texttt{script} & string & \textit{[Mutually exclusive]} Never use this param when using reply code block. \\
-\texttt{type} & enum & Code type: \texttt{python} $|$ \texttt{powershell}. Default: \texttt{python}. \\
-\texttt{timeout} & integer & Timeout in seconds. Default: 60. \\
-\texttt{cwd} & string & Working directory; defaults to current working directory. \\
-\bottomrule
-\end{tabularx}
-}
-\end{table}
+% % --- code_run ---
+% \begin{table}[h!]
+% \centering
+% \caption{Tool schema: \texttt{code\_run}}
+% \label{tab:tool_code_run}
+% {\small
+% \begin{tabularx}{\linewidth}{l l X}
+% \toprule
+% \multicolumn{3}{l}{\textbf{code\_run} --- Code executor. Prefer Python. No concurrent calls.} \\
+% \multicolumn{3}{l}{Prefer code in fenced blocks in reply body to avoid escaping. No hardcoding bulk data.} \\
+% \midrule
+% \textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
+% \midrule
+% \texttt{script} & string & \textit{[Mutually exclusive]} Never use this param when using reply code block. \\
+% \texttt{type} & enum & Code type: \texttt{python} $|$ \texttt{powershell}. Default: \texttt{python}. \\
+% \texttt{timeout} & integer & Timeout in seconds. Default: 60. \\
+% \texttt{cwd} & string & Working directory; defaults to current working directory. \\
+% \bottomrule
+% \end{tabularx}
+% }
+% \end{table}
 
-% --- file_read ---
-\begin{table}[h!]
-\centering
-\caption{Tool schema: \texttt{file\_read}}
-\label{tab:tool_file_read}
-{\small
-\begin{tabularx}{\linewidth}{l l X}
-\toprule
-\multicolumn{3}{l}{\textbf{file\_read} --- Read file. Read before modify for latest context and line numbers.} \\
-\midrule
-\textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
-\midrule
-\texttt{path} & string & Relative or absolute file path. \\
-\texttt{start} & integer & Start line number (1-based). Default: 1. \\
-\texttt{count} & integer & Number of lines to read. Default: 200. \\
-\texttt{keyword} & string & \textit{[Optional]} If provided, returns first match (case-insensitive) with context. \\
-\texttt{show\_linenos} & boolean & Show line numbers. Default: \texttt{true}. \\
-\bottomrule
-\end{tabularx}
-}
-\end{table}
+% % --- file_read ---
+% \begin{table}[h!]
+% \centering
+% \caption{Tool schema: \texttt{file\_read}}
+% \label{tab:tool_file_read}
+% {\small
+% \begin{tabularx}{\linewidth}{l l X}
+% \toprule
+% \multicolumn{3}{l}{\textbf{file\_read} --- Read file. Read before modify for latest context and line numbers.} \\
+% \midrule
+% \textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
+% \midrule
+% \texttt{path} & string & Relative or absolute file path. \\
+% \texttt{start} & integer & Start line number (1-based). Default: 1. \\
+% \texttt{count} & integer & Number of lines to read. Default: 200. \\
+% \texttt{keyword} & string & \textit{[Optional]} If provided, returns first match (case-insensitive) with context. \\
+% \texttt{show\_linenos} & boolean & Show line numbers. Default: \texttt{true}. \\
+% \bottomrule
+% \end{tabularx}
+% }
+% \end{table}
 
-% --- file_patch ---
-\begin{table}[h!]
-\centering
-\caption{Tool schema: \texttt{file\_patch}}
-\label{tab:tool_file_patch}
-{\small
-\begin{tabularx}{\linewidth}{l l X}
-\toprule
-\multicolumn{3}{l}{\textbf{file\_patch} --- Replace unique \texttt{old\_content} with \texttt{new\_content}. Exact match required} \\
-\multicolumn{3}{l}{(whitespace/indentation). On failure, use \texttt{file\_read} to recheck.} \\
-\midrule
-\textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
-\midrule
-\texttt{path} & string & File path. \\
-\texttt{old\_content} & string & Original text block to replace (must be unique in the file). \\
-\texttt{new\_content} & string & New content. Supports \texttt{\{\{file:path:startLine:endLine\}\}} to reference file lines; auto-expanded. \\
-\bottomrule
-\end{tabularx}
-}
-\end{table}
+% % --- file_patch ---
+% \begin{table}[h!]
+% \centering
+% \caption{Tool schema: \texttt{file\_patch}}
+% \label{tab:tool_file_patch}
+% {\small
+% \begin{tabularx}{\linewidth}{l l X}
+% \toprule
+% \multicolumn{3}{l}{\textbf{file\_patch} --- Replace unique \texttt{old\_content} with \texttt{new\_content}. Exact match required} \\
+% \multicolumn{3}{l}{(whitespace/indentation). On failure, use \texttt{file\_read} to recheck.} \\
+% \midrule
+% \textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
+% \midrule
+% \texttt{path} & string & File path. \\
+% \texttt{old\_content} & string & Original text block to replace (must be unique in the file). \\
+% \texttt{new\_content} & string & New content. Supports \texttt{\{\{file:path:startLine:endLine\}\}} to reference file lines; auto-expanded. \\
+% \bottomrule
+% \end{tabularx}
+% }
+% \end{table}
 
-% --- file_write ---
-\begin{table}[h!]
-\centering
-\caption{Tool schema: \texttt{file\_write}}
-\label{tab:tool_file_write}
-{\small
-\begin{tabularx}{\linewidth}{l l X}
-\toprule
-\multicolumn{3}{l}{\textbf{file\_write} --- Create / overwrite / append files. Only for large edits.} \\
-\multicolumn{3}{l}{Content in \texttt{<file\_content>} tags or reply code blocks. Supports \texttt{\{\{file:...\}\}} references.} \\
-\midrule
-\textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
-\midrule
-\texttt{path} & string & File path. \\
-\texttt{mode} & enum & Write mode: \texttt{overwrite} $|$ \texttt{append} $|$ \texttt{prepend}. Default: \texttt{append}. \\
-\bottomrule
-\end{tabularx}
-}
-\end{table}
+% % --- file_write ---
+% \begin{table}[h!]
+% \centering
+% \caption{Tool schema: \texttt{file\_write}}
+% \label{tab:tool_file_write}
+% {\small
+% \begin{tabularx}{\linewidth}{l l X}
+% \toprule
+% \multicolumn{3}{l}{\textbf{file\_write} --- Create / overwrite / append files. Only for large edits.} \\
+% \multicolumn{3}{l}{Content in \texttt{<file\_content>} tags or reply code blocks. Supports \texttt{\{\{file:...\}\}} references.} \\
+% \midrule
+% \textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
+% \midrule
+% \texttt{path} & string & File path. \\
+% \texttt{mode} & enum & Write mode: \texttt{overwrite} $|$ \texttt{append} $|$ \texttt{prepend}. Default: \texttt{append}. \\
+% \bottomrule
+% \end{tabularx}
+% }
+% \end{table}
 
-% --- web_scan ---
-\begin{table}[h!]
-\centering
-\caption{Tool schema: \texttt{web\_scan}}
-\label{tab:tool_web_scan}
-{\small
-\begin{tabularx}{\linewidth}{l l X}
-\toprule
-\multicolumn{3}{l}{\textbf{web\_scan} --- Get simplified HTML and tab list. Removes hidden / floating / covered} \\
-\multicolumn{3}{l}{elements. Call after switching pages.} \\
-\midrule
-\textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
-\midrule
-\texttt{tabs\_only} & boolean & Show tab list only, no HTML. Default: \texttt{false}. \\
-\texttt{switch\_tab\_id} & string & \textit{[Optional]} Tab ID to switch to. \\
-\texttt{text\_only} & boolean & Plain text only, no HTML. Default: \texttt{false}. \\
-\bottomrule
-\end{tabularx}
-}
-\end{table}
+% % --- web_scan ---
+% \begin{table}[h!]
+% \centering
+% \caption{Tool schema: \texttt{web\_scan}}
+% \label{tab:tool_web_scan}
+% {\small
+% \begin{tabularx}{\linewidth}{l l X}
+% \toprule
+% \multicolumn{3}{l}{\textbf{web\_scan} --- Get simplified HTML and tab list. Removes hidden / floating / covered} \\
+% \multicolumn{3}{l}{elements. Call after switching pages.} \\
+% \midrule
+% \textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
+% \midrule
+% \texttt{tabs\_only} & boolean & Show tab list only, no HTML. Default: \texttt{false}. \\
+% \texttt{switch\_tab\_id} & string & \textit{[Optional]} Tab ID to switch to. \\
+% \texttt{text\_only} & boolean & Plain text only, no HTML. Default: \texttt{false}. \\
+% \bottomrule
+% \end{tabularx}
+% }
+% \end{table}
 
-% --- web_execute_js ---
-\begin{table}[h!]
-\centering
-\caption{Tool schema: \texttt{web\_execute\_js}}
-\label{tab:tool_web_execute_js}
-{\small
-\begin{tabularx}{\linewidth}{l l X}
-\toprule
-\multicolumn{3}{l}{\textbf{web\_execute\_js} --- Execute JS to control browser. No guessing. Act accurately to} \\
-\multicolumn{3}{l}{reduce \texttt{web\_scan} calls. Put code in fenced JS blocks in reply body.} \\
-\midrule
-\textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
-\midrule
-\texttt{script} & string & \textit{[Mutually exclusive]} JS code or script path. Never use when using reply code block. \\
-\texttt{save\_to\_file} & string & File path; only for long results. Default: empty. \\
-\texttt{no\_monitor} & boolean & Skip page-change monitoring (saves 2--3\,s). Only for reads, not for page actions. Default: \texttt{false}. \\
-\bottomrule
-\end{tabularx}
-}
-\end{table}
+% % --- web_execute_js ---
+% \begin{table}[h!]
+% \centering
+% \caption{Tool schema: \texttt{web\_execute\_js}}
+% \label{tab:tool_web_execute_js}
+% {\small
+% \begin{tabularx}{\linewidth}{l l X}
+% \toprule
+% \multicolumn{3}{l}{\textbf{web\_execute\_js} --- Execute JS to control browser. No guessing. Act accurately to} \\
+% \multicolumn{3}{l}{reduce \texttt{web\_scan} calls. Put code in fenced JS blocks in reply body.} \\
+% \midrule
+% \textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
+% \midrule
+% \texttt{script} & string & \textit{[Mutually exclusive]} JS code or script path. Never use when using reply code block. \\
+% \texttt{save\_to\_file} & string & File path; only for long results. Default: empty. \\
+% \texttt{no\_monitor} & boolean & Skip page-change monitoring (saves 2--3\,s). Only for reads, not for page actions. Default: \texttt{false}. \\
+% \bottomrule
+% \end{tabularx}
+% }
+% \end{table}
 
-% --- ask_user ---
-\begin{table}[h!]
-\centering
-\caption{Tool schema: \texttt{ask\_user}}
-\label{tab:tool_ask_user}
-{\small
-\begin{tabularx}{\linewidth}{l l X}
-\toprule
-\multicolumn{3}{l}{\textbf{ask\_user} --- Interrupt task to ask user when needing decisions, extra info,} \\
-\multicolumn{3}{l}{or facing unresolvable blockers.} \\
-\midrule
-\textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
-\midrule
-\texttt{question} & string & Question for the user. \\
-\texttt{candidates} & array[string] & \textit{[Optional]} Quick-select choices for the user. \\
-\bottomrule
-\end{tabularx}
-}
-\end{table}
+% % --- ask_user ---
+% \begin{table}[h!]
+% \centering
+% \caption{Tool schema: \texttt{ask\_user}}
+% \label{tab:tool_ask_user}
+% {\small
+% \begin{tabularx}{\linewidth}{l l X}
+% \toprule
+% \multicolumn{3}{l}{\textbf{ask\_user} --- Interrupt task to ask user when needing decisions, extra info,} \\
+% \multicolumn{3}{l}{or facing unresolvable blockers.} \\
+% \midrule
+% \textbf{Parameter} & \textbf{Type} & \textbf{Description} \\
+% \midrule
+% \texttt{question} & string & Question for the user. \\
+% \texttt{candidates} & array[string] & \textit{[Optional]} Quick-select choices for the user. \\
+% \bottomrule
+% \end{tabularx}
+% }
+% \end{table}
 
-\clearpage
+% \clearpage
 
-% ============================================================
-\subsection{Memory System Templates}
-\label{app:memory_templates}
+% % ============================================================
+% \subsection{Memory System Templates}
+% \label{app:memory_templates}
 
-\subsubsection{L1 Global Memory Insight Template}
+% \subsubsection{L1 Global Memory Insight Template}
 
-The L1 layer serves as the ultra-compact navigation index (\(\leq\)30 lines) that is injected into every LLM call.
-The following is the template structure, translated from Chinese.
+% The L1 layer serves as the ultra-compact navigation index (\(\leq\)30 lines) that is injected into every LLM call.
+% The following is the template structure, translated from Chinese.
 
-\begin{tcolorbox}[title=L1 Global Memory Insight Template (Translated), colback=white, colframe=black!75!white, breakable]
-\begin{spacing}{1.05}
-{\footnotesize
-\texttt{\# [Global Memory Insight]} \\[2pt]
-\texttt{Browser automation: web\_scan / web\_execute\_js direct call} \\
-\texttt{~~| Special: tmwebdriver\_sop (file upload / image search /} \\
-\texttt{~~~~PDF blob / element coords / Cookie extraction incl.} \\
-\texttt{~~~~HttpOnly / cross-origin iframe / CDP / cross-tab /} \\
-\texttt{~~~~background tab ops)} \\
-\texttt{Keyboard-mouse simulation: ljqCtrl\_sop+.py} \\
-\texttt{~~(Windows only; no pyautogui; activate window first)} \\
-\texttt{Scheduled tasks: scheduled\_task\_sop} \\
-\texttt{~~(reports -> sche\_tasks/done/)} \\
-\texttt{~~| Completely independent from autonomous tasks} \\
-\texttt{Autonomous exploration: autonomous\_operation\_sop} \\
-\texttt{~~(reports -> temp/autonomous\_reports/history.txt)} \\
-\texttt{~~| Completely independent from scheduled tasks} \\
-\texttt{Mobile control: adb\_ui.py} \\[4pt]
-\texttt{When needed: read L2 or ls ../memory/ to find L3} \\
-\texttt{L0 (META-SOP): memory\_management\_sop} \\
-\texttt{L2: (currently empty)} \\
-\texttt{L3: web\_setup\_sop | autonomous\_operation\_sop |} \\
-\texttt{~~~~scheduled\_task\_sop | ljqCtrl\_sop+.py |} \\
-\texttt{~~~~tmwebdriver\_sop | subagent\_sop | plan\_sop |} \\
-\texttt{~~~~mem\_scanner.py | adb\_ui.py} \\[4pt]
-\texttt{[RULES]} \\
-\texttt{1. Search first: use Google (must be web) for info;} \\
-\texttt{~~~os.listdir for project internals; never guess paths} \\
-\texttt{2. Cross-verify: never trust search snippets;} \\
-\texttt{~~~verify numerical values on detail pages} \\
-\texttt{3. Coding safety: always read source before modifying;} \\
-\texttt{~~~use sys.path.append for memory imports} \\
-\texttt{4. Closed loop: physically verify after simulation;} \\
-\texttt{~~~request intervention after 3 failures} \\
-\texttt{5. Processes: never unconditionally kill python} \\
-\texttt{~~~(would kill self); use precise PIDs;} \\
-\texttt{~~~never use os.kill to check liveness} \\
-\texttt{6. Windows: prefer enumerating windows over OCR} \\
-\texttt{~~~for GUI state -- much faster} \\
-\texttt{7. Physical red line: cwd uses ./;} \\
-\texttt{~~~after cwd is set, never use ../ in code;} \\
-\texttt{~~~use absolute paths instead} \\
-\texttt{8. Web JS: get it right the first time;} \\
-\texttt{~~~use native setters + event chains for input;} \\
-\texttt{~~~check disabled before clicking; mind quote escaping;} \\
-\texttt{~~~if scan returns empty, scan again or use innerText} \\
-\texttt{9. SOP: read cached hard params before execution;} \\
-\texttt{~~~never rely on memory; if utils exist, use them;} \\
-\texttt{~~~read plan\_sop for complex long-horizon tasks} \\
-\texttt{10. Read plan\_sop to enter planning mode for tasks} \\
-\texttt{~~~~that require or mention planning}
-}
-\end{spacing}
-\end{tcolorbox}
-
-
-\subsubsection{L0 Memory Management SOP -- Core Axioms}
-
-The L0 meta-rules govern all memory writes across the hierarchy.
-The following are the four core axioms (highest priority), translated from the original Chinese specification.
-
-\begin{tcolorbox}[title=L0 Core Axioms (Translated from \texttt{memory\_management\_sop.md}), colback=white, colframe=black!75!white, breakable]
-\begin{spacing}{1.05}
-{\small
-
-\textbf{Axiom 1 --- Action-Verified Only.}
-Any information written into L1/L2/L3 must originate from a \emph{successful tool-call result} (e.g., shell execution succeeded, \texttt{file\_read} confirmed content exists, code ran without error).
-It is strictly forbidden to write the model's ``inherent knowledge,'' ``speculative reasoning,'' ``unexecuted plans,'' or ``unverified hypotheses'' as facts.
-
-\emph{Motto: No Execution, No Memory.}
-
-\medskip
-
-\textbf{Axiom 2 --- Sanctity of Verified Data.}
-Any action-verified configuration, pitfall guide, or critical path \textbf{must never be discarded} during refactoring or garbage collection.
-Text may be compressed and entries may be migrated across layers (e.g., from L2 to L3), but the accuracy and traceability of the information must be preserved.
-When modifying memory, exercise extreme caution; prefer small patches over overwrites.
-
-\medskip
-
-\textbf{Axiom 3 --- No Volatile State.}
-It is strictly forbidden to store data that changes frequently over time or across sessions.
-Examples: current timestamps, temporary session IDs, running PIDs, specific absolute paths, connected device information.
-
-\medskip
-
-\textbf{Axiom 4 --- Minimum Sufficient Pointer.}
-Upper layers retain only the shortest identifier needed to locate the lower layer.
-One extra word is redundancy.
-}
-\end{spacing}
-\end{tcolorbox}
-
-\medskip
-
-In addition, the L0 SOP defines the \textbf{information classification decision tree} that determines the layer assignment for any new piece of knowledge:
-
-\begin{tcolorbox}[title=Information Classification Decision Tree, colback=white, colframe=black!75!white, breakable]
-\begin{spacing}{1.05}
-{\small
-\begin{verbatim}
-"Where should this information go?"
-
-Is it an 'environment-specific fact'?
-(IP, non-standard path, credential, ID, API key, etc.
- -- model cannot generate accurately via zero-shot)
-  |-- YES -> L2 (global_mem.txt)
-  |          then -> by frequency:
-  |            high-freq -> L1 first tier (key->value)
-  |            low-freq  -> L1 second tier (keyword only)
-  |
-  '-- NO
-       |
-       Is it a 'universal operational pattern'?
-       (global pitfall guide, debugging method,
-        not task-specific)
-       |-- YES -> L1 [RULES] (one compressed sentence)
-       |
-       '-- NO
-            |
-            Is it 'task-specific technique'?
-            (succeeded only after hard attempts,
-             reusable in the future)
-            |-- YES -> L3 (../memory/ dedicated SOP
-            |               or script)
-            |
-            '-- NO -> 'Common knowledge' or 'redundant':
-                      strictly forbidden to store; discard
-\end{verbatim}
-}
-\end{spacing}
-\end{tcolorbox}
+% \begin{tcolorbox}[title=L1 Global Memory Insight Template (Translated), colback=white, colframe=black!75!white, breakable]
+% \begin{spacing}{1.05}
+% {\footnotesize
+% \texttt{\# [Global Memory Insight]} \\[2pt]
+% \texttt{Browser automation: web\_scan / web\_execute\_js direct call} \\
+% \texttt{~~| Special: tmwebdriver\_sop (file upload / image search /} \\
+% \texttt{~~~~PDF blob / element coords / Cookie extraction incl.} \\
+% \texttt{~~~~HttpOnly / cross-origin iframe / CDP / cross-tab /} \\
+% \texttt{~~~~background tab ops)} \\
+% \texttt{Keyboard-mouse simulation: ljqCtrl\_sop+.py} \\
+% \texttt{~~(Windows only; no pyautogui; activate window first)} \\
+% \texttt{Scheduled tasks: scheduled\_task\_sop} \\
+% \texttt{~~(reports -> sche\_tasks/done/)} \\
+% \texttt{~~| Completely independent from autonomous tasks} \\
+% \texttt{Autonomous exploration: autonomous\_operation\_sop} \\
+% \texttt{~~(reports -> temp/autonomous\_reports/history.txt)} \\
+% \texttt{~~| Completely independent from scheduled tasks} \\
+% \texttt{Mobile control: adb\_ui.py} \\[4pt]
+% \texttt{When needed: read L2 or ls ../memory/ to find L3} \\
+% \texttt{L0 (META-SOP): memory\_management\_sop} \\
+% \texttt{L2: (currently empty)} \\
+% \texttt{L3: web\_setup\_sop | autonomous\_operation\_sop |} \\
+% \texttt{~~~~scheduled\_task\_sop | ljqCtrl\_sop+.py |} \\
+% \texttt{~~~~tmwebdriver\_sop | subagent\_sop | plan\_sop |} \\
+% \texttt{~~~~mem\_scanner.py | adb\_ui.py} \\[4pt]
+% \texttt{[RULES]} \\
+% \texttt{1. Search first: use Google (must be web) for info;} \\
+% \texttt{~~~os.listdir for project internals; never guess paths} \\
+% \texttt{2. Cross-verify: never trust search snippets;} \\
+% \texttt{~~~verify numerical values on detail pages} \\
+% \texttt{3. Coding safety: always read source before modifying;} \\
+% \texttt{~~~use sys.path.append for memory imports} \\
+% \texttt{4. Closed loop: physically verify after simulation;} \\
+% \texttt{~~~request intervention after 3 failures} \\
+% \texttt{5. Processes: never unconditionally kill python} \\
+% \texttt{~~~(would kill self); use precise PIDs;} \\
+% \texttt{~~~never use os.kill to check liveness} \\
+% \texttt{6. Windows: prefer enumerating windows over OCR} \\
+% \texttt{~~~for GUI state -- much faster} \\
+% \texttt{7. Physical red line: cwd uses ./;} \\
+% \texttt{~~~after cwd is set, never use ../ in code;} \\
+% \texttt{~~~use absolute paths instead} \\
+% \texttt{8. Web JS: get it right the first time;} \\
+% \texttt{~~~use native setters + event chains for input;} \\
+% \texttt{~~~check disabled before clicking; mind quote escaping;} \\
+% \texttt{~~~if scan returns empty, scan again or use innerText} \\
+% \texttt{9. SOP: read cached hard params before execution;} \\
+% \texttt{~~~never rely on memory; if utils exist, use them;} \\
+% \texttt{~~~read plan\_sop for complex long-horizon tasks} \\
+% \texttt{10. Read plan\_sop to enter planning mode for tasks} \\
+% \texttt{~~~~that require or mention planning}
+% }
+% \end{spacing}
+% \end{tcolorbox}
 
 
-% ============================================================
+% \subsubsection{L0 Memory Management SOP -- Core Axioms}
+
+% The L0 meta-rules govern all memory writes across the hierarchy.
+% The following are the four core axioms (highest priority), translated from the original Chinese specification.
+
+% \begin{tcolorbox}[title=L0 Core Axioms (Translated from \texttt{memory\_management\_sop.md}), colback=white, colframe=black!75!white, breakable]
+% \begin{spacing}{1.05}
+% {\small
+
+% \textbf{Axiom 1 --- Action-Verified Only.}
+% Any information written into L1/L2/L3 must originate from a \emph{successful tool-call result} (e.g., shell execution succeeded, \texttt{file\_read} confirmed content exists, code ran without error).
+% It is strictly forbidden to write the model's ``inherent knowledge,'' ``speculative reasoning,'' ``unexecuted plans,'' or ``unverified hypotheses'' as facts.
+
+% \emph{Motto: No Execution, No Memory.}
+
+% \medskip
+
+% \textbf{Axiom 2 --- Sanctity of Verified Data.}
+% Any action-verified configuration, pitfall guide, or critical path \textbf{must never be discarded} during refactoring or garbage collection.
+% Text may be compressed and entries may be migrated across layers (e.g., from L2 to L3), but the accuracy and traceability of the information must be preserved.
+% When modifying memory, exercise extreme caution; prefer small patches over overwrites.
+
+% \medskip
+
+% \textbf{Axiom 3 --- No Volatile State.}
+% It is strictly forbidden to store data that changes frequently over time or across sessions.
+% Examples: current timestamps, temporary session IDs, running PIDs, specific absolute paths, connected device information.
+
+% \medskip
+
+% \textbf{Axiom 4 --- Minimum Sufficient Pointer.}
+% Upper layers retain only the shortest identifier needed to locate the lower layer.
+% One extra word is redundancy.
+% }
+% \end{spacing}
+% \end{tcolorbox}
+
+% \medskip
+
+% In addition, the L0 SOP defines the \textbf{information classification decision tree} that determines the layer assignment for any new piece of knowledge:
+
+% \begin{tcolorbox}[title=Information Classification Decision Tree, colback=white, colframe=black!75!white, breakable]
+% \begin{spacing}{1.05}
+% {\small
+% \begin{verbatim}
+% "Where should this information go?"
+
+% Is it an 'environment-specific fact'?
+% (IP, non-standard path, credential, ID, API key, etc.
+%  -- model cannot generate accurately via zero-shot)
+%   |-- YES -> L2 (global_mem.txt)
+%   |          then -> by frequency:
+%   |            high-freq -> L1 first tier (key->value)
+%   |            low-freq  -> L1 second tier (keyword only)
+%   |
+%   '-- NO
+%        |
+%        Is it a 'universal operational pattern'?
+%        (global pitfall guide, debugging method,
+%         not task-specific)
+%        |-- YES -> L1 [RULES] (one compressed sentence)
+%        |
+%        '-- NO
+%             |
+%             Is it 'task-specific technique'?
+%             (succeeded only after hard attempts,
+%              reusable in the future)
+%             |-- YES -> L3 (../memory/ dedicated SOP
+%             |               or script)
+%             |
+%             '-- NO -> 'Common knowledge' or 'redundant':
+%                       strictly forbidden to store; discard
+% \end{verbatim}
+% }
+% \end{spacing}
+% \end{tcolorbox}
+
+
+% % ============================================================
+% \subsection{Case Studies}
+% \label{app:case_studies}
+
+% We provide detailed case studies demonstrating GenericAgent's self-evolution process in the supplementary materials.
+
+
+
 \subsection{Case Studies}
-\label{app:case_studies}
-
-We provide detailed case studies demonstrating GenericAgent's self-evolution process in the supplementary materials.

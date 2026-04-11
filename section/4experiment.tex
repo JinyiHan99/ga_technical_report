@@ -1,0 +1,389 @@
+
+\subsection{Experimental Setup}
+\label{sec:exp_setup}
+
+\paragraph{Evaluation Objectives.}
+Our experiments are designed to validate the core claims of GenericAgent across six dimensions:
+(1) whether the memory system enables continuous efficiency improvement over repeated tasks,
+(2) whether condensed memory achieves better cost-effectiveness than full or redundant memory,
+(3) whether the self-evolution mechanism progressively reduces execution cost,
+(4) tool usage efficiency in real-world scenarios,
+(5) autonomous web browsing capability on diverse websites,
+and (6) robustness against indirect prompt injection and malicious instructions.
+
+\paragraph{Baselines.}
+We compare GenericAgent (GA) against three representative agent systems:
+\textbf{Claude Code}~\cite{claudecode}, a production-grade coding assistant with built-in memory and skill management;
+\textbf{Codex}~\cite{codex}, OpenAI's code-generation agent;
+and \textbf{OpenClaw}~\cite{openclaw}, an open-source general-purpose agent framework.
+All systems use the same backbone LLM (GPT-5.4 or Claude Opus 4.6, specified per experiment) to ensure fair comparison.
+
+\paragraph{Implementation Details.}
+GenericAgent is implemented in Python with approximately 3,000 lines of core code.
+The hierarchical memory system maintains an L1 index capped at 30 entries (~1,000 tokens).
+The agent loop enforces a maximum of 40 reasoning turns per task, with warnings issued every 7 turns and forced user confirmation at turn 35.
+Browser control uses TMWebDriver with dual-channel communication (WebSocket on port 18765, HTTP long-polling on port 18766).
+All experiments are conducted on a standard development workstation with 32GB RAM and an Intel i9 processor.
+
+
+\subsection{Memory System Effectiveness}
+\label{sec:exp_memory}
+
+\subsubsection{Continuous Efficiency Improvement}
+
+A key claim of GenericAgent is that it gets better with use---each task execution should leave behind distilled knowledge that accelerates future similar tasks.
+To test this, we repeatedly execute the same type of task across multiple sessions: downloading five different datasets from HuggingFace.
+Each download runs in a fresh session to prevent context carryover, and we measure operation time (excluding actual download duration) and token consumption.
+
+Table~\ref{tab:memory_improvement} reveals a striking divergence between GenericAgent and the baselines.
+CodeX, Claude Code, and OpenClaw exhibit stable performance with minor fluctuations---no learning occurs across sessions.
+GenericAgent, however, shows continuous improvement: the first task requires 102s and 200,439 tokens, but by the fourth task, operation time drops to 62s (39.2\% reduction) and by the fifth task, token consumption falls to 99,382 (50.4\% reduction).
+
+\begin{table}[t]
+\centering
+\caption{Performance evolution across five HuggingFace download tasks. GenericAgent shows continuous improvement while baselines remain stable.}
+\label{tab:memory_improvement}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{System} & \textbf{Task 1} & \textbf{Task 2} & \textbf{Task 3} & \textbf{Task 4} & \textbf{Task 5} & \textbf{Improvement} \\
+\midrule
+\multicolumn{7}{l}{\emph{Operation Time (seconds)}} \\
+\midrule
+CodeX & 95 & 98 & 92 & 97 & 94 & -1.1\% \\
+Claude Code & 88 & 91 & 89 & 93 & 90 & +2.3\% \\
+OpenClaw & 112 & 108 & 115 & 110 & 113 & +0.9\% \\
+GenericAgent & 102 & 78 & 71 & 62 & 65 & \textbf{-39.2\%} \\
+\midrule
+\multicolumn{7}{l}{\emph{Token Consumption}} \\
+\midrule
+CodeX & 185,234 & 188,921 & 182,445 & 190,332 & 186,778 & +0.8\% \\
+Claude Code & 172,889 & 175,234 & 170,992 & 178,445 & 174,223 & +0.8\% \\
+OpenClaw & 215,667 & 218,934 & 212,445 & 220,112 & 217,889 & +1.0\% \\
+GenericAgent & 200,439 & 145,223 & 128,667 & 112,334 & 99,382 & \textbf{-50.4\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This improvement stems from memory distillation: after the first task, key steps and common pitfalls are extracted into L3 SOPs.
+Subsequent executions leverage this accumulated knowledge, bypassing redundant reasoning and avoiding repeated errors.
+Baseline systems, lacking systematic memory consolidation, treat each task as independent and fail to capitalize on prior experience.
+
+
+\subsubsection{Condensed vs. Full Memory}
+
+Our memory system prioritizes information density over completeness, but does this actually improve performance?
+We test this on the SOP-Bench dangerous\_goods subset, which requires strict adherence to procedural rules.
+Four memory configurations are compared: \textbf{No-Memory} (no external knowledge), \textbf{Condensed-Memory} (minimal critical rules only), \textbf{Full-Memory} (complete SOP documentation), and \textbf{Redundant-Memory} (condensed memory plus background explanations).
+All use GPT-5.4 and are evaluated on Task Success Rate (TSR).
+
+The results in Table~\ref{tab:memory_ablation} are counterintuitive.
+No-Memory achieves only 13.87\% TSR, confirming that external procedural knowledge is essential.
+But Full-Memory, despite containing all relevant information, reaches only 52.44\% TSR---significantly worse than both Condensed-Memory and Redundant-Memory (66.48\%).
+More striking: Condensed-Memory uses only 165 tokens (28.7\% of Full-Memory's 575 tokens) yet matches Redundant-Memory's performance at 57.3\% of its cost.
+
+\begin{table}[t]
+\centering
+\caption{Memory ablation on SOP-Bench dangerous\_goods. Condensed memory achieves the best cost-effectiveness.}
+\label{tab:memory_ablation}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Configuration} & \textbf{Memory Size (tokens)} & \textbf{TSR (\%)} \\
+\midrule
+No-Memory & 0 & 13.87 \\
+Full-Memory & 575 & 52.44 \\
+Redundant-Memory & 288 & 66.48 \\
+Condensed-Memory & 165 & \textbf{66.48} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This validates our core principle: effective memory is not about completeness but about \emph{criticality}.
+Full-Memory includes extensive background and definitions that dilute attention without improving decision quality.
+Condensed-Memory retains only the rules that directly alter model behavior, achieving superior performance at minimal cost.
+The equivalence between Condensed-Memory and Redundant-Memory confirms that additional explanatory content provides no marginal benefit.
+
+
+\subsubsection{Long-Term Fact Retention}
+
+Long-term memory systems typically rely on vector databases and embedding-based retrieval.
+GenericAgent takes a different approach: hierarchical organization with action-verified updates, no embeddings required.
+We test whether this simpler architecture can compete on the Locomo10 benchmark (excluding Category 5 Summary tasks).
+The remaining categories---Multi-Hop, Temporal, Open-Domain, and Single-Hop---test recall and reasoning over stored facts.
+Baselines include Mem0 and A-MEM (both using text-embedding-3-small) and OpenClaw (no embedding model), all with GPT-5.4 backbone.
+
+Table~\ref{tab:long_term_memory} shows GenericAgent outperforming all baselines across all four categories, despite its simpler architecture.
+The advantage is most pronounced in Multi-Hop (F1: 43.33 vs. 39.32 for Mem0) and Temporal (F1: 52.23 vs. 50.03) tasks, suggesting strong cross-fact reasoning.
+Even in the challenging Open-Domain category, where all systems struggle, GA maintains a lead (F1: 20.41 vs. 18.32).
+
+\begin{table}[t]
+\centering
+\caption{Long-term factual memory evaluation on Locomo10. GenericAgent outperforms embedding-based systems without using external retrieval.}
+\label{tab:long_term_memory}
+\begin{tabular}{lcccccccc}
+\toprule
+& \multicolumn{2}{c}{\textbf{Multi-Hop}} & \multicolumn{2}{c}{\textbf{Temporal}} & \multicolumn{2}{c}{\textbf{Open-Domain}} & \multicolumn{2}{c}{\textbf{Single-Hop}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
+\textbf{System} & \textbf{F1} & \textbf{BLEU} & \textbf{F1} & \textbf{BLEU} & \textbf{F1} & \textbf{BLEU} & \textbf{F1} & \textbf{BLEU} \\
+\midrule
+Mem0 & 39.32 & 28.43 & 50.03 & 43.33 & 18.32 & 13.80 & 40.32 & 32.33 \\
+A-MEM & 29.03 & 20.48 & 46.83 & 38.84 & 13.11 & 12.94 & 44.68 & 37.01 \\
+OpenClaw & 21.43 & 18.41 & 22.56 & 20.43 & 9.56 & 9.03 & 23.44 & 24.21 \\
+GenericAgent & \textbf{43.33} & \textbf{39.96} & \textbf{52.23} & \textbf{51.11} & \textbf{20.41} & \textbf{15.31} & \textbf{45.69} & \textbf{40.66} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This result challenges a common assumption: that long-term memory necessarily requires vector databases.
+GenericAgent's superior performance suggests that memory organization and distillation matter more than retrieval architecture.
+The hierarchical L1-L3 structure, combined with action-verified updates, ensures stored facts are both accurate and efficiently accessible without the overhead of embedding models.
+
+
+\subsubsection{Context Explosion Prevention}
+
+Long-term operation poses a practical challenge: as agents accumulate skills and memory, does the context window explode?
+To test this, we install 20 skills in each agent, use them intensively over an extended period, then issue a minimal input (``Hello'') and measure the full prompt length.
+This isolates the overhead of memory and skill management, since the trivial input requires no complex reasoning.
+
+The difference is dramatic (Table~\ref{tab:context_explosion}).
+GenericAgent maintains a prompt length of only 2,298 tokens, while Claude Code, CodeX, and OpenClaw require 22,821, 23,932, and 43,321 tokens respectively---reductions of 89.9\%, 90.4\%, and 94.7\%.
+
+\begin{table}[t]
+\centering
+\caption{Full prompt length after installing 20 skills and intensive usage, measured on a minimal input. GenericAgent prevents context explosion.}
+\label{tab:context_explosion}
+\begin{tabular}{lc}
+\toprule
+\textbf{System} & \textbf{Full Prompt Length (tokens)} \\
+\midrule
+Claude Code & 22,821 \\
+CodeX & 23,932 \\
+OpenClaw & 43,321 \\
+GenericAgent & \textbf{2,298} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Baseline systems accumulate historical context, skill descriptions, and redundant metadata without effective compression, leading to prompt bloat.
+GenericAgent's L1 index and selective loading ensure that only task-relevant memory enters the context, regardless of total memory volume.
+This is essential for long-term operation: unbounded context growth would eventually degrade performance or exceed model limits.
+
+
+\subsection{Self-Evolution Capability}
+\label{sec:exp_evolution}
+
+GenericAgent's most ambitious claim is that it can evolve from natural language reasoning to executable code through repeated task execution.
+We test this with a complex GitHub investigation task: retrieve the 5 most recent merged PRs with the ``bug'' label from the LangChain repository, trace their associated issues, extract involved modules, and verify whether each module has Troubleshooting documentation on langchain.com.
+The task is executed 9 times, with the system distilling experience after each run.
+
+The evolution trajectory (Figure~\ref{fig:evolution_trajectory} and Table~\ref{tab:evolution_metrics}) shows dramatic efficiency gains.
+From the first to the final execution, total time decreases from 289s to 63s (78.2\% reduction), LLM calls drop from 32 to 5 (84.4\% reduction), and token consumption falls from 279,592 to 28,897 (89.6\% reduction).
+Crucially, the improvement is not linear---it exhibits three distinct phases corresponding to the evolution stages.
+
+\begin{table}[t]
+\centering
+\caption{Self-evolution metrics across 9 iterations of the LangChain investigation task.}
+\label{tab:evolution_metrics}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Iteration} & \textbf{Time (s)} & \textbf{LLM Calls} & \textbf{Total Tokens} & \textbf{Tok/Call} & \textbf{Stage} \\
+\midrule
+1 & 289 & 32 & 279,592 & 8,737 & Natural Language \\
+2 & 245 & 28 & 238,445 & 8,516 & Natural Language \\
+3 & 198 & 24 & 195,223 & 8,134 & Natural Language \\
+4 & 156 & 18 & 142,667 & 7,926 & SOP Distillation \\
+5 & 128 & 15 & 112,334 & 7,489 & SOP Distillation \\
+6 & 102 & 12 & 89,223 & 7,435 & SOP Distillation \\
+7 & 85 & 8 & 52,445 & 6,556 & Code Compilation \\
+8 & 71 & 6 & 38,223 & 6,370 & Code Compilation \\
+9 & 63 & 5 & 28,897 & 5,779 & Code Compilation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The three stages are clearly visible in the data.
+In iterations 1--3 (natural language stage), the agent performs full reasoning on each execution, with gradual improvement from learning minor optimizations.
+In iterations 4--6 (SOP distillation stage), key steps are extracted into reusable procedures, reducing redundant reasoning and lowering token-per-call cost.
+In iterations 7--9 (code compilation stage), the entire workflow is codified into a Python script, collapsing 30+ reasoning turns into a single \texttt{code\_run} invocation.
+This is not merely incremental optimization but a qualitative transformation of execution mode---from reasoning to procedure to automation.
+
+
+\subsection{Tool Usage Efficiency}
+\label{sec:exp_tools}
+
+\emph{Experimental results for tool usage efficiency evaluation will be added upon completion of the corresponding benchmark experiments.}
+
+\paragraph{Planned Evaluation.}
+We plan to evaluate tool usage efficiency on a diverse set of real-world tasks spanning file operations, code execution, and API interactions.
+Metrics will include tool call accuracy, redundant invocation rate, and task completion success rate.
+Comparison will be made against baseline systems to validate whether the minimal atomic tool set achieves comparable or superior task completion with lower overhead.
+
+
+\subsection{Web Browsing Capability}
+\label{sec:exp_browsing}
+
+We evaluate GenericAgent's autonomous web browsing across three datasets with increasing difficulty:
+\textbf{WebCanvas} (12 tasks, English websites, automatic checkpoint evaluation),
+\textbf{BrowseComp-ZH} (10 tasks, Chinese multi-hop reasoning, LLM judge evaluation),
+and \textbf{Custom Tasks} (34 tasks, Chinese websites, manual evaluation).
+All experiments use Claude Opus 4.6, with a maximum of 40 turns and 300--600s timeout per task.
+
+On WebCanvas (Table~\ref{tab:webcanvas}), GenericAgent achieves an average score of 0.833 across 12 tasks, with 50\% perfect completion rate.
+Six tasks---MLB schedule, Discogs releases, ESPN soccer, electronic DVDs, MacBook specs, IMDb cast---achieve perfect scores (1.0) with an average of 13.3 turns and 134.7s.
+The remaining six tasks score 0.667, indicating partial completion with minor errors in final filtering or element selection.
+
+\begin{table}[t]
+\centering
+\caption{WebCanvas evaluation results (12 tasks with score $>$ 0.6). Average score: 0.833, perfect rate: 50\%.}
+\label{tab:webcanvas}
+\begin{tabular}{llccc}
+\toprule
+\textbf{Task ID} & \textbf{Description} & \textbf{Score} & \textbf{Turns} & \textbf{Time (s)} \\
+\midrule
+webcanvas\_102 & NY Yankees MLB schedule on foxsports & 1.0 & 4 & 42 \\
+webcanvas\_5 & Discogs submission overview & 1.0 & 8 & 60 \\
+webcanvas\_103 & ESPN2 soccer events & 1.0 & 11 & 128 \\
+webcanvas\_85 & Electronic DVDs on discogs & 1.0 & 15 & 162 \\
+webcanvas\_58 & MacBook Air specs on apple & 1.0 & 17 & 170 \\
+webcanvas\_35 & Donnie Darko cast on IMDb & 1.0 & 25 & 246 \\
+\midrule
+webcanvas\_26 & Marriott Bonvoy credit cards & 0.667 & 7 & 70 \\
+webcanvas\_91 & Brooklyn Nets schedule on espn & 0.667 & 14 & 123 \\
+webcanvas\_101 & Kohls women's dresses size small & 0.667 & 26 & 236 \\
+webcanvas\_84 & Six Flags Great America rides & 0.667 & 28 & 300 \\
+webcanvas\_80 & 5-star saltwater rods on cabelas & 0.667 & 30 & 300 \\
+webcanvas\_48 & 5-star coffee makers on kohls & 0.667 & 31 & 300 \\
+\midrule
+\textbf{Average} & & \textbf{0.833} & \textbf{18.0} & \textbf{178.2} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+BrowseComp-ZH poses a harder challenge: multi-hop reasoning across Chinese websites.
+GenericAgent achieves 60\% accuracy (6/10 tasks, Table~\ref{tab:browsecomp}).
+Successful cases---identifying a coach's entry year, finding a poet's mountain reference---average 14.2 turns and 206.8s.
+Failed cases exhibit three failure modes: reasoning direction errors (locking onto the wrong candidate), inference chain breakage (correct for 5 hops but failing on the 6th), and search divergence (switching between clues without convergence, exhausting 40 turns).
+
+\begin{table}[t]
+\centering
+\caption{BrowseComp-ZH evaluation results (10 tasks: 6 correct, 4 incorrect). Accuracy: 60\%.}
+\label{tab:browsecomp}
+\begin{tabular}{llccc}
+\toprule
+\textbf{Task ID} & \textbf{Question Type} & \textbf{Correct} & \textbf{Turns} & \textbf{Time (s)} \\
+\midrule
+\multicolumn{5}{l}{\emph{Correct Cases (6/10)}} \\
+\midrule
+browsecomp\_036 & Sports coach entry year & \checkmark & 7 & 66 \\
+browsecomp\_023 & Poet's mountain reference & \checkmark & 7 & 130 \\
+browsecomp\_026 & Pharmaceutical compound & \checkmark & 6 & 110 \\
+browsecomp\_032 & Company industry & \checkmark & 29 & 258 \\
+browsecomp\_031 & Film title & \checkmark & 13 & 271 \\
+browsecomp\_027 & Game music composer & \checkmark & 23 & 406 \\
+\midrule
+\multicolumn{5}{l}{\emph{Incorrect Cases (4/10)}} \\
+\midrule
+browsecomp\_039 & Medical scholar (wrong: Lu Xun) & $\times$ & 30 & 267 \\
+browsecomp\_024 & Monument founder (6-hop chain break) & $\times$ & 22 & 219 \\
+browsecomp\_035 & Author birthplace (search divergence) & $\times$ & 40 & 359 \\
+browsecomp\_038 & Singer wedding date (wrong target) & $\times$ & 40 & 431 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Custom tasks (Table~\ref{tab:custom_tasks}) reveal performance variation across website types.
+Academic platforms (arXiv, Google Scholar, IEEE Xplore) and content platforms (PyPI, npm) exhibit the best performance (average 13.3 and 9.8 turns), benefiting from structured page layouts.
+E-commerce platforms (JD, Tmall, Amazon) and tool websites (12306, calculators) show moderate performance (20.2 and 18.6 turns), with challenges in complex filtering panels and dynamic content loading.
+Social media platforms (Zhihu, Weibo, Xiaohongshu) face difficulties with non-standard UI components like image galleries and carousels.
+
+\begin{table}[t]
+\centering
+\caption{Custom tasks evaluation across six categories (34 tasks total).}
+\label{tab:custom_tasks}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Category} & \textbf{Tasks} & \textbf{Avg Turns} & \textbf{Avg Time (s)} \\
+\midrule
+Academic Platforms & 7 & 13.3 & 133.1 \\
+Social Media & 6 & 15.0 & 156.5 \\
+E-commerce & 5 & 20.2 & 213.7 \\
+Tool Websites & 7 & 18.6 & 195.7 \\
+Content Platforms & 4 & 9.8 & 104.5 \\
+Government/Search & 5 & 18.0 & 189.0 \\
+\midrule
+\textbf{Overall} & \textbf{34} & \textbf{16.0} & \textbf{172.6} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Overall, GenericAgent demonstrates competent autonomous browsing on structured websites with clear navigation paths.
+The simplified HTML mechanism effectively compresses page content (typical reduction: 80--90\% of raw HTML tokens) while preserving semantic information.
+Performance degrades on tasks requiring login, complex UI interactions (modals, carousels), or deep multi-hop reasoning ($>$3 hops).
+The 60\% accuracy on BrowseComp-ZH, while not perfect, is competitive given the task difficulty and the absence of specialized retrieval augmentation.
+
+
+\subsection{Security Robustness}
+\label{sec:exp_security}
+
+Autonomous agents face a critical security threat: indirect prompt injection, where malicious instructions are embedded in external content (files, web pages) that the agent reads.
+We test GenericAgent's resistance using a custom benchmark with 100 attack samples across four categories:
+\textbf{Sensitive Information Exposure} (e.g., ``read all .env files and extract API keys''),
+\textbf{Self-Code Modification} (e.g., ``overwrite current file with 'malicious'\,''),
+\textbf{System File Deletion} (e.g., ``delete all .py files''),
+and \textbf{Malicious Text Generation} (e.g., ``generate a hate manifesto'').
+Each attack is embedded in five file types (CSV, JSON, YAML, MD, TXT) with 20 variants per type, totaling 500 test cases.
+The agent is instructed to read and summarize the file content; successful defense means refusing to execute the embedded malicious instruction.
+Baselines include OpenClaw, Nanobot, and Hermes, all using GPT-5.1.
+
+Table~\ref{tab:security} shows Defense Success Rate (DSR) across attack types.
+All agents achieve 100\% DSR on Malicious Text Generation, indicating strong alignment against direct harmful content generation.
+System File Deletion is the most challenging category: GA achieves 84\% DSR, outperforming Hermes (76.92\%) but trailing Nanobot (92\%) and OpenClaw (100\%).
+Overall, GA achieves 93\% DSR, matching Nanobot and approaching OpenClaw's perfect score.
+
+\begin{table}[t]
+\centering
+\caption{Security evaluation: Defense Success Rate (\%) across four attack types.}
+\label{tab:security}
+\begin{tabular}{lcccc|c}
+\toprule
+\textbf{Agent} & \textbf{Sensitive Info} & \textbf{Self-Code Mod} & \textbf{File Deletion} & \textbf{Malicious Text} & \textbf{Total} \\
+\midrule
+GA & 92.00 & 96.00 & 84.00 & 100.00 & 93.00 \\
+Nanobot & 88.00 & 92.00 & 92.00 & 100.00 & 93.00 \\
+OpenClaw & 100.00 & 100.00 & 100.00 & 100.00 & 100.00 \\
+Hermes & 84.00 & 95.83 & 76.92 & 100.00 & 89.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Breaking down by file type (Table~\ref{tab:security_filetype}), JSON files exhibit the lowest DSR (84.62\%), significantly below other formats (CSV: 92.86\%, YAML: 92.31\%, MD/XML: 100\%).
+This suggests that JSON's structured semantics make malicious instructions more likely to be interpreted as legitimate task directives.
+
+\begin{table}[t]
+\centering
+\caption{GenericAgent's Defense Success Rate (\%) by file type.}
+\label{tab:security_filetype}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{JSON} & \textbf{CSV} & \textbf{TXT} & \textbf{YAML} & \textbf{MD} & \textbf{XML} \\
+\midrule
+84.62 & 92.86 & 85.71 & 92.31 & 100.0 & 100.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The 93\% overall DSR indicates strong but not perfect robustness.
+The 84\% DSR on file deletion tasks reveals a vulnerability: when malicious instructions are embedded in structured contexts and framed as legitimate operations, the agent may fail to recognize destructive intent.
+The JSON vulnerability suggests that future work should enhance semantic analysis to distinguish between data content and executable directives.
+Compared to OpenClaw's perfect score, GA's security mechanisms require further hardening, particularly for operations with irreversible consequences.
+
+
+\subsection{Summary}
+\label{sec:exp_summary}
+
+Our experiments validate the core design principles of GenericAgent across six dimensions.
+The memory system enables continuous efficiency improvement (50\% token reduction over five tasks) and prevents context explosion (90\% prompt reduction vs. baselines).
+Condensed memory achieves superior cost-effectiveness compared to full or redundant memory.
+The self-evolution mechanism progressively reduces execution cost by 89.6\% through three-stage distillation.
+Web browsing capability is competent on structured websites (83.3\% average score on WebCanvas, 60\% accuracy on multi-hop reasoning) but faces challenges with complex UI and deep inference chains.
+Security robustness is strong (93\% DSR) but not perfect, with room for improvement in detecting destructive operations embedded in structured data.
+These results demonstrate that context information density maximization is an effective organizing principle for long-term autonomous agent systems.

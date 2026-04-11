@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.5.14)  9 APR 2026 10:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.5.14)  10 APR 2026 14:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1819,9 +1819,9 @@ Package microtype Info: Character `guillemotleft ' is missing
 Package microtype Info: Character `guillemotright ' is missing
 (microtype)             in font `T1/bytesans/b/n/12'.
 (microtype)             Ignoring protrusion settings for this character.
-(./latex/section/0abstract.tex) (./latex/section/1intro.tex
+(./latex/section/0abstract.tex
 LaTeX Font Info:    Font shape `T1/bytesans/b/n' will be
-(Font)              scaled to size 8.8pt on input line 11.
+(Font)              scaled to size 8.8pt on input line 3.
 Package microtype Info: Character `AE ' is missing
 (microtype)             in font `T1/bytesans/b/n/8.8'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1831,9 +1831,9 @@ Package microtype Info: Character `guillemotleft ' is missing
 Package microtype Info: Character `guillemotright ' is missing
 (microtype)             in font `T1/bytesans/b/n/8.8'.
 (microtype)             Ignoring protrusion settings for this character.
+) (./latex/section/1intro.tex
 
-
-<latex/seed/kw_logo.jpg, id=133, 301.125pt x 301.125pt>
+<latex/seed/kw_logo.jpg, id=193, 301.125pt x 301.125pt>
 File: latex/seed/kw_logo.jpg Graphic file (type jpg)
 <use latex/seed/kw_logo.jpg>
 Package pdftex.def Info: latex/seed/kw_logo.jpg  used on input line 17.
@@ -1876,9 +1876,9 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 (/usr/local/texlive/2025/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 ))
-(./latex/section/2related.tex
+(./latex/section/3method.tex
 LaTeX Font Info:    Font shape `T1/bytesans/m/n' will be
-(Font)              scaled to size 11.0pt on input line 2.
+(Font)              scaled to size 11.0pt on input line 1.
 Package microtype Info: Character `AE ' is missing
 (microtype)             in font `T1/bytesans/m/n/11'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1889,7 +1889,7 @@ Package microtype Info: Character `guillemotright ' is missing
 (microtype)             in font `T1/bytesans/m/n/11'.
 (microtype)             Ignoring protrusion settings for this character.
 LaTeX Font Info:    Font shape `T1/bytesans/b/n' will be
-(Font)              scaled to size 11.0pt on input line 2.
+(Font)              scaled to size 11.0pt on input line 1.
 Package microtype Info: Character `AE ' is missing
 (microtype)             in font `T1/bytesans/b/n/11'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1898,17 +1898,44 @@ Package microtype Info: Character `guillemotleft ' is missing
 (microtype)             Ignoring protrusion settings for this character.
 Package microtype Info: Character `guillemotright ' is missing
 (microtype)             in font `T1/bytesans/b/n/11'.
+(microtype)             Ignoring protrusion settings for this character.
+LaTeX Font Info:    Font shape `T1/bytesans/m/n' will be
+(Font)              scaled to size 10.0pt on input line 4.
+Package microtype Info: Character `AE ' is missing
+(microtype)             in font `T1/bytesans/m/n/10'.
+(microtype)             Ignoring protrusion settings for this character.
+Package microtype Info: Character `guillemotleft ' is missing
+(microtype)             in font `T1/bytesans/m/n/10'.
+(microtype)             Ignoring protrusion settings for this character.
+Package microtype Info: Character `guillemotright ' is missing
+(microtype)             in font `T1/bytesans/m/n/10'.
+(microtype)             Ignoring protrusion settings for this character.
+LaTeX Font Info:    Font shape `T1/bytesans/b/n' will be
+(Font)              scaled to size 10.0pt on input line 4.
+Package microtype Info: Character `AE ' is missing
+(microtype)             in font `T1/bytesans/b/n/10'.
+(microtype)             Ignoring protrusion settings for this character.
+Package microtype Info: Character `guillemotleft ' is missing
+(microtype)             in font `T1/bytesans/b/n/10'.
+(microtype)             Ignoring protrusion settings for this character.
+Package microtype Info: Character `guillemotright ' is missing
+(microtype)             in font `T1/bytesans/b/n/10'.
 (microtype)             Ignoring protrusion settings for this character.
 
 
 [2{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 }]
 
-[3]) (./latex/section/3method.tex
+LaTeX Warning: Reference `fig:agent_loop' on page 3 undefined on input line 17.
+
+
+
+
+[3]
 
 [4]
 LaTeX Font Info:    Font shape `T1/bytesans/m/n' will be
-(Font)              scaled to size 9.0pt on input line 22.
+(Font)              scaled to size 9.0pt on input line 108.
 Package microtype Info: Character `AE ' is missing
 (microtype)             in font `T1/bytesans/m/n/9'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1919,7 +1946,7 @@ Package microtype Info: Character `guillemotright ' is missing
 (microtype)             in font `T1/bytesans/m/n/9'.
 (microtype)             Ignoring protrusion settings for this character.
 LaTeX Font Info:    Font shape `T1/bytesans/m/n' will be
-(Font)              scaled to size 8.8pt on input line 22.
+(Font)              scaled to size 8.8pt on input line 108.
 Package microtype Info: Character `AE ' is missing
 (microtype)             in font `T1/bytesans/m/n/8.8'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1931,40 +1958,39 @@ Package microtype Info: Character `guillemotright ' is missing
 (microtype)             Ignoring protrusion settings for this character.
 
 
-[5]
-LaTeX Font Info:    Font shape `T1/bytesans/m/n' will be
-(Font)              scaled to size 10.0pt on input line 51.
-Package microtype Info: Character `AE ' is missing
-(microtype)             in font `T1/bytesans/m/n/10'.
-(microtype)             Ignoring protrusion settings for this character.
-Package microtype Info: Character `guillemotleft ' is missing
-(microtype)             in font `T1/bytesans/m/n/10'.
-(microtype)             Ignoring protrusion settings for this character.
-Package microtype Info: Character `guillemotright ' is missing
-(microtype)             in font `T1/bytesans/m/n/10'.
-(microtype)             Ignoring protrusion settings for this character.
-LaTeX Font Info:    Font shape `T1/bytesans/b/n' will be
-(Font)              scaled to size 10.0pt on input line 51.
-Package microtype Info: Character `AE ' is missing
-(microtype)             in font `T1/bytesans/b/n/10'.
-(microtype)             Ignoring protrusion settings for this character.
-Package microtype Info: Character `guillemotleft ' is missing
-(microtype)             in font `T1/bytesans/b/n/10'.
-(microtype)             Ignoring protrusion settings for this character.
-Package microtype Info: Character `guillemotright ' is missing
-(microtype)             in font `T1/bytesans/b/n/10'.
-(microtype)             Ignoring protrusion settings for this character.
-
+[5]) (./latex/section/4experiment.tex
 
 [6]
 
+Package natbib Warning: Citation `openclaw' on page 7 undefined on input line 1
+8.
+
+
+
 [7]
 
-[8]) (./latex/section/5conclusion.tex)
+[8]
 
-[9] (./main.bbl
+LaTeX Warning: Reference `fig:evolution_trajectory' on page 9 undefined on inpu
+t line 178.
 
-[10
+
+
+[9]
+
+[10]
+
+[11]) (./latex/section/2related.tex
+
+[12]
+
+[13])
+
+[14] (./latex/section/5conclusion.tex)
+
+[15] (./main.bbl
+
+[16
 
 ]
 Underfull \hbox (badness 1412) in paragraph at lines 157--161
@@ -1980,9 +2006,9 @@ Underfull \hbox (badness 10000) in paragraph at lines 163--167
 
 )
 
-[11]
+[17]
 LaTeX Font Info:    Font shape `T1/bytesans/b/n' will be
-(Font)              scaled to size 17.0pt on input line 81.
+(Font)              scaled to size 17.0pt on input line 82.
 Package microtype Info: Character `AE ' is missing
 (microtype)             in font `T1/bytesans/b/n/17'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -2010,20 +2036,23 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 
-[12
+[18
 
 ]
 
-[13]
+[19]
 
-[14
+[20
 
 ]
 
-[15])
+[21])
 
 Package caption Warning: Unused \captionsetup[sub] on input line 16.
 See the caption package documentation for explanation.
+
+
+Package natbib Warning: There were undefined citations.
 
 Package minitoc Info: I0009
 (minitoc)             Listing minitoc auxiliary files. 
@@ -2042,7 +2071,7 @@ Package minitoc(hints) Warning: W0024
 
 
 
-[16] (./main.aux)
+[22] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -2051,31 +2080,38 @@ L3 programming layer <2025-01-18>
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
+
+LaTeX Warning: There were undefined references.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 4045028826826BF780DAFB70ABBCC6F0;3640.
+(rerunfilecheck)             Checksum: 863D9A092C88B283ABE7541D572EA714;6169.
  ) 
 Here is how much of TeX's memory you used:
- 63581 strings out of 473190
- 1516428 string characters out of 5715800
+ 63690 strings out of 473190
+ 1518308 string characters out of 5715800
  2191367 words of memory out of 5000000
- 85551 multiletter control sequences out of 15000+600000
- 591253 words of font info for 232 fonts, out of 8000000 for 9000
+ 85607 multiletter control sequences out of 15000+600000
+ 592038 words of font info for 242 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  101i,15n,113p,1617b,1015s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <seed/ByteSans-Bold.ttf></usr/local/texlive/2025/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/c
-m-super/sfrm0900.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-
-super/sfrm1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-su
-per/sfti0900.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-supe
-r/sfti1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/
-sftt0800.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sf
-tt0900.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sftt
-1000.pfb>
-Output written on main.pdf (16 pages, 324174 bytes).
+c/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmsy9.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsf
+onts/symbols/msam10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/
+cm-super/sfbx1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm
+-super/sfrm0900.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-s
+uper/sfrm1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-sup
+er/sfti0900.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super
+/sfti1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/s
+ftt0800.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sft
+t0900.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sftt1
+000.pfb>
+Output written on main.pdf (22 pages, 380281 bytes).
 PDF statistics:
- 376 PDF objects out of 1000 (max. 8388607)
- 306 compressed objects within 4 object streams
- 76 named destinations out of 1000 (max. 500000)
- 71490 words of extra memory for PDF output out of 74296 (max. 10000000)
+ 508 PDF objects out of 1000 (max. 8388607)
+ 423 compressed objects within 5 object streams
+ 106 named destinations out of 1000 (max. 500000)
+ 71610 words of extra memory for PDF output out of 74296 (max. 10000000)
 
