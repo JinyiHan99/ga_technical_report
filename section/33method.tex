@@ -1,71 +1,71 @@
-\begin{figure*}[htbp]
+\begin{figure*}[t]
     \centering
-    \includegraphics[width=0.98\linewidth]{image/framework.pdf}
-    \caption{\textbf{The overall framework of GA.}}
+    \includegraphics[width=0.98\linewidth]{image/framework_0413.pdf}
+    \caption{\textbf{Overall framework of GA.}}
     \label{fig:agent_loop}
-    \end{figure*}
+\end{figure*}
 
 \subsection{Design Principles}
 \label{sec:principle}
 \begin{AIbox}
-The design of gain is governed by the principle of \textbf{maximizing contextual information density}. The core goal is to encode the most complete decision-relevant information using the fewest possible tokens.
+GA is designed around the principle of \textbf{maximizing contextual information density}. The goal is to provide the most decision-relevant information within a limited context budget.
 \end{AIbox}
 
-The central objective of this principle is to maximize decision-relevant information under a fixed context budget. In practice, performance degradation in LLM-based agents rarely comes from insufficient context length. It is more often caused by inefficient context organization. Redundant information dilutes attention, irrelevant historical memory interferes with current reasoning, and overly compressed representations obscure semantic structure and reduce reliability. These failure modes share a common cause: low information density. To address this, GA requires that all contextual content satisfy three constraints:
+GA aims to maximize decision-relevant information under a fixed context budget. In practice, the performance of LLM agents depends not only on context length, but also on how context is organized. Redundant content diffuses attention. Irrelevant history interferes with the current task. Overly compressed representations can hide useful structure and reduce interpretability. These issues all lower information density. To address them, GA requires contextual content to satisfy three constraints:
 \begin{itemize}
     \item \textbf{Completeness.} {\small
-    All information required for the current decision must be explicitly present in the context, preventing the model from relying on implicit assumptions or hallucinated completions.
+    All information required for the current decision should be explicitly available in context, so the model does not rely on missing premises or unsupported completion.
     }
 
     \item \textbf{Conciseness.} {\small
-    Irrelevant and redundant information must be eliminated to reduce noise and ensure that attention is focused on decision-critical signals.
+    Irrelevant and redundant content should be removed, so attention remains focused on decision-critical signals.
     }
 
     \item \textbf{Naturalness.} {\small
-    The context must be expressed in well-formed natural language that preserves semantic clarity, avoiding overly compressed or artificial representations that hinder comprehension.
+    Context should remain in clear and well-formed natural language, so semantic structure is preserved and the content remains easy to interpret.
     }
 \end{itemize}
 
-These three constraints form a minimal and complementary set. Completeness ensures that no required information is missing. Conciseness removes all non-essential content. Naturalness preserves the interpretability of the remaining information. Together, they define a high-density contextual representation that is both information-complete and cognitively tractable.
+These constraints are complementary. Completeness prevents missing information. Conciseness removes non-essential content. Naturalness preserves interpretability. Together, they define a contextual representation that is both information-rich and tractable for reasoning.
 
-Based on these constraints, GA introduces four system-level mechanisms to enforce high-density context construction, namely a minimal tool set, hierarchical memory mechanism, reflection-driven self-evolution, and efficient browser interaction via structured extraction. Through these mechanisms, GA shifts context construction from passive accumulation to active optimization. The context is transformed from a long sequence of tokens into a compact, high-value information substrate for decision making.
+Based on these constraints, GA is organized around four principle-level mechanisms: tool minimality, hierarchical memory, reflection-driven adaptation, and structured browser extraction. The following subsections introduce these mechanisms conceptually. Section~\ref{sec:core_design} then presents their concrete design in detail.
 
-
-\subsubsection{Minimal Atomic Tool Set}
+\subsubsection{Tool Minimality}
+% In agent-loop systems, tool definitions are typically injected into the context at each model call. Tool design therefore contributes directly to contextual overhead. GA addresses this issue with a small set of atomic tools designed for composition. This design favors irreducible primitives over task-specific interfaces, so complex tasks can be expressed through short tool sequences rather than a large tool inventory.
 In existing agent loop architecture, tool definitions are explicitly injected into the context at every LLM call, making tool design a key determinant of context information density. To reduce the overhead introduced by tool schemas, GA adopts a minimal tool set consisting of nine atomic tools and follows two core principles: \textbf{atomicity} and \textbf{compositional generalization}. Atomicity constrains tool granularity by enforcing irreducible primitive capabilities, while compositional generalization enables the expression of complex tasks through sequential composition of these atomic tools. Table~\ref{tab:tools} summarizes the complete GA tool set.
 
 This minimal tool set yields two direct benefits. First, it significantly reduces tool-description overhead in the context. In multi-turn interactions, a smaller and more interface-efficient tool set directly reduces cumulative token consumption across calls. Second, it reduces the model’s decision complexity. A compact and well-bounded action space decreases uncertainty in tool selection, enabling more stable tool-use patterns and thereby reducing execution errors and retries.
 
 Besides, GA does not rely on specialized tools to expand functionality. Instead, complex behaviors are composed from atomic primitives. For example, file-level operations follow a standard read–modify–write paradigm, while web interactions are decomposed into content retrieval and browser-side execution. External capabilities are encapsulated as Skills and invoked indirectly through general-purpose code-execution and web-related primitives, and are loaded into the context only on demand. 
 
-\subsubsection{Hierarchical Memory Mechanism}
-\label{sec:momory}
+\subsubsection{Hierarchical Memory}
+% GA retains only information that is difficult to reconstruct from the current context or from direct reasoning. It filters redundant signals and preserves only information that can meaningfully affect future behavior. This keeps memory compact and behaviorally useful.
+
 GA retains only information that cannot be readily reconstructed from the current context or inferred by the model through reasoning. It aggressively filters out redundant signals and preserves only experience that introduces non-trivial behavioral change. The objective is to maximize the marginal impact of each retained interaction on future decisions, ensuring that stored experience directly shapes and improves GA's behavior.
 
 The memory system follows a four-layer architecture with hierarchical distillation and taxonomy-based organization. It focuses on keeping only behaviorally useful knowledge. L0 defines constraints. L1 handles routing. L2 stores verified facts. L3 captures reusable experience. Together, they allow GA to operate within a fixed context budget while maximizing the utility of each token.
 
-\subsubsection{Reflection-Driven Self-Evolution Mechanism}
+\subsubsection{Reflection-Driven Adaptation}
 GA’s self-evolution mechanism is an abstraction-driven process that compiles execution trajectories into high-density reusable representations. It preserves semantic integrity while reducing reasoning cost. Through periodic reflection, GA analyzes historical execution traces and converts them into structured knowledge. These structures are then organized into executable forms. The evolution is guided by user task distributions and behavioral patterns, ensuring alignment with real-world usage and observed failures.
 
+\subsubsection{Structured Browser Extraction}
+GA treats browser interaction as structured extraction of task-relevant information rather than full-page retrieval. Raw web pages contain large amounts of irrelevant DOM content, which increases token cost without proportional utility. GA therefore extracts compact page representations that preserve task-relevant signals while controlling context growth.
 
-\subsubsection{Efficient Browser Interaction via Structured Extraction}
-GA treats browser interaction as structured extraction of task-relevant information rather than full-page retrieval. This addresses the inefficiency of raw web pages, where most DOM content is irrelevant yet consumes large context, making direct input both costly and low in information density. At the same time, aggressive filtering risks losing useful signals. GA resolves this by extracting only compact, task-focused content from pages, removing verbose HTML and redundant markup. This makes browser interaction efficient while preserving the information needed for decision making.
-
-\subsection{Overview of GenericAgent}
+\subsection{System Overview}
 \label{sec:overview}
-GA is a general-purpose LLM agent system that provides automation over a local computing environment. It enables a compatible LLM backend to operate across browsers, terminals, file systems, keyboard and mouse inputs, screen-based perception, and mobile devices through configurable tool adapters. The system is model-agnostic, allowing the underlying reasoning engine (e.g., Claude, GPT, Gemini) to be replaced without affecting execution logic, tool interfaces, or memory architecture. The overall architecture is illustrated in Figure \ref{fig:agent_loop}.
+GA is a general-purpose LLM agent system for local computer automation. It enables a compatible model backend to interact with browsers, terminals, file systems, keyboard and mouse input, screen-based perception, and mobile devices through configurable tool adapters. The system is model-agnostic: the underlying model can be replaced without changing the execution loop, tool interfaces, or memory architecture. Figure~\ref{fig:agent_loop} illustrates the overall framework.
 
-GA is organized around a unified agent loop that connects the model and the environment. At each step, the system combines global memory with the current task specification to form an execution context. The LLM processes this context and produces either direct outputs or tool calls. Tool execution is delegated to external modules, and the results are returned as structured signals that update the system state. This loop defines a continuous interaction between reasoning and environment feedback, enabling tool-grounded iterative execution.
+GA operates through a unified agent loop that connects the model and the environment. At each step, the system combines the current task with relevant memory to form the execution context. The model then produces either a direct response or a tool call. External modules execute tool calls and return structured results, which update the system state for the next step. This loop supports iterative, tool-grounded interaction.
 
-On top of this loop, GA supports two execution modes. \textbf{Interactive execution} handles user-initiated tasks such as code execution, information retrieval, and file operations. \textbf{Reflective execution} runs in the background and is triggered by schedules or system events. It is responsible for monitoring, memory consolidation, and experience distillation. Both modes share the same agent loop and memory system, differing only in initiation and output handling. To support long-horizon operation, GA defines explicit execution bounds that ensure controllability while preserving interruptibility and scope constraints.
+On top of this loop, GA supports two execution modes. \textbf{Interactive execution} handles user-initiated tasks such as file operations, information retrieval, and code execution. \textbf{Reflective execution} runs in the background and is triggered by schedules or system events. It is used for monitoring, memory consolidation, and experience distillation. The two modes share the same execution loop and memory system, but differ in how they are initiated and how their outputs are consumed. GA also enforces explicit execution bounds to preserve controllability, interruptibility, and task scope.
 
-After task completion, GA performs memory distillation. Execution traces are compressed into structured long-term representations and stored in shared memory. These representations are reused across both execution modes, allowing accumulated experience to improve future execution through compression and reuse rather than unbounded computation.
+After task completion, GA distills execution traces into structured long-term representations and stores them in shared memory. These representations can be reused across both execution modes, allowing the system to improve through compression and reuse.
 
 \subsection{Core Components of GA}
 \label{sec:core_design}
-Building on the principles in Section \ref{sec:principle}, we describe the core components of GA, covering the atomic tool set, hierarchical memory management, reflection-driven self-evolution, and structured-extraction-based browser interaction.
+We now describe the concrete design of the four mechanisms introduced above: the minimal atomic toolset, the hierarchical memory architecture, reflection-driven self-evolution, and structured extraction for efficient browser interaction.
 
-\subsubsection{Minimal Atomic Tool Set}
+\subsubsection{Minimal Atomic Toolset}
 \label{sec:tools}
 GA’s tool system is designed to achieve broad computer operation coverage with a minimal set of atomic tools. Instead of expanding tools according to task needs, it abstracts them along underlying capability boundaries, which prevents toolset bloat and ensures long-term stability and composability. Concretely, GA compresses all capabilities into five core dimensions: file system, browser, code execution, human-in-the-loop interaction, and memory management. Within each dimension, only the minimal necessary atomic operations are retained, allowing tools to directly correspond to fundamental OS and browser behaviors rather than task-specific abstractions, thereby enabling cross-task generality.
 
@@ -81,7 +81,7 @@ Overall, GA builds an extremely compact tool system through capability compressi
 
 \begin{table}[t]
     \centering
-    \caption{The nine atomic tools in GenericAgent.}
+    \caption{Atomic tools in GA.}
     \label{tab:tools}
     {\footnotesize
     \setlength{\tabcolsep}{3pt}
@@ -93,28 +93,28 @@ Overall, GA builds an extremely compact tool system through capability compressi
     \texttt{code\_run} &
     Execute Python or shell code with timeout and abort control. \\
     \texttt{file\_read} &
-    Read local files by line range, with optional keyword-based location. \\
+    Read local files by line range, with optional keyword-based lookup. \\
     \texttt{file\_write} &
-    Create new files or write large content blocks (overwrite/append/prepend). \\
+    Create files or write large content blocks in overwrite, append, or prepend mode. \\
     \texttt{file\_patch} &
-    Apply precise, context-checked patch updates to existing file regions. \\
+    Apply precise, context-checked updates to existing file regions. \\
     \texttt{web\_scan} &
-    Extract the current browser page as simplified HTML or text, with tab metadata. \\
+    Extract the current browser page as simplified HTML or text, together with tab metadata. \\
     \texttt{web\_execute\_js} &
-    Inject and execute JavaScript in the user’s browser, capturing return values. \\
+    Inject and execute JavaScript in the user’s browser and capture the return value. \\
     \texttt{ask\_user} &
     Issue a synchronous query to the user and wait for an explicit response. \\
     \shortstack[l]{\texttt{update\_working\_}\\\texttt{checkpoint}} &
-    Update a short-term working notepad injected in subsequent reasoning turns. \\
+    Update a short-term working note that is injected into subsequent reasoning turns. \\
     \shortstack[l]{\texttt{start\_long\_term\_}\\\texttt{update}} &
     Trigger long-term memory distillation over recent execution traces. \\
     \bottomrule
     \end{tabularx}
     }
-    \end{table}
+\end{table}
 
-\subsubsection{Hierarchical Memory Mechanism}
-\label{sec:momory}
+\subsubsection{Hierarchical Memory Architecture}
+\label{sec:memory}
 GA follows a four-layer architecture with hierarchical distillation and taxonomy-based organization.
 
 \textbf{L0: Meta-Rule Layer.}  L0 defines the core behavioral constraints of GA. It acts as a lightweight control layer for system operation and self-regulation. Each rule is written in a single sentence. For example: ``Only information verified through execution can be written to long-term memory.'' This rule prevent unverified or hallucinated information from entering long-term memory. L0 is injected into the system prompt at startup with minimal overhead and remains fixed during execution.
@@ -131,9 +131,8 @@ All entries are validated through tool execution or external signals. Informatio
 
 These SOPs are extracted from execution traces after task completion. They are not manually written. In later tasks, a small amount of L3 content can guide behavior and improve success rates.
 
-\subsubsection{Reflection-Driven Self-Evolution Mechanism}
+\subsubsection{Reflection-Driven Self-Evolution}
 \label{sec:self-evolution}
-
 GA is not a fixed prompt wrapped around a model. It is an agent system whose internal behavior is continuously shaped by execution, while its external interface remains stable and minimal.
 
 During task execution, GA transforms raw execution traces into \textbf{structured representations} of its own decisions, rather than leaving them as unorganized dialogue history. As similar tasks recur, these representations are progressively distilled and compressed into reusable strategies and executable skills, enabling future problem solving to rely less on repeated ad-hoc reasoning and more on internal skill composition. This reduces redundant reasoning over time, leading to lower token consumption in repeated or structurally similar tasks. Specifically, this mechanism consists of three stages.
@@ -152,7 +151,7 @@ GA monitors Skill usage and updates implementations over time. Updates include i
 
 These stages form a closed loop. Reflection extracts experience, SOPs generalize behavior, code replaces reasoning, and Skills enable reuse. This process improves efficiency over time and reduces redundant computation. 
 
-\subsubsection{Efficient Browser Interaction via Structured Extraction}
+\subsubsection{Structured Extraction for Efficient Browser Interaction}
 Interacting with web pages is expensive in tokens. A full DOM often contains tens of thousands of tokens, while only a small portion is useful for the current task. Sending the full DOM to the model is not practical. At the same time, aggressive filtering may remove important signals. GA address this with a two-stage extraction pipeline.
 
 \textbf{Geometry-aware DOM pruning.} A JavaScript routine clones the DOM with access to layout information. Invisible nodes are removed, including hidden elements, zero-area nodes, and off-screen content. Modal dialogs and cookie banners are explicitly detected by their viewport coverage and moved to the top level. Form states such as input values and checkboxes are preserved during cloning. This ensures the snapshot matches the actual visible page state.

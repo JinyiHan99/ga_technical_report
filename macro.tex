@@ -154,6 +154,21 @@
             \vskip\belowrulesep}}
 
 % \usepackage[most]{tcolorbox}
+% \tcbset{
+%   aibox/.style={
+%     width=\linewidth,
+%     top=8pt,
+%     bottom=4pt,
+%     colback=blue!6!white,
+%     colframe=black,
+%     colbacktitle=black,
+%     enhanced,
+%     center,
+%     attach boxed title to top left={yshift=-0.1in,xshift=0.15in},
+%     boxed title style={boxrule=0pt,colframe=white,},
+%   }
+% }
+
 \tcbset{
   aibox/.style={
     width=\linewidth,
@@ -161,14 +176,12 @@
     bottom=4pt,
     colback=blue!6!white,
     colframe=black,
-    colbacktitle=black,
     enhanced,
     center,
-    attach boxed title to top left={yshift=-0.1in,xshift=0.15in},
-    boxed title style={boxrule=0pt,colframe=white,},
   }
 }
-\newtcolorbox{AIbox}[2][]{aibox,title=#2,#1}
+% \newtcolorbox{AIbox}[2][]{aibox,title=#2,#1}
+\newtcolorbox{AIbox}[1][]{aibox,#1}
 \definecolor{lightblue}{rgb}{0.22,0.45,0.70}%
 \newcommand{\hl}[1]{\begingroup\setlength{\fboxsep}{3pt}\colorbox{yellow!25}{#1}\endgroup}
 
@@ -183,7 +196,7 @@
 \definecolor{mypink}{HTML}{D92879}
 
 % name
-\newcommand{\method}{\textsc{SCR}\xspace}
+% \newcommand{\method}{\textsc{SCR}\xspace}
 %  scale the front in the main table
 \newcommand{\chg}[1]{\scalebox{0.7}{(#1)}}
 \newcommand{\fix}{\marginpar{FIX}}

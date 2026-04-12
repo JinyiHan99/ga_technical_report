@@ -198,12 +198,7 @@
     \fancyhead[R]{
         % Other content for the left side of the header, if any
     }
-    \fancyhead[L]{
-        \vskip 4mm
-    \includegraphics[height=12mm]{latex/seed/kw_logo.jpg}
-    }
-
-
+    \fancyhead[L]{}
 }
 % \fancypagestyle{firststyle}{
 %   \fancyhead[R]{
@@ -260,8 +255,14 @@
       
       {
       \@toptitlebar
-        
+      \noindent
+      \begin{minipage}[c]{0.22\textwidth}
+        \centering
+        \includegraphics[height=18mm]{seed/ga_logo.jpg}
+      \end{minipage}\hspace{-0.1em}
+      \begin{minipage}[c]{0.77\textwidth}
         \titlelist\par
+      \end{minipage}
          \@bottomtitlebar
       }
       \vskip 6mm

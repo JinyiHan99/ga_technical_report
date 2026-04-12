@@ -1,41 +1,12 @@
 \begin{thebibliography}{10}
 
-\bibitem{react}
-Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan,
-  and Yuan Cao.
-\newblock React: Synergizing reasoning and acting in language models.
-\newblock In {\em International Conference on Learning Representations}, 2023.
+\bibitem{lost_in_middle}
+Lost in the middle: How language models use long contexts.
+\newblock \url{https://arxiv.org/abs/2307.03172}, 2023.
 
-\bibitem{cot}
-Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei Xia,
-  Ed~Chi, Quoc Le, and Denny Zhou.
-\newblock Chain-of-thought prompting elicits reasoning in large language
-  models.
-\newblock In {\em Advances in Neural Information Processing Systems},
-  volume~35, pages 24824--24837, 2022.
-
-\bibitem{gpt4}
-OpenAI.
-\newblock Gpt-4 technical report.
-\newblock {\em arXiv preprint arXiv:2303.08774}, 2023.
-
-\bibitem{claudecode}
-{Anthropic}.
-\newblock Claude code.
-\newblock \url{https://www.anthropic.com/product/claude-code}, 2025.
-
-\bibitem{codex}
-{OpenAI}.
-\newblock Introducing codex.
-\newblock \url{https://openai.com/index/introducing-codex/}, 2025.
-
-\bibitem{openhands}
-Xingyao Wang, Boxuan Jiang, Ziniu Lu, Yufan Liu, Abishek~Sridhar Li, Bolun Shi,
-  Jiannan Fang, Rithvik Mohanty, Niklas~Muennighoff Ponnapalli, Kaixuan Ren,
-  et~al.
-\newblock Openhands: An open platform for ai software developers as generalist
-  agents.
-\newblock In {\em International Conference on Learning Representations}, 2025.
+\bibitem{multi_turn_lost}
+Llms get lost in multi-turn conversation.
+\newblock \url{https://arxiv.org/abs/2505.06120}, 2025.
 
 \bibitem{anthropic_context}
 Aditya Rajasekaran et~al.
@@ -44,22 +15,23 @@ Aditya Rajasekaran et~al.
   \url{https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents},
   September 2025.
 
-\bibitem{memgpt}
-Charles Packer, Vivian Fang, Shishir~G. Patil, Kevin Lin, Sarah Wooders, and
-  Joseph~E. Gonzalez.
-\newblock Memgpt: Towards llms as operating systems.
-\newblock {\em arXiv preprint arXiv:2310.08560}, 2023.
-
 \bibitem{voyager}
 Guanzhi Wang, Yuqi Xie, Yunfan Jiang, Ajay Mandlekar, Chaowei Xiao, Yuke Zhu,
   Linxi Fan, and Anima Anandkumar.
 \newblock Voyager: An open-ended embodied agent with large language models.
 \newblock {\em arXiv preprint arXiv:2305.16291}, 2023.
 
-\bibitem{manus}
-Yichao Shen et~al.
-\newblock Manus: From mind to machine.
-\newblock {\em arXiv preprint arXiv:2505.02024}, 2025.
+\bibitem{selfevolvinglifelong}
+Tianyu Cai et~al.
+\newblock Building self-evolving agents via experience-driven lifelong
+  learning.
+\newblock {\em arXiv preprint arXiv:2508.19005}, 2025.
+
+\bibitem{react}
+Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan,
+  and Yuan Cao.
+\newblock React: Synergizing reasoning and acting in language models.
+\newblock In {\em International Conference on Learning Representations}, 2023.
 
 \bibitem{reflexion}
 Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu
@@ -91,15 +63,44 @@ John Yang, Carlos~E. Jimenez, Alexander Wettig, Kilian Liber, Shunyu~Yao
   engineering.
 \newblock {\em Advances in Neural Information Processing Systems}, 37, 2024.
 
+\bibitem{openhands}
+Xingyao Wang, Boxuan Jiang, Ziniu Lu, Yufan Liu, Abishek~Sridhar Li, Bolun Shi,
+  Jiannan Fang, Rithvik Mohanty, Niklas~Muennighoff Ponnapalli, Kaixuan Ren,
+  et~al.
+\newblock Openhands: An open platform for ai software developers as generalist
+  agents.
+\newblock In {\em International Conference on Learning Representations}, 2025.
+
 \bibitem{openhands_sdk}
 Xingyao Wang et~al.
 \newblock Openhands software agent sdk.
 \newblock {\em arXiv preprint arXiv:2511.03690}, 2025.
 
+\bibitem{claudecode}
+{Anthropic}.
+\newblock Claude code.
+\newblock \url{https://www.anthropic.com/product/claude-code}, 2025.
+
+\bibitem{codex}
+{OpenAI}.
+\newblock Introducing codex.
+\newblock \url{https://openai.com/index/introducing-codex/}, 2025.
+
+\bibitem{manus}
+Yichao Shen et~al.
+\newblock Manus: From mind to machine.
+\newblock {\em arXiv preprint arXiv:2505.02024}, 2025.
+
 \bibitem{openclaw_rl}
 Xingyao Wang et~al.
 \newblock Openclaw-rl: Training agents via interaction.
 \newblock {\em arXiv preprint arXiv:2603.10165}, 2026.
+
+\bibitem{memgpt}
+Charles Packer, Vivian Fang, Shishir~G. Patil, Kevin Lin, Sarah Wooders, and
+  Joseph~E. Gonzalez.
+\newblock Memgpt: Towards llms as operating systems.
+\newblock {\em arXiv preprint arXiv:2310.08560}, 2023.
 
 \bibitem{amem}
 Wujiang Xu et~al.
@@ -127,55 +128,5 @@ Anonymous.
 Anonymous.
 \newblock Agentevolver: Towards efficient self-evolving agent system.
 \newblock {\em arXiv preprint arXiv:2511.10395}, 2025.
-
-\bibitem{selfevolvinglifelong}
-Tianyu Cai et~al.
-\newblock Building self-evolving agents via experience-driven lifelong
-  learning.
-\newblock {\em arXiv preprint arXiv:2508.19005}, 2025.
-
-\bibitem{toolformer}
-Timo Schick, Jane Dwivedi-Yu, Roberto Dess{\`i}, Roberta Raileanu, Maria
-  Lomeli, Eric Hambro, Luke Zettlemoyer, Nicola Cancedda, and Thomas Scialom.
-\newblock Toolformer: Language models can teach themselves to use tools.
-\newblock In {\em Advances in Neural Information Processing Systems},
-  volume~36, 2023.
-
-\bibitem{gorilla}
-Shishir~G. Patil, Tianjun Zhang, Xin Wang, and Joseph~E. Gonzalez.
-\newblock Gorilla: Large language model connected with massive apis.
-\newblock {\em arXiv preprint arXiv:2305.15334}, 2023.
-
-\bibitem{toolbench}
-Yujia Qin, Shihao Liang, Yining Ye, Kunlun Zhu, Lan Yan, Yaxi Lu, Yankai Lin,
-  Xin Cong, Xiangru Tang, Bill Qian, et~al.
-\newblock Toolbench: An open platform for training, serving, and evaluating
-  large language model tool-use.
-\newblock {\em arXiv preprint arXiv:2305.16504}, 2023.
-
-\bibitem{anthropic_agents}
-Erik Schluntz and Barry Zhang.
-\newblock Building effective agents.
-\newblock \url{https://www.anthropic.com/research/building-effective-agents},
-  December 2024.
-
-\bibitem{computeruse}
-{Anthropic}.
-\newblock Developing a computer use model.
-\newblock \url{https://www.anthropic.com/research/developing-computer-use},
-  October 2024.
-
-\bibitem{webarena}
-Shuyan Zhou, Frank~F. Xu, Hao Zhu, Xuhui Zhou, Robert Lo, Abishek Sridhar,
-  Xianyi Cheng, Yonatan Bisk, Daniel Fried, Uri Alon, et~al.
-\newblock Webarena: A realistic web environment for building autonomous agents.
-\newblock In {\em International Conference on Learning Representations}, 2024.
-
-\bibitem{mind2web}
-Xiang Deng, Yu~Gu, Boyuan Zheng, Shijie Chen, Samuel Stevens, Boshi Wang, Huan
-  Sun, and Yu~Su.
-\newblock Mind2web: Towards a generalist agent for the web.
-\newblock In {\em Advances in Neural Information Processing Systems},
-  volume~36, 2023.
 
 \end{thebibliography}

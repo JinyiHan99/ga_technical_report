@@ -3,46 +3,44 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
 The style file: unsrt.bst
 Database file #1: main.bib
-Warning--I didn't find a database entry for "openclaw"
-You've used 30 entries,
+You've used 23 entries,
             1791 wiz_defined-function locations,
-            565 strings with 8271 characters,
-and the built_in function-call counts, 5948 in all, are:
-= -- 405
-> -- 448
-< -- 4
-+ -- 162
-- -- 132
-* -- 335
-:= -- 1048
-add.period$ -- 90
-call.type$ -- 30
-change.case$ -- 30
+            536 strings with 6796 characters,
+and the built_in function-call counts, 3931 in all, are:
+= -- 280
+> -- 266
+< -- 0
++ -- 99
+- -- 76
+* -- 184
+:= -- 694
+add.period$ -- 67
+call.type$ -- 23
+change.case$ -- 23
 chr.to.int$ -- 0
-cite$ -- 30
-duplicate$ -- 261
-empty$ -- 556
-format.name$ -- 132
-if$ -- 1285
+cite$ -- 23
+duplicate$ -- 176
+empty$ -- 395
+format.name$ -- 76
+if$ -- 858
 int.to.chr$ -- 0
-int.to.str$ -- 30
-missing$ -- 23
-newline$ -- 153
-num.names$ -- 30
-pop$ -- 129
+int.to.str$ -- 23
+missing$ -- 16
+newline$ -- 116
+num.names$ -- 21
+pop$ -- 98
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 122
+skip$ -- 80
 stack$ -- 0
-substring$ -- 79
-swap$ -- 53
-text.length$ -- 4
+substring$ -- 31
+swap$ -- 26
+text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 35
-width$ -- 32
-write$ -- 309
-(There was 1 warning)
+while$ -- 23
+width$ -- 25
+write$ -- 231
