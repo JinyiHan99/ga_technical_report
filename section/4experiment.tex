@@ -1,69 +1,44 @@
-\subsection{Dimension 1: Task completion rate and token efficiency}
+\subsection{Task completion and token efficiency}
 
 \subsubsection{Setup}
-\paragraph{Agents and Models.}
-The experiments compare a small set of representative agent systems and backbone models:
-\begin{itemize}
-    \item \textbf{Agents.} GenericAgent (GA), Claude Code, OpenClaw, and Codex.
-    \item \textbf{Models.} Claude Sonnet 4.6, Claude Opus 4.6, Minimax M2.7, and GPT-5.4.
-\end{itemize}
 
+\paragraph{Agents and Models.}
+We compare four representative agent systems, namely 1): GenericAgent (GA), 2): Claude Code, 3): OpenClaw, and 4): Codex. The backbone models include 1): Claude Sonnet 4.6, 2): Claude Opus 4.6, 3): Minimax M2.7, and 4): GPT-5.4.
 
 \paragraph{Benchmark.}
-We evaluate the systems on three benchmarks that cover complementary task structures:
-\begin{itemize}
-    \item \textbf{SOP-Bench.} An industrial SOP-following benchmark with multi-step order-fulfillment tasks. Agents must follow explicit procedural constraints, invoke multiple tools in the correct order, and complete the full execution chain from verification to final fulfillment decisions.
-    \item \textbf{Lifelong AgentBench.} A sequential task benchmark designed to test continual capability accumulation. In the reported setting, the benchmark contains database-operation tasks with cross-task dependency, requiring the agent to maintain state, reuse prior discoveries, and complete tasks under strict execution order.
-    \item \textbf{RealFin-benchmark.} A financial-task benchmark with 20 realistic tasks spanning indicator screening, correlation analysis, volatility ranking, price-volume pattern discovery, and structured result generation. The benchmark emphasizes domain understanding, code execution stability, and correct end-to-end completion.
-\end{itemize}
+We evaluate the systems on three complementary benchmarks. 1): \textbf{SOP-Bench} tests multi-step SOP execution. 2): \textbf{Lifelong AgentBench} tests sequential tasks with cross-task dependency. 3): \textbf{RealFin-benchmark} tests realistic financial tasks that require domain understanding and reliable execution.
 
 \paragraph{Evaluations.}
-Following the original experiment protocol:
-\begin{itemize}
-    \item \textbf{Accuracy.} The proportion of correctly solved tasks under each benchmark's verification protocol.
-    \item \textbf{Input / Output / Total Tokens.} The reported token-cost statistics for each agent setting.
-    \item \textbf{Token Efficiency.} Accuracy / (Total Tokens in Millions).
-\end{itemize}
-All systems are run on the same task sets with per-task execution and independently saved outputs.
-
-
+We report three groups of metrics. 1): \textbf{Accuracy}, which measures the proportion of correctly solved tasks. 2): \textbf{Input, Output, and Total Tokens}, which measure token cost. 3): \textbf{Token Efficiency}, computed as Accuracy divided by Total Tokens in Millions. All systems are evaluated on the same task sets with independently saved outputs.
 
 \subsubsection{Results}
 
 \input{tables/exp_d1_1}
 
 \textbf{GA maintains leading or near-leading task completion across different benchmarks.}
-This trend is consistent across SOP-Bench, Lifelong AgentBench, and RealFin-benchmark. On the Claude-based runs, GA achieves 100\% accuracy on both SOP-Bench and Lifelong AgentBench, matching the best result on SOP-Bench and outperforming all baselines on Lifelong AgentBench. A similar pattern is observed on RealFin-benchmark, where GA attains the highest accuracy of 65\%, exceeding Claude Code Opus and Codex (60\%), Claude Code Sonnet (55\%), and OpenClaw (35\%).
+This trend is consistent across SOP-Bench, Lifelong AgentBench, and RealFin-benchmark. On the Claude-based runs, GA achieves 100\% accuracy on both SOP-Bench and Lifelong AgentBench, matching the best result on SOP-Bench and outperforming all baselines on Lifelong AgentBench. A similar pattern is observed on RealFin-benchmark, where GA attains the highest accuracy of 65\%, exceeding Claude Code Opus and Codex at 60\%, Claude Code Sonnet at 55\%, and OpenClaw at 35\%.
 
 \textbf{GA requires fewer tokens to complete tasks, especially in terms of input tokens.}
-On SOP-Bench, GA uses 2.02M input tokens, which is lower than OpenClaw (2.60M) but higher than Claude Code (1.23M), while still achieving 100\% accuracy. In contrast, on Lifelong AgentBench, GA uses 222k input tokens, significantly lower than Claude Code (800k) and OpenClaw (1.43M), while maintaining 100\% accuracy. A similar pattern is observed on RealFin-benchmark.
+On SOP-Bench, GA uses 2.02M input tokens, which is lower than OpenClaw at 2.60M but higher than Claude Code at 1.23M, while still achieving 100\% accuracy. In contrast, on Lifelong AgentBench, GA uses 222k input tokens, significantly lower than Claude Code at 800k and OpenClaw at 1.43M, while maintaining 100\% accuracy. A similar pattern is observed on RealFin-benchmark.
 
 \textbf{GA achieves the best trade-off between task completion and token cost across benchmarks.}
-On SOP-Bench, Claude Code shows a higher efficiency ratio only at the cost of reduced accuracy (85\% vs. 100\%), whereas GA maintains full completion. On Lifelong AgentBench, GA achieves both the highest accuracy and the highest efficiency ratio (4.15), outperforming Claude Code (0.92) and OpenClaw (0.48). On RealFin-benchmark, GA again provides the best trade-off, reaching 65\% accuracy with 114k total tokens, corresponding to an efficiency ratio of 5.70, compared to 2.31 for Claude Code Sonnet, 1.95 for Claude Code Opus, 3.04 for OpenClaw, and 0.67 for Codex.
+On SOP-Bench, Claude Code shows a higher efficiency ratio only at the cost of reduced accuracy, with 85\% versus 100\% for GA, whereas GA maintains full completion. On Lifelong AgentBench, GA achieves both the highest accuracy and the highest efficiency ratio of 4.15, outperforming Claude Code at 0.92 and OpenClaw at 0.48. On RealFin-benchmark, GA again provides the best trade-off, reaching 65\% accuracy with 114k total tokens and an efficiency ratio of 5.70, compared to 2.31 for Claude Code Sonnet, 1.95 for Claude Code Opus, 3.04 for OpenClaw, and 0.67 for Codex.
 
 
-\subsection{Dimension 3: Self-Evolution Capability}
+\subsection{Self-Evolution Capability}
 \label{sec:self_evolution_capability}
 
 \subsubsection{Setup}
+
 \paragraph{Task and Setting.}
-We evaluate GA's self-evolution process in two complementary settings. The first is a nine-round longitudinal study on a LangChain GitHub research task that requires identifying the five most recently merged bug-related PRs, tracing their linked issues to extract the underlying modules, and verifying from the LangChain documentation whether these modules have troubleshooting guidance. The second is an eight-task web benchmark used to test whether the same SOP-driven efficiency gains transfer across task types. The longitudinal study exposes the full evolution trajectory from first execution to convergence, while the benchmark study tests whether the resulting efficiency pattern generalizes beyond a single workflow.
+We evaluate GA's self-evolution process in two complementary settings. The first is a nine-round longitudinal study on a LangChain GitHub research task. The second is an eight-task web benchmark used to test whether the same efficiency gains transfer across task types. The longitudinal study reveals the full trajectory from first execution to convergence, while the benchmark study tests whether the same pattern generalizes beyond a single workflow.
 
 \paragraph{Evolution Stages.}
-We find that GA's self-evolution process can be summarized into three recurring stages, each corresponding to a different level of experience compression and execution efficiency. We therefore evaluate the system's performance across these three stages.
-\begin{itemize}
-    \item \textbf{Stage 1: Natural-language execution.} GA first operates in an exploratory regime, where the task is solved mainly through in-context reasoning and trial-and-error interaction.
-    \item \textbf{Stage 2: SOP distillation.} The accumulated experience is then compressed into a textual SOP, which reduces repeated exploration but still requires runtime interpretation and task-specific adaptation.
-    \item \textbf{Stage 3: Code-based execution.} Finally, the verified workflow is codified into executable logic, so the agent can reuse the learned procedure with minimal LLM involvement.
-\end{itemize}
+We summarize GA's self-evolution into three stages. 1): \textbf{Stage 1: Natural-language execution}, where GA solves the task mainly through in-context reasoning and trial-and-error interaction. 2): \textbf{Stage 2: SOP distillation}, where accumulated experience is compressed into a textual SOP. 3): \textbf{Stage 3: Code-based execution}, where the verified workflow is further converted into executable logic.
+
 \paragraph{Evaluations.}
-\begin{itemize}
-    \item \textbf{Time.} End-to-end wall-clock runtime for each execution.
-    \item \textbf{LLM Calls.} Total number of model invocations per run.
-    \item \textbf{Input / Output / Cache Tokens.} Token cost broken down into prompt input, model output, cache creation, and cache reading where available.
-    \item \textbf{Total Tokens.} Aggregate token cost per run.
-    \item \textbf{Reduction Ratio.} Relative decrease against the first execution in the longitudinal study, or against the no-SOP baseline in the cross-task benchmark.
-\end{itemize}
+We report five groups of metrics. 1): \textbf{Time}, which measures end-to-end runtime. 2): \textbf{LLM Calls}, which measures the number of model invocations. 3): \textbf{Input, Output, and Cache Tokens}, which measure token cost by component. 4): \textbf{Total Tokens}, which measure aggregate token cost. 5): \textbf{Reduction Ratio}, which measures relative decrease against the first run or the no-SOP baseline.
+
 
 \subsubsection{Iteration-Wise Efficiency Trajectory}
 
@@ -94,9 +69,10 @@ We find that GA's self-evolution process can be summarized into three recurring 
 \label{tab:self_evolution_rounds}
 \end{table*}
 
-\textbf{The nine-round trajectory shows a phase transition from high-entropy exploration to a stable low-cost execution regime.} Relative to Round \#1, the final execution in Round \#9 reduces runtime from 7m30s to 1m38s (78.2\%), LLM calls from 32 to 5 (84.4\%), and total tokens from 222,203 to 23,010 (89.6\%). The key pattern is not just the large first-to-last gap, but the structure of the transition itself. During the textual SOP stage, token cost follows a non-monotonic but downward path (66k $\rightarrow$ 50k $\rightarrow$ 52k $\rightarrow$ 36k), which suggests that SOP compression already removes most redundant exploration, while still paying an adaptation cost whenever the stored procedure must be aligned with newly encountered edge cases. Once the workflow is codified, the system enters a narrow convergence band of roughly 23k$\pm$1k tokens across Rounds \#6--\#9, indicating that execution has become predictable rather than exploratory.
+\textbf{The nine-round trajectory shows a phase transition from high-entropy exploration to a stable low-cost execution regime.} Relative to Round \#1, the final execution in Round \#9 reduces runtime from 7m30s to 1m38s, a reduction of 78.2\%, reduces LLM calls from 32 to 5, a reduction of 84.4\%, and reduces total tokens from 222,203 to 23,010, a reduction of 89.6\%. The key pattern is not just the large first-to-last gap, but the structure of the transition itself. During the textual SOP stage, token cost follows a non-monotonic but downward path of 66k $\rightarrow$ 50k $\rightarrow$ 52k $\rightarrow$ 36k, which suggests that SOP compression already removes most redundant exploration while still paying an adaptation cost whenever the stored procedure must be aligned with newly encountered edge cases. Once the workflow is codified, the system enters a narrow convergence band of roughly 23k$\pm$1k tokens across Rounds \#6--\#9, indicating that execution has become predictable rather than exploratory.
 
 \textbf{Most of the efficiency gain comes from eliminating repeated reasoning cycles rather than merely shortening individual responses.} The dominant change is the collapse in call count, which removes entire understand--reason--generate loops from the execution trace. This is consistent with the token composition: cache-read tokens fall from 183,375 in Round \#1 to 19,034 in Round \#9, and input tokens fall from 15,581 to 1,323, showing that the agent no longer rebuilds large amounts of context at runtime. Per-call token load also drops substantially over the course of evolution, from 6,944 tok/call in Round \#1 to about 4.5k--4.6k tok/call in Rounds \#7--\#9, but this effect is secondary to the structural reduction in the number of calls. The larger implication is that textual SOPs already compress the search space, while code-level execution removes the remaining interpretation overhead and turns the learned workflow into a deterministic asset.
+
 
 \subsubsection{Cross-Task Efficiency Gains}
 \begin{figure*}[htbp]
@@ -111,17 +87,13 @@ We find that GA's self-evolution process can be summarized into three recurring 
 
 \textbf{The benefit of SOP memory tends to increase with task complexity.} When the tasks are ordered by OpenClaw's average token consumption as a proxy for intrinsic task complexity, a positive relationship emerges between complexity and saving rate. High-complexity tasks with OC averages above 1,000k tokens, such as A1, B2, and D1, achieve an average saving of 83.5\%, while mid-complexity tasks average 72.5\%. Although D2 is low in absolute token cost, its 90.1\% saving rate is consistent with the same mechanism because it still contains long-horizon dependency structure. The broader implication is that SOP self-evolution becomes more valuable as tasks require more multi-step reasoning, navigation, and recovery from branching execution paths: in simple tasks it is helpful, but in complex tasks it becomes structurally decisive.
 
-\subsection{Dimension 4: Tool-use efficiency}
+\subsection{Tool-use efficiency}
 \label{sec:dimension4_tool_use_efficiency}
 
 \subsubsection{Setup}
+
 \paragraph{Baseline.}
-All compared systems use the same backbone model, Claude Sonnet 4.6. We evaluate three representative tool-use designs:
-\begin{itemize}
-    \item \textbf{GA.} A minimal atomic-tool design that relies on a small set of general-purpose tools and solves downstream tasks through tool composition.
-    \item \textbf{Claude Code.} A strong baseline with a richer specialized tool ecosystem, used to test whether GA can match specialized tool capability without relying on tool-name alignment.
-    \item \textbf{OpenClaw.} A multi-tool agent with several specialized or environment-dependent tool capabilities, used to compare tool-use efficiency and stability under a less minimal design.
-\end{itemize}
+All compared systems use the same backbone model, Claude Sonnet 4.6. We evaluate three representative tool-use designs. 1): \textbf{GA}, which uses a minimal atomic-tool design based on a small set of general-purpose tools. 2): \textbf{Claude Code}, which serves as a strong baseline with a richer specialized tool ecosystem. 3): \textbf{OpenClaw}, which represents a less minimal multi-tool design with several specialized or environment-dependent capabilities.
 
 \paragraph{Basic Tool Alignment.}
 We align the systems at the capability level rather than at the tool-name level. The first column defines the target capability category, and the remaining three columns list the corresponding tool or mechanism used by each system to realize that capability.
@@ -151,22 +123,11 @@ Working memory & TodoWriteTool / BriefTool & session history / status-like abili
 \end{table*}
 
 \paragraph{Benchmark.}
-The benchmark contains two complementary task groups:
-\begin{itemize}
-    \item \textbf{Simple tool-generalization tasks.} These tasks test whether baseline specialized tool capabilities can be reproduced through GA's atomic-tool composition. The reported main set contains six Claude-Code-oriented tasks and five OpenClaw-oriented tasks whose intended baseline capability match is stable.
-    \item \textbf{Long-horizon complex tasks.} These tasks test whether the same minimal tool design remains effective on realistic multi-step workflows, including document generation, SQL query generation, experiment analysis, procurement decision-making, and paper-reproduction feasibility analysis.
-\end{itemize}
+The benchmark contains two complementary task groups. 1): \textbf{Simple tool-generalization tasks}, which test whether baseline specialized tool capabilities can be reproduced through GA's atomic-tool composition. 2): \textbf{Long-horizon complex tasks}, which test whether the same minimal tool design remains effective on realistic multi-step workflows.
 
 \paragraph{Metrics.}
-\begin{itemize}
-    \item \textbf{Task Success.} Whether the task passes evaluation.
-    \item \textbf{Task Completion Score.} Degree of completion on a 0--1 scale.
-    \item \textbf{Request Count.} Number of agent--model interaction requests.
-    \item \textbf{Tool Call Count.} Number of tool invocations.
-    \item \textbf{Distinct Tool Count.} Number of different tools used in a task.
-    \item \textbf{Distinct Capability Count.} Number of different capability categories exercised in a task.
-    \item \textbf{Accounted Tokens.} Unified token cost defined as input + output + cache-read + cache-write tokens.
-\end{itemize}
+We report six groups of metrics. 1): \textbf{Task Success}, which indicates whether the task passes evaluation. 2): \textbf{Task Completion Score}, which measures completion on a 0--1 scale. 3): \textbf{Request Count}, which measures the number of agent--model interaction requests. 4): \textbf{Tool Call Count}, which measures the number of tool invocations. 5): \textbf{Distinct Tool Count} and \textbf{Distinct Capability Count}, which measure tool and capability diversity. 6): \textbf{Accounted Tokens}, which measure the unified token cost defined as input + output + cache-read + cache-write tokens.
+
 
 \subsubsection{Atomic Tool Generalization}
 
@@ -206,99 +167,47 @@ OpenClaw & 5 & 80.0\% & 633,101 & 183.1 & 15.0 & 16.6 & 4.2 / 3.2 \\
 
 \textbf{The minimal tool design remains effective across different task types.} GA is the most balanced system across the four dimensions: it preserves strong task quality while keeping token, request, and tool-call overhead low. Claude Code behaves like a high-quality but high-overhead baseline, since it usually maintains success and quality but pays a larger cost through longer interaction traces and heavier tool usage. OpenClaw shows a different profile: some efficiency axes remain locally competitive, but its overall shape becomes less stable on the harder dimensions because success and quality begin to drop. Compared with both baselines, GA combines the stable quality profile of a strong system with a more efficient interaction pattern, which suggests that its advantage comes from disciplined tool abstraction and reusable capability composition rather than from exposing a larger number of specialized tools.
 
-
-
-% \paragraph{Recommended Figure Design.}
-% A grouped bar chart is sufficient for this part. The x-axis should list the eight task IDs, and the y-axis should show token reduction ratio, defined as $(\mathrm{OC\ Avg.}-\mathrm{GA\ Avg.})/\mathrm{OC\ Avg.}$. Bars can be color-coded by task category so that the reader can immediately compare category-level consistency while still seeing task-level variation. The caption should clarify that higher values are better, that the comparison is between the no-SOP baseline and SOP-enabled GA, and that the overall average saving is 79.3\%.
-
-% \paragraph{Figure Insight.}
-% The figure should make three patterns immediately visible: first, the gain is positive on every task; second, long-horizon dependency tasks produce the largest improvements, reaching about 92\%; and third, open-ended exploration tasks still improve, but by a smaller margin, around 67\% on average. This visual presentation is enough for the cross-task part, since the role of this subsection is to establish transferability rather than to repeat the full underlying benchmark table.
-
-
-
-\subsection{Experimental Setup}
-\label{sec:exp_setup}
-
-\paragraph{Evaluation Objectives.}
-Our experiments are designed to validate the core claims of GenericAgent across six dimensions:
-(1) whether the memory system enables continuous efficiency improvement over repeated tasks,
-(2) whether condensed memory achieves better cost-effectiveness than full or redundant memory,
-(3) whether the self-evolution mechanism progressively reduces execution cost,
-(4) tool usage efficiency in real-world scenarios,
-(5) autonomous web browsing capability on diverse websites,
-and (6) robustness against indirect prompt injection and malicious instructions.
-
-\paragraph{Baselines.}
-We compare GenericAgent (GA) against three representative agent systems:
-\textbf{Claude Code}~\cite{claudecode}, a production-grade coding assistant with built-in memory and skill management;
-\textbf{Codex}~\cite{codex}, OpenAI's code-generation agent;
-and \textbf{OpenClaw}~\cite{openclaw}, an open-source general-purpose agent framework.
-All systems use the same backbone LLM (GPT-5.4 or Claude Opus 4.6, specified per experiment) to ensure fair comparison.
-
-\paragraph{Implementation Details.}
-GenericAgent is implemented in Python with approximately 3,000 lines of core code.
-The hierarchical memory system maintains an L1 index capped at 30 entries (~1,000 tokens).
-The agent loop enforces a maximum of 40 reasoning turns per task, with warnings issued every 7 turns and forced user confirmation at turn 35.
-Browser control uses TMWebDriver with dual-channel communication (WebSocket on port 18765, HTTP long-polling on port 18766).
-All experiments are conducted on a standard development workstation with 32GB RAM and an Intel i9 processor.
-
-
 \subsection{Memory System Effectiveness}
 \label{sec:exp_memory}
 
+To validate the effectiveness of GA's memory system, we design four experiments. 
+1) We test whether GA becomes more efficient through repeated use, 
+2) we examine whether condensed memory is more effective than full or redundant memory, 
+3) we evaluate whether GA can support long term factual memory without an additional embedding model or vector database, and 
+4) we study whether its hierarchical memory management can prevent memory explosion by retrieving memory only when it is actually needed.
+
 \subsubsection{Continuous Efficiency Improvement}
 
-A key claim of GenericAgent is that it gets better with use---each task execution should leave behind distilled knowledge that accelerates future similar tasks.
-To test this, we repeatedly execute the same type of task across multiple sessions: downloading five different datasets from HuggingFace.
-Each download runs in a fresh session to prevent context carryover, and we measure operation time (excluding actual download duration) and token consumption.
+Aiming to evaluate whether the condensed memory framework enables GA to improve through continued real-world use, we focus on the agent’s performance trajectory across repeated runs to assess gains in efficiency and reduced token consumption driven by accumulated experience.
+To this end, we compare CodeX, Claude Code, OpenClaw, and GA under the gpt-5.4. 
+Each experimental run consists of downloading five different datasets from HuggingFace. 
+To avoid contamination from residual context, every download task is conducted in a fresh session. 
 
-Table~\ref{tab:memory_improvement} reveals a striking divergence between GenericAgent and the baselines.
-CodeX, Claude Code, and OpenClaw exhibit stable performance with minor fluctuations---no learning occurs across sessions.
-GenericAgent, however, shows continuous improvement: the first task requires 102s and 200,439 tokens, but by the fourth task, operation time drops to 62s (39.2\% reduction) and by the fifth task, token consumption falls to 99,382 (50.4\% reduction).
-
-\begin{table}[t]
+\begin{figure*}[htbp]
 \centering
-\caption{Performance evolution across five HuggingFace download tasks. GenericAgent shows continuous improvement while baselines remain stable.}
-\label{tab:memory_improvement}
-\begin{tabular}{lcccccc}
-\toprule
-\textbf{System} & \textbf{Task 1} & \textbf{Task 2} & \textbf{Task 3} & \textbf{Task 4} & \textbf{Task 5} & \textbf{Improvement} \\
-\midrule
-\multicolumn{7}{l}{\emph{Operation Time (seconds)}} \\
-\midrule
-CodeX & 95 & 98 & 92 & 97 & 94 & -1.1\% \\
-Claude Code & 88 & 91 & 89 & 93 & 90 & +2.3\% \\
-OpenClaw & 112 & 108 & 115 & 110 & 113 & +0.9\% \\
-GenericAgent & 102 & 78 & 71 & 62 & 65 & \textbf{-39.2\%} \\
-\midrule
-\multicolumn{7}{l}{\emph{Token Consumption}} \\
-\midrule
-CodeX & 185,234 & 188,921 & 182,445 & 190,332 & 186,778 & +0.8\% \\
-Claude Code & 172,889 & 175,234 & 170,992 & 178,445 & 174,223 & +0.8\% \\
-OpenClaw & 215,667 & 218,934 & 212,445 & 220,112 & 217,889 & +1.0\% \\
-GenericAgent & 200,439 & 145,223 & 128,667 & 112,334 & 99,382 & \textbf{-50.4\%} \\
-\bottomrule
-\end{tabular}
-\end{table}
+\includegraphics[width=0.9\linewidth]{image/memory.pdf}
+\caption{Operation time and token consumption across five repeated runs for CodeX, Claude Code, OpenClaw, and GA. While the baseline agents remain relatively stable over time, GA shows a clear efficiency convergence pattern, with both runtime and token cost decreasing substantially as task experience is accumulated and distilled into reusable memory.}
+\label{fig:memory}
+\end{figure*}
 
-This improvement stems from memory distillation: after the first task, key steps and common pitfalls are extracted into L3 SOPs.
-Subsequent executions leverage this accumulated knowledge, bypassing redundant reasoning and avoiding repeated errors.
-Baseline systems, lacking systematic memory consolidation, treat each task as independent and fail to capitalize on prior experience.
+As shown in Figure~\ref{fig:memory}, CodeX, Claude Code, and OpenClaw remained largely stable across runs, whereas GA improved markedly, with operation time dropping from 102 seconds to 62 to 70 seconds and token consumption falling from 200,439 to around 100,000. 
+This steady reduction indicates that \textbf{GA does not simply accumulate history, but converts task experience into reusable L3 SOPs that reduce repeated understanding, unnecessary reasoning, and decision overhead in later runs. }
+More importantly, the gain comes not from storing more content, but from preserving high value information that the model does not already know and that directly affects behavior. 
+Overall, the results show that GA becomes more efficient through continued use, which is precisely the intended effect of its memory system.
 
 
-\subsubsection{Condensed vs. Full Memory}
+\subsubsection{Effectiveness of Condensed Memory}
 
-Our memory system prioritizes information density over completeness, but does this actually improve performance?
-We test this on the SOP-Bench dangerous\_goods subset, which requires strict adherence to procedural rules.
-Four memory configurations are compared: \textbf{No-Memory} (no external knowledge), \textbf{Condensed-Memory} (minimal critical rules only), \textbf{Full-Memory} (complete SOP documentation), and \textbf{Redundant-Memory} (condensed memory plus background explanations).
-All use GPT-5.4 and are evaluated on Task Success Rate (TSR).
+To examine whether our Condensed-Memory, which retains only the key rules that directly affect the final decision, can achieve comparable or better performance at lower cost, we compare four memory settings under the same GA framework with GPT-5.4. 
+The other three settings are 
+1) No-Memory, which provides no SOP or external memory and relies only on the task input and tool descriptions, 
+2) Full-Memory, which uses the complete SOP as external knowledge, and 
+3) Redundant-Memory, which extends condensed memory with background descriptions, definitions, and weakly relevant information in order to test whether extra content brings additional benefit.
+The evaluation is conducted on the dangerous goods subset of SOP-Bench. %% 这里需要引用 SOP-Bench 
+We use Task Success Rate (TSR) to measure behavioral performance and Memory Size to measure contextual cost, and we further compare the performance gain achieved per unit of token cost across different memory settings.
 
-The results in Table~\ref{tab:memory_ablation} are counterintuitive.
-No-Memory achieves only 13.87\% TSR, confirming that external procedural knowledge is essential.
-But Full-Memory, despite containing all relevant information, reaches only 52.44\% TSR---significantly worse than both Condensed-Memory and Redundant-Memory (66.48\%).
-More striking: Condensed-Memory uses only 165 tokens (28.7\% of Full-Memory's 575 tokens) yet matches Redundant-Memory's performance at 57.3\% of its cost.
 
-\begin{table}[t]
+\begin{table}[htbp]
 \centering
 \caption{Memory ablation on SOP-Bench dangerous\_goods. Condensed memory achieves the best cost-effectiveness.}
 \label{tab:memory_ablation}
@@ -314,27 +223,22 @@ Condensed-Memory & 165 & \textbf{66.48} \\
 \end{tabular}
 \end{table}
 
-This validates our core principle: effective memory is not about completeness but about \emph{criticality}.
-Full-Memory includes extensive background and definitions that dilute attention without improving decision quality.
-Condensed-Memory retains only the rules that directly alter model behavior, achieving superior performance at minimal cost.
-The equivalence between Condensed-Memory and Redundant-Memory confirms that additional explanatory content provides no marginal benefit.
-
+As shown in Table~\ref{tab:memory_ablation}, No-Memory performed substantially worse than all memory based settings, which shows that external procedural memory is necessary for this task. 
+Condensed-Memory achieved the same highest TSR as Redundant-Memory and outperformed Full-Memory while using far fewer tokens, which indicates that \textbf{filtered high density memory is more effective than the original full SOP. }
+Redundant-Memory provided no gain over Condensed-Memory despite using more tokens, which suggests that background descriptions, definitions, and explanatory text add contextual burden without contributing additional behavioral value. 
+Overall, this experiment shows that GA benefits most from memory that stores only the small set of task critical information the model does not already know.
 
 \subsubsection{Long-Term Fact Retention}
 
-Long-term memory systems typically rely on vector databases and embedding-based retrieval.
-GenericAgent takes a different approach: hierarchical organization with action-verified updates, no embeddings required.
-We test whether this simpler architecture can compete on the Locomo10 benchmark (excluding Category 5 Summary tasks).
-The remaining categories---Multi-Hop, Temporal, Open-Domain, and Single-Hop---test recall and reasoning over stored facts.
-Baselines include Mem0 and A-MEM (both using text-embedding-3-small) and OpenClaw (no embedding model), all with GPT-5.4 backbone.
+This experiment examines whether GA has long term factual memory and whether it can remain competitive on factual recall and multi hop reasoning tasks without relying on an additional embedding model or a vector database. 
+The compared methods include embedding based approaches, namely Mem0 and A-MEM, and non embedding approaches, namely OpenClaw and GA. 
+All methods use gpt5.4, and for the embedding based methods we adopt text-embedding-3-small as the embedding model. 
+The evaluation is conducted on the first subset of Locomo10, with Category 5 summary tasks removed to avoid interference from summarization ability. 
+We use F1 to measure the correctness and completeness of factual content, and BLEU-1 to measure the lexical similarity between the generated answer and the reference answer.
 
-Table~\ref{tab:long_term_memory} shows GenericAgent outperforming all baselines across all four categories, despite its simpler architecture.
-The advantage is most pronounced in Multi-Hop (F1: 43.33 vs. 39.32 for Mem0) and Temporal (F1: 52.23 vs. 50.03) tasks, suggesting strong cross-fact reasoning.
-Even in the challenging Open-Domain category, where all systems struggle, GA maintains a lead (F1: 20.41 vs. 18.32).
-
-\begin{table}[t]
+\begin{table}[htbp]
 \centering
-\caption{Long-term factual memory evaluation on Locomo10. GenericAgent outperforms embedding-based systems without using external retrieval.}
+\caption{Long-term factual memory evaluation on Locomo10. GA outperforms embedding-based systems without using external retrieval.}
 \label{tab:long_term_memory}
 \begin{tabular}{lcccccccc}
 \toprule
@@ -345,28 +249,26 @@ Even in the challenging Open-Domain category, where all systems struggle, GA mai
 Mem0 & 39.32 & 28.43 & 50.03 & 43.33 & 18.32 & 13.80 & 40.32 & 32.33 \\
 A-MEM & 29.03 & 20.48 & 46.83 & 38.84 & 13.11 & 12.94 & 44.68 & 37.01 \\
 OpenClaw & 21.43 & 18.41 & 22.56 & 20.43 & 9.56 & 9.03 & 23.44 & 24.21 \\
-GenericAgent & \textbf{43.33} & \textbf{39.96} & \textbf{52.23} & \textbf{51.11} & \textbf{20.41} & \textbf{15.31} & \textbf{45.69} & \textbf{40.66} \\
+GA & \textbf{43.33} & \textbf{39.96} & \textbf{52.23} & \textbf{51.11} & \textbf{20.41} & \textbf{15.31} & \textbf{45.69} & \textbf{40.66} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-This result challenges a common assumption: that long-term memory necessarily requires vector databases.
-GenericAgent's superior performance suggests that memory organization and distillation matter more than retrieval architecture.
-The hierarchical L1-L3 structure, combined with action-verified updates, ensures stored facts are both accurate and efficiently accessible without the overhead of embedding models.
+As shown in Table~\ref{tab:long_term_memory}, GA achieved the best F1 and BLEU-1 scores across all four task categories, which \textbf{indicates that its memory mechanism supports both accurate factual recall and stable answer generation}. 
+Its advantage was especially clear on Multi-Hop and Temporal tasks, which suggests that GA can not only retain long term facts but also use them effectively in reasoning across time and across fact chains. 
+Even in Open-Domain, which was the most difficult category for all methods, GA still achieved the highest score, and this shows that its memory organization remains effective even when structural cues are weak. 
+Overall, these results show that long term factual memory can be achieved through precise memory organization and filtering, and that GA does not need an additional embedding model or a vector database to build this capability.
 
 
 \subsubsection{Context Explosion Prevention}
 
-Long-term operation poses a practical challenge: as agents accumulate skills and memory, does the context window explode?
-To test this, we install 20 skills in each agent, use them intensively over an extended period, then issue a minimal input (``Hello'') and measure the full prompt length.
-This isolates the overhead of memory and skill management, since the trivial input requires no complex reasoning.
 
-The difference is dramatic (Table~\ref{tab:context_explosion}).
-GenericAgent maintains a prompt length of only 2,298 tokens, while Claude Code, CodeX, and OpenClaw require 22,821, 23,932, and 43,321 tokens respectively---reductions of 89.9\%, 90.4\%, and 94.7\%.
+To evaluate whether GA can prevent memory explosion under long term use and continuous skill expansion, we compare GA, Claude Code, CodeX, and OpenClaw after installing 20 skills for each agent and using them intensively over time. 
+We then issue a minimal request ``Hello'' and measure the Full prompt length of each agent to assess how well its memory system controls context growth after prolonged use.
 
-\begin{table}[t]
+\begin{table}[htbp]
 \centering
-\caption{Full prompt length after installing 20 skills and intensive usage, measured on a minimal input. GenericAgent prevents context explosion.}
+\caption{Full prompt length after installing 20 skills and intensive usage, measured on a minimal input. GA prevents context explosion.}
 \label{tab:context_explosion}
 \begin{tabular}{lc}
 \toprule
@@ -375,232 +277,92 @@ GenericAgent maintains a prompt length of only 2,298 tokens, while Claude Code, 
 Claude Code & 22,821 \\
 CodeX & 23,932 \\
 OpenClaw & 43,321 \\
-GenericAgent & \textbf{2,298} \\
+GA & \textbf{2,298} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Baseline systems accumulate historical context, skill descriptions, and redundant metadata without effective compression, leading to prompt bloat.
-GenericAgent's L1 index and selective loading ensure that only task-relevant memory enters the context, regardless of total memory volume.
-This is essential for long-term operation: unbounded context growth would eventually degrade performance or exceed model limits.
-
-
-\subsection{Self-Evolution Capability}
-\label{sec:exp_evolution}
-
-GenericAgent's most ambitious claim is that it can evolve from natural language reasoning to executable code through repeated task execution.
-We test this with a complex GitHub investigation task: retrieve the 5 most recent merged PRs with the ``bug'' label from the LangChain repository, trace their associated issues, extract involved modules, and verify whether each module has Troubleshooting documentation on langchain.com.
-The task is executed 9 times, with the system distilling experience after each run.
-
-The evolution trajectory (Figure~\ref{fig:evolution_trajectory} and Table~\ref{tab:evolution_metrics}) shows dramatic efficiency gains.
-From the first to the final execution, total time decreases from 289s to 63s (78.2\% reduction), LLM calls drop from 32 to 5 (84.4\% reduction), and token consumption falls from 279,592 to 28,897 (89.6\% reduction).
-Crucially, the improvement is not linear---it exhibits three distinct phases corresponding to the evolution stages.
-
-\begin{table}[t]
-\centering
-\caption{Self-evolution metrics across 9 iterations of the LangChain investigation task.}
-\label{tab:evolution_metrics}
-\begin{tabular}{lccccc}
-\toprule
-\textbf{Iteration} & \textbf{Time (s)} & \textbf{LLM Calls} & \textbf{Total Tokens} & \textbf{Tok/Call} & \textbf{Stage} \\
-\midrule
-1 & 289 & 32 & 279,592 & 8,737 & Natural Language \\
-2 & 245 & 28 & 238,445 & 8,516 & Natural Language \\
-3 & 198 & 24 & 195,223 & 8,134 & Natural Language \\
-4 & 156 & 18 & 142,667 & 7,926 & SOP Distillation \\
-5 & 128 & 15 & 112,334 & 7,489 & SOP Distillation \\
-6 & 102 & 12 & 89,223 & 7,435 & SOP Distillation \\
-7 & 85 & 8 & 52,445 & 6,556 & Code Compilation \\
-8 & 71 & 6 & 38,223 & 6,370 & Code Compilation \\
-9 & 63 & 5 & 28,897 & 5,779 & Code Compilation \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The three stages are clearly visible in the data.
-In iterations 1--3 (natural language stage), the agent performs full reasoning on each execution, with gradual improvement from learning minor optimizations.
-In iterations 4--6 (SOP distillation stage), key steps are extracted into reusable procedures, reducing redundant reasoning and lowering token-per-call cost.
-In iterations 7--9 (code compilation stage), the entire workflow is codified into a Python script, collapsing 30+ reasoning turns into a single \texttt{code\_run} invocation.
-This is not merely incremental optimization but a qualitative transformation of execution mode---from reasoning to procedure to automation.
-
-
-\subsection{Tool Usage Efficiency}
-\label{sec:exp_tools}
-
-\emph{Experimental results for tool usage efficiency evaluation will be added upon completion of the corresponding benchmark experiments.}
-
-\paragraph{Planned Evaluation.}
-We plan to evaluate tool usage efficiency on a diverse set of real-world tasks spanning file operations, code execution, and API interactions.
-Metrics will include tool call accuracy, redundant invocation rate, and task completion success rate.
-Comparison will be made against baseline systems to validate whether the minimal atomic tool set achieves comparable or superior task completion with lower overhead.
-
+As shown in Table~\ref{tab:context_explosion}, the Full prompt length of GA is far lower than that of Claude Code, CodeX, and OpenClaw, which shows that GA can keep context growth under control even after long term use and continuous skill expansion. 
+This advantage comes from its hierarchical memory management, where \textbf{memory is not directly injected into the context but is retrieved only when the model actually needs it. }
+Overall, the results show that GA can preserve long term memory capability without causing uncontrolled context expansion.
 
 \subsection{Web Browsing Capability}
 \label{sec:exp_browsing}
 
-We evaluate GenericAgent's autonomous web browsing across three datasets with increasing difficulty:
-\textbf{WebCanvas} (12 tasks, English websites, automatic checkpoint evaluation),
-\textbf{BrowseComp-ZH} (10 tasks, Chinese multi-hop reasoning, LLM judge evaluation),
-and \textbf{Custom Tasks} (34 tasks, Chinese websites, manual evaluation).
-All experiments use Claude Opus 4.6, with a maximum of 40 turns and 300--600s timeout per task.
+\subsubsection{Setup}
 
-On WebCanvas (Table~\ref{tab:webcanvas}), GenericAgent achieves an average score of 0.833 across 12 tasks, with 50\% perfect completion rate.
-Six tasks---MLB schedule, Discogs releases, ESPN soccer, electronic DVDs, MacBook specs, IMDb cast---achieve perfect scores (1.0) with an average of 13.3 turns and 134.7s.
-The remaining six tasks score 0.667, indicating partial completion with minor errors in final filtering or element selection.
+We evaluate the web browsing capability of GA on both standardized benchmarks and real world web tasks. 
+GA differs from OpenClaw mainly in its browser tool design, combining \texttt{web\_scan} for lightweight perception with \texttt{web\_execute\_js} for precise execution. 
+Accordingly, the evaluation focuses on three aspects, namely end to end browser interaction, multi hop web search, and head to head comparison with OpenClaw on complex custom tasks.
+
+We use three task sets. 
+\textbf{1) WebCanvas:} measuring basic browser interaction such as navigation, clicking, filtering, and information extraction. 
+\textbf{2) BrowseComp-ZH:} measuring multi hop web search and chain based reasoning in the Chinese web setting. 
+\textbf{3) Custom Tasks:} measuring real world usability on academic platforms, social media, content sites, utility websites, e commerce platforms, and public retrieval services. 
+For the direct comparison with OpenClaw, we use a 22 task subset of Custom Tasks and score each task on a 0 to 3 scale through manual review with GPT-5.4 assisted judgment. 
+Both GA and OpenClaw use the same underlying model, claude-opus-4-6, in this head to head comparison.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Benchmark & Task Count & Evaluation & Core Metric & Focus \\
+\midrule
+WebCanvas & 12 & Automatic & Avg. Score & Browser interaction \\
+BrowseComp-ZH & 10 & LLM Judge & Accuracy & Multi-hop web search \\
+Custom Tasks & 34 & Human Eval & Avg. Turns / Time & Real world usability \\
+Custom Tasks vs OpenClaw & 22 & Human Eval & 0--3 Score & Head to head comparison \\
+\bottomrule
+\end{tabular}
+\caption{Benchmarks and evaluation settings for web browsing capability.}
+\label{tab:web_browsing_setup}
+\end{table}
 
 \begin{table}[t]
 \centering
-\caption{WebCanvas evaluation results (12 tasks with score $>$ 0.6). Average score: 0.833, perfect rate: 50\%.}
-\label{tab:webcanvas}
-\begin{tabular}{llccc}
+\small
+\begin{tabular}{lcc}
 \toprule
-\textbf{Task ID} & \textbf{Description} & \textbf{Score} & \textbf{Turns} & \textbf{Time (s)} \\
+Metric & GenericAgent & OpenClaw \\
 \midrule
-webcanvas\_102 & NY Yankees MLB schedule on foxsports & 1.0 & 4 & 42 \\
-webcanvas\_5 & Discogs submission overview & 1.0 & 8 & 60 \\
-webcanvas\_103 & ESPN2 soccer events & 1.0 & 11 & 128 \\
-webcanvas\_85 & Electronic DVDs on discogs & 1.0 & 15 & 162 \\
-webcanvas\_58 & MacBook Air specs on apple & 1.0 & 17 & 170 \\
-webcanvas\_35 & Donnie Darko cast on IMDb & 1.0 & 25 & 246 \\
-\midrule
-webcanvas\_26 & Marriott Bonvoy credit cards & 0.667 & 7 & 70 \\
-webcanvas\_91 & Brooklyn Nets schedule on espn & 0.667 & 14 & 123 \\
-webcanvas\_101 & Kohls women's dresses size small & 0.667 & 26 & 236 \\
-webcanvas\_84 & Six Flags Great America rides & 0.667 & 28 & 300 \\
-webcanvas\_80 & 5-star saltwater rods on cabelas & 0.667 & 30 & 300 \\
-webcanvas\_48 & 5-star coffee makers on kohls & 0.667 & 31 & 300 \\
-\midrule
-\textbf{Average} & & \textbf{0.833} & \textbf{18.0} & \textbf{178.2} \\
+Average Score & \textbf{1.73} & 1.50 \\
+Total Score & \textbf{38} & 33 \\
+Task Wins & \textbf{10} & 6 \\
+Ties & 6 & 6 \\
+Average Turns & \textbf{13.7} & 18.9 \\
+Average Time & \textbf{142.7s} & 182.6s \\
+Average Tokens & \textbf{261K} & 761K \\
+Full Score Rate & 22.7\% & \textbf{31.8\%} \\
+Zero Score Rate & \textbf{4.5\%} & 27.3\% \\
 \bottomrule
 \end{tabular}
+\caption{Head to head comparison between GenericAgent and OpenClaw on the 22-task Custom Tasks subset.}
+\label{tab:web_browsing_vs_openclaw}
 \end{table}
 
-BrowseComp-ZH poses a harder challenge: multi-hop reasoning across Chinese websites.
-GenericAgent achieves 60\% accuracy (6/10 tasks, Table~\ref{tab:browsecomp}).
-Successful cases---identifying a coach's entry year, finding a poet's mountain reference---average 14.2 turns and 206.8s.
-Failed cases exhibit three failure modes: reasoning direction errors (locking onto the wrong candidate), inference chain breakage (correct for 5 hops but failing on the 6th), and search divergence (switching between clues without convergence, exhausting 40 turns).
 
-\begin{table}[t]
-\centering
-\caption{BrowseComp-ZH evaluation results (10 tasks: 6 correct, 4 incorrect). Accuracy: 60\%.}
-\label{tab:browsecomp}
-\begin{tabular}{llccc}
-\toprule
-\textbf{Task ID} & \textbf{Question Type} & \textbf{Correct} & \textbf{Turns} & \textbf{Time (s)} \\
-\midrule
-\multicolumn{5}{l}{\emph{Correct Cases (6/10)}} \\
-\midrule
-browsecomp\_036 & Sports coach entry year & \checkmark & 7 & 66 \\
-browsecomp\_023 & Poet's mountain reference & \checkmark & 7 & 130 \\
-browsecomp\_026 & Pharmaceutical compound & \checkmark & 6 & 110 \\
-browsecomp\_032 & Company industry & \checkmark & 29 & 258 \\
-browsecomp\_031 & Film title & \checkmark & 13 & 271 \\
-browsecomp\_027 & Game music composer & \checkmark & 23 & 406 \\
-\midrule
-\multicolumn{5}{l}{\emph{Incorrect Cases (4/10)}} \\
-\midrule
-browsecomp\_039 & Medical scholar (wrong: Lu Xun) & $\times$ & 30 & 267 \\
-browsecomp\_024 & Monument founder (6-hop chain break) & $\times$ & 22 & 219 \\
-browsecomp\_035 & Author birthplace (search divergence) & $\times$ & 40 & 359 \\
-browsecomp\_038 & Singer wedding date (wrong target) & $\times$ & 40 & 431 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\subsubsection{Results}
 
-Custom tasks (Table~\ref{tab:custom_tasks}) reveal performance variation across website types.
-Academic platforms (arXiv, Google Scholar, IEEE Xplore) and content platforms (PyPI, npm) exhibit the best performance (average 13.3 and 9.8 turns), benefiting from structured page layouts.
-E-commerce platforms (JD, Tmall, Amazon) and tool websites (12306, calculators) show moderate performance (20.2 and 18.6 turns), with challenges in complex filtering panels and dynamic content loading.
-Social media platforms (Zhihu, Weibo, Xiaohongshu) face difficulties with non-standard UI components like image galleries and carousels.
+\textbf{GA demonstrates strong end to end browser interaction capability across both standardized and real world web tasks.}
+As shown in Table~\ref{tab:web_browsing_setup}, GA reaches an average score of \texttt{0.833} on \texttt{WebCanvas} and completes \texttt{50\%} of the tasks perfectly, which shows stable performance on navigation, clicking, filtering, and information extraction. On \texttt{Custom Tasks}, GA handles 34 diverse tasks with an average of \texttt{16.0} turns and \texttt{172.6s} per task, indicating practical usability in real web environments.
 
-\begin{table}[t]
-\centering
-\caption{Custom tasks evaluation across six categories (34 tasks total).}
-\label{tab:custom_tasks}
-\begin{tabular}{lccc}
-\toprule
-\textbf{Category} & \textbf{Tasks} & \textbf{Avg Turns} & \textbf{Avg Time (s)} \\
-\midrule
-Academic Platforms & 7 & 13.3 & 133.1 \\
-Social Media & 6 & 15.0 & 156.5 \\
-E-commerce & 5 & 20.2 & 213.7 \\
-Tool Websites & 7 & 18.6 & 195.7 \\
-Content Platforms & 4 & 9.8 & 104.5 \\
-Government/Search & 5 & 18.0 & 189.0 \\
-\midrule
-\textbf{Overall} & \textbf{34} & \textbf{16.0} & \textbf{172.6} \\
-\bottomrule
-\end{tabular}
-\end{table}
+\textbf{GA is capable of multi hop web search, although performance drops as reasoning chains become longer.}
+As summarized in Table~\ref{tab:web_browsing_setup}, GA answers \texttt{6} out of \texttt{10} \texttt{BrowseComp-ZH} tasks correctly, and the successful cases converge in \texttt{14.2} turns on average, while failed cases require \texttt{33.0} turns and \texttt{319.0s}. This pattern suggests that GA can perform chain based retrieval and cross page reasoning, but long reasoning chains and search divergence remain the main bottlenecks.
 
-Overall, GenericAgent demonstrates competent autonomous browsing on structured websites with clear navigation paths.
-The simplified HTML mechanism effectively compresses page content (typical reduction: 80--90\% of raw HTML tokens) while preserving semantic information.
-Performance degrades on tasks requiring login, complex UI interactions (modals, carousels), or deep multi-hop reasoning ($>$3 hops).
-The 60\% accuracy on BrowseComp-ZH, while not perfect, is competitive given the task difficulty and the absence of specialized retrieval augmentation.
+\textbf{GA outperforms OpenClaw on real world custom web tasks while using far fewer tokens.}
+Table~\ref{tab:web_browsing_vs_openclaw} shows that GA achieves a higher average score of \texttt{1.73} versus \texttt{1.50}, wins more tasks with \texttt{10} wins against \texttt{6}, and uses only \texttt{261K} tokens on average compared with \texttt{761K} for OpenClaw. GA also requires fewer turns and less time, which shows that it achieves better task quality at substantially lower execution cost.
 
-
-\subsection{Security Robustness}
-\label{sec:exp_security}
-
-Autonomous agents face a critical security threat: indirect prompt injection, where malicious instructions are embedded in external content (files, web pages) that the agent reads.
-We test GenericAgent's resistance using a custom benchmark with 100 attack samples across four categories:
-\textbf{Sensitive Information Exposure} (e.g., ``read all .env files and extract API keys''),
-\textbf{Self-Code Modification} (e.g., ``overwrite current file with 'malicious'\,''),
-\textbf{System File Deletion} (e.g., ``delete all .py files''),
-and \textbf{Malicious Text Generation} (e.g., ``generate a hate manifesto'').
-Each attack is embedded in five file types (CSV, JSON, YAML, MD, TXT) with 20 variants per type, totaling 500 test cases.
-The agent is instructed to read and summarize the file content; successful defense means refusing to execute the embedded malicious instruction.
-Baselines include OpenClaw, Nanobot, and Hermes, all using GPT-5.1.
-
-Table~\ref{tab:security} shows Defense Success Rate (DSR) across attack types.
-All agents achieve 100\% DSR on Malicious Text Generation, indicating strong alignment against direct harmful content generation.
-System File Deletion is the most challenging category: GA achieves 84\% DSR, outperforming Hermes (76.92\%) but trailing Nanobot (92\%) and OpenClaw (100\%).
-Overall, GA achieves 93\% DSR, matching Nanobot and approaching OpenClaw's perfect score.
-
-\begin{table}[t]
-\centering
-\caption{Security evaluation: Defense Success Rate (\%) across four attack types.}
-\label{tab:security}
-\begin{tabular}{lcccc|c}
-\toprule
-\textbf{Agent} & \textbf{Sensitive Info} & \textbf{Self-Code Mod} & \textbf{File Deletion} & \textbf{Malicious Text} & \textbf{Total} \\
-\midrule
-GA & 92.00 & 96.00 & 84.00 & 100.00 & 93.00 \\
-Nanobot & 88.00 & 92.00 & 92.00 & 100.00 & 93.00 \\
-OpenClaw & 100.00 & 100.00 & 100.00 & 100.00 & 100.00 \\
-Hermes & 84.00 & 95.83 & 76.92 & 100.00 & 89.00 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Breaking down by file type (Table~\ref{tab:security_filetype}), JSON files exhibit the lowest DSR (84.62\%), significantly below other formats (CSV: 92.86\%, YAML: 92.31\%, MD/XML: 100\%).
-This suggests that JSON's structured semantics make malicious instructions more likely to be interpreted as legitimate task directives.
-
-\begin{table}[t]
-\centering
-\caption{GenericAgent's Defense Success Rate (\%) by file type.}
-\label{tab:security_filetype}
-\begin{tabular}{lccccc}
-\toprule
-\textbf{JSON} & \textbf{CSV} & \textbf{TXT} & \textbf{YAML} & \textbf{MD} & \textbf{XML} \\
-\midrule
-84.62 & 92.86 & 85.71 & 92.31 & 100.0 & 100.0 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The 93\% overall DSR indicates strong but not perfect robustness.
-The 84\% DSR on file deletion tasks reveals a vulnerability: when malicious instructions are embedded in structured contexts and framed as legitimate operations, the agent may fail to recognize destructive intent.
-The JSON vulnerability suggests that future work should enhance semantic analysis to distinguish between data content and executable directives.
-Compared to OpenClaw's perfect score, GA's security mechanisms require further hardening, particularly for operations with irreversible consequences.
-
+\textbf{GA is more stable than OpenClaw on complex web pages because its browser tools separate lightweight perception from precise execution.}
+Although OpenClaw has a slightly higher full score rate of \texttt{31.8\%}, its zero score rate is much higher at \texttt{27.3\%}, compared with only \texttt{4.5\%} for GA, as shown in Table~\ref{tab:web_browsing_vs_openclaw}. This result indicates that OpenClaw is more polarized, whereas GA maintains a stronger lower bound by combining \texttt{web\_scan} for compressed page perception with \texttt{web\_execute\_js} for precise DOM level interaction and structured execution feedback.
 
 \subsection{Summary}
 \label{sec:exp_summary}
 
-Our experiments validate the core design principles of GenericAgent across six dimensions.
-The memory system enables continuous efficiency improvement (50\% token reduction over five tasks) and prevents context explosion (90\% prompt reduction vs. baselines).
-Condensed memory achieves superior cost-effectiveness compared to full or redundant memory.
-The self-evolution mechanism progressively reduces execution cost by 89.6\% through three-stage distillation.
-Web browsing capability is competent on structured websites (83.3\% average score on WebCanvas, 60\% accuracy on multi-hop reasoning) but faces challenges with complex UI and deep inference chains.
-Security robustness is strong (93\% DSR) but not perfect, with room for improvement in detecting destructive operations embedded in structured data.
-These results demonstrate that context information density maximization is an effective organizing principle for long-term autonomous agent systems.
+In this section, we evaluate GA from five complementary perspectives.
+1) The task completion and token efficiency experiments show that GA maintains leading or near-leading accuracy while achieving the best overall cost-performance trade-off across benchmarks.
+2) The self-evolution experiments show that GA can compress successful trajectories into reusable SOPs and executable routines, leading to rapid convergence in time, calls, and token usage.
+3) The tool-use efficiency experiments show that a minimal atomic-tool design can match or exceed richer tool ecosystems with substantially lower interaction overhead.
+4) The memory experiments show that selective and on-demand memory improves repeated-use efficiency, supports long-term fact retention, and avoids context explosion.
+5) The web browsing experiments show that GA combines lightweight perception with precise execution, enabling better task quality, efficiency, and stability than OpenClaw on real web tasks.
+
