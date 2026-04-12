@@ -1,79 +1,111 @@
 
+% \subsection{LLM-Based Agent Systems}
+
+% The development of LLM-based autonomous agents has progressed rapidly from prompting-level techniques to fully integrated production systems.
+% Early work focused on augmenting a single LLM call with structured reasoning.
+% ReAct~\citep{react} interleaves chain-of-thought reasoning~\citep{cot} with environment actions, enabling models to ground their plans in observed feedback.
+% Reflexion~\citep{reflexion} extends this paradigm by introducing verbal self-reflection: after each trial the agent critiques its own trajectory and carries the critique forward, yielding substantial gains on sequential decision-making benchmarks.
+
+% Moving beyond single-turn prompting, AutoGPT~\citep{autogpt} demonstrated that an LLM can autonomously decompose a high-level goal into sub-tasks, execute them through tool calls, and iterate until completion, sparking widespread interest in fully autonomous agents.
+% MetaGPT~\citep{metagpt} shifted the focus to multi-agent collaboration, encoding domain-specific Standard Operating Procedures (SOPs) into the communication protocol at design time so that specialized agents coordinate through structured message passing rather than free-form dialogue.
+
+% Software engineering has emerged as a primary proving ground.
+% Devin~\citep{devin}, introduced as the first AI software engineer, couples long-horizon planning with an integrated development environment.
+% SWE-agent~\citep{sweagent} formalizes the notion of an \emph{Agent--Computer Interface} (ACI), demonstrating that purpose-built commands for file navigation and editing significantly outperform raw shell access.
+% OpenHands~\citep{openhands} provides an open-source platform unifying multiple agent architectures with a shared runtime, complemented by the OpenHands SDK~\citep{openhands_sdk} for rapid agent development.
+
+% Most recently, a wave of product-level systems has pushed the frontier of agent capabilities.
+% Claude Code~\citep{claudecode} adopts a single-threaded master loop with approximately 24 built-in tools, relying on compaction-based context management that triggers summarization when utilization reaches roughly 92\% of the context window.
+% OpenAI Codex~\citep{codex} deploys an RL-optimized coding agent in isolated cloud sandboxes, emphasizing safe parallel execution.
+% Manus~\citep{manus} introduces a three-agent architecture---planner, executor, and verifier---built around the CodeAct paradigm in which executable Python code serves as the universal action format.
+% OpenClaw~\citep{openclaw_rl} takes a messaging-platform-centric approach, centering agent interaction on a skills marketplace and attracting broad community adoption.
+
+% Despite this rapid progress, the vast majority of existing systems target single-session task completion or are tailored to a specific domain such as software engineering.
+% Few address the challenge of long-term autonomy with a systematic optimization of context efficiency.
+% GenericAgent is designed to fill precisely this gap.
+
+% \subsection{Memory Systems for Agents}
+
+% Effective memory management is critical for agents that must operate over extended horizons, yet existing approaches exhibit notable limitations.
+% MemGPT~\citep{memgpt} draws an analogy to operating-system virtual memory, maintaining a two-tier architecture in which the LLM's context window serves as ``main memory'' (RAM) and an external database acts as ``disk.''
+% A paging mechanism swaps information between the two tiers on demand, but the approach inherits the complexity of page-fault handling without mechanisms to verify the integrity of what is stored.
+
+% A-MEM~\citep{amem} takes inspiration from the Zettelkasten note-taking method, organizing memories as a dynamically evolving graph with semantic links between atomic notes.
+% While the graph structure supports rich associative retrieval, the system lacks mechanisms to prevent hallucinated or stale information from contaminating the memory store over time.
+
+% Among production systems, Claude Code~\citep{claudecode} persists memory as flat Markdown files and triggers compaction---a summarization pass that condenses the conversation---when context utilization approaches its ceiling.
+% Manus~\citep{manus} maintains a chronological event stream as working memory and offloads longer-term state to file-based artifacts such as \texttt{todo.md} for plan tracking.
+% Both designs are predominantly append-only: new information is accumulated but rarely condensed, compressed, or actively verified against ground truth.
+
+% A common shortcoming across these systems is the absence of strict verification mechanisms that guard against hallucination contamination of the memory store.
+% Updates are largely additive, and no system performs active condensation that distills accumulated knowledge into progressively denser representations.
+% GenericAgent addresses these gaps through its L0--L3 hierarchical memory architecture and a ``No Execution, No Memory'' verification principle that conditions every memory update on an observed action outcome, ensuring that only empirically validated information enters the persistent store.
+
+% \subsection{Self-Evolution and Experience Accumulation}
+
+% A growing body of work investigates how agents can improve autonomously by accumulating and leveraging experience.
+% Voyager~\citep{voyager} introduced the first LLM-based lifelong learning agent, constructing an ever-growing library of executable skills within the Minecraft environment; each skill is a verified JavaScript program that the agent can compose to tackle increasingly complex tasks.
+
+% A recent survey on self-evolving agents~\citep{selfevolvesurvey} provides a comprehensive taxonomy along three axes: \emph{what} to evolve (model parameters, memory, or tool repertoire), \emph{when} to evolve (intra-test-time versus inter-test-time), and \emph{how} to evolve (using scalar or textual feedback).
+% Within this taxonomy, several concrete methods have been proposed.
+% EvolveR~\citep{evolver} performs offline self-distillation of successful trajectories into strategic principles, which are then retrieved online to guide future decisions.
+% FLEX~\citep{flex} builds a structured experience library through continual reflection on both successes and failures, selecting relevant past experiences at inference time.
+% AgentEvolver~\citep{agentevolver} represents experience as structured knowledge units expressed in natural language and injects them into the agent's context for in-context learning.
+% The self-evolving lifelong learning framework~\citep{selfevolvinglifelong} decomposes the evolution process into three stages---experience exploration, skill learning, and knowledge internalization---providing a principled progression from raw observations to reusable capabilities.
+
+% Despite their diversity, existing self-evolution approaches share a common limitation: they distill experience exclusively into textual guidelines---natural-language summaries, principles, or structured notes.
+% None take the further step of codifying distilled experience into executable programs, thereby missing an opportunity for order-of-magnitude reductions in token cost.
+% An SOP that requires hundreds of tokens to describe in prose can often be implemented as a short function consuming only a handful of tokens to invoke.
+% GenericAgent's three-stage evolution pipeline---from natural-language experience to structured SOPs to executable code and reusable skills---bridges this gap, enabling progressively denser and more efficient representations of accumulated knowledge.
+
+% \subsection{Tool Design and Context Engineering}
+
+% Tool augmentation has become a standard technique for extending LLM capabilities.
+% Toolformer~\citep{toolformer} demonstrated that language models can learn to insert API calls into their own generations, while Gorilla~\citep{gorilla} and ToolBench~\citep{toolbench} address the challenge of selecting from large-scale tool repositories with hundreds or thousands of available APIs.
+% Function calling interfaces, initially popularized alongside GPT-4~\citep{gpt4} and subsequently adopted across providers, now provide the dominant paradigm for structured tool invocation in production systems.
+
+% The Manus system~\citep{manus} pushes this further with its CodeAct paradigm, in which executable Python code serves as a universal action format---subsuming individual tool calls within a more expressive programming abstraction.
+% On the design-philosophy side, Anthropic's ``Building Effective Agents''~\citep{anthropic_agents} and ``Context Engineering''~\citep{anthropic_context} documents offer the most systematic industry articulation of context efficiency principles to date, advocating system prompts written at the right level of abstraction, token-efficient tool definitions, just-in-time information retrieval, and aggressive compaction of historical context.
+
+% In practice, however, existing systems tend to address capability gaps by adding specialized tools: Claude Code~\citep{claudecode} ships with approximately 24 built-in tools, and OpenHands~\citep{openhands} exposes a rich and extensible toolset.
+% Each additional tool definition consumes context tokens for its schema, description, and usage examples, creating a tension between capability breadth and context efficiency.
+
+% Web browsing presents a particularly acute instance of this tension.
+% Vision-based approaches such as Anthropic's Computer Use~\citep{computeruse} operate on screenshot pixels, while DOM-based methods parse the page's HTML or accessibility tree.
+% WebArena~\citep{webarena} and Mind2Web~\citep{mind2web} have established standard benchmarks for evaluating web agents, revealing that both raw HTML and accessibility-tree representations contain substantial irrelevant information---navigation bars, decorative elements, tracking scripts---that dilutes the context with low-density tokens.
+
+% GenericAgent takes a fundamentally different approach.
+% Rather than expanding the tool repertoire, it defines a minimal atomic set of only seven tools whose principled composition achieves full environmental control.
+% Combined with DOM-level content compression that strips irrelevant markup before it enters the context window, this design simultaneously minimizes tool-definition overhead and maximizes the information density of web interaction observations.
+
 \subsection{LLM-Based Agent Systems}
 
-The development of LLM-based autonomous agents has progressed rapidly from prompting-level techniques to fully integrated production systems.
-Early work focused on augmenting a single LLM call with structured reasoning.
-ReAct~\citep{react} interleaves chain-of-thought reasoning~\citep{cot} with environment actions, enabling models to ground their plans in observed feedback.
-Reflexion~\citep{reflexion} extends this paradigm by introducing verbal self-reflection: after each trial the agent critiques its own trajectory and carries the critique forward, yielding substantial gains on sequential decision-making benchmarks.
+LLM agents have evolved along a clear trajectory: from prompt-level reasoning loops, to autonomous task decomposition, to domain-specialized production systems. ReAct~\citep{react} and Reflexion~\citep{reflexion} established the basic interaction pattern of alternating reasoning with action and using feedback from prior trajectories to improve future decisions. AutoGPT~\citep{autogpt} then popularized iterative goal decomposition with tool-driven execution, while MetaGPT~\citep{metagpt} made coordination itself a design object by encoding role specialization and SOP-like workflows into multi-agent communication.
 
-Moving beyond single-turn prompting, AutoGPT~\citep{autogpt} demonstrated that an LLM can autonomously decompose a high-level goal into sub-tasks, execute them through tool calls, and iterate until completion, sparking widespread interest in fully autonomous agents.
-MetaGPT~\citep{metagpt} shifted the focus to multi-agent collaboration, encoding domain-specific Standard Operating Procedures (SOPs) into the communication protocol at design time so that specialized agents coordinate through structured message passing rather than free-form dialogue.
+Software engineering quickly became the main stress test for these ideas. Devin~\citep{devin} frames coding as long-horizon execution in an integrated environment; SWE-agent~\citep{sweagent} shows that a carefully designed \emph{Agent--Computer Interface} can outperform unrestricted shell access; and OpenHands~\citep{openhands,openhands_sdk} offers an open runtime and SDK for instantiating different agent architectures. Recent product systems push this line further: Claude Code~\citep{claudecode} emphasizes practical coding workflows with explicit context management, OpenAI Codex~\citep{codex} couples coding agents with isolated cloud sandboxes, Manus~\citep{manus} organizes planning, execution, and verification around CodeAct, and OpenClaw~\citep{openclaw_rl} centers interaction around reusable skills.
 
-Software engineering has emerged as a primary proving ground.
-Devin~\citep{devin}, introduced as the first AI software engineer, couples long-horizon planning with an integrated development environment.
-SWE-agent~\citep{sweagent} formalizes the notion of an \emph{Agent--Computer Interface} (ACI), demonstrating that purpose-built commands for file navigation and editing significantly outperform raw shell access.
-OpenHands~\citep{openhands} provides an open-source platform unifying multiple agent architectures with a shared runtime, complemented by the OpenHands SDK~\citep{openhands_sdk} for rapid agent development.
-
-Most recently, a wave of product-level systems has pushed the frontier of agent capabilities.
-Claude Code~\citep{claudecode} adopts a single-threaded master loop with approximately 24 built-in tools, relying on compaction-based context management that triggers summarization when utilization reaches roughly 92\% of the context window.
-OpenAI Codex~\citep{codex} deploys an RL-optimized coding agent in isolated cloud sandboxes, emphasizing safe parallel execution.
-Manus~\citep{manus} introduces a three-agent architecture---planner, executor, and verifier---built around the CodeAct paradigm in which executable Python code serves as the universal action format.
-OpenClaw~\citep{openclaw_rl} takes a messaging-platform-centric approach, centering agent interaction on a skills marketplace and attracting broad community adoption.
-
-Despite this rapid progress, the vast majority of existing systems target single-session task completion or are tailored to a specific domain such as software engineering.
-Few address the challenge of long-term autonomy with a systematic optimization of context efficiency.
-GenericAgent is designed to fill precisely this gap.
+The common trend is clear: agent systems are becoming more capable and more integrated. Yet most are still optimized either for bounded single-session tasks or for narrow domains such as software engineering. What remains underexplored is how to sustain long-horizon, cross-domain autonomy while keeping context growth under tight control. GenericAgent is motivated by this missing combination of generality and context efficiency.
 
 \subsection{Memory Systems for Agents}
 
-Effective memory management is critical for agents that must operate over extended horizons, yet existing approaches exhibit notable limitations.
-MemGPT~\citep{memgpt} draws an analogy to operating-system virtual memory, maintaining a two-tier architecture in which the LLM's context window serves as ``main memory'' (RAM) and an external database acts as ``disk.''
-A paging mechanism swaps information between the two tiers on demand, but the approach inherits the complexity of page-fault handling without mechanisms to verify the integrity of what is stored.
+Existing memory work has made long-horizon agents more feasible, but it is much stronger on storage and retrieval than on verification and condensation. MemGPT~\citep{memgpt} treats the context window as ``main memory'' and external storage as ``disk,'' using a paging mechanism to move information across tiers. A-MEM~\citep{amem} instead organizes memory as a dynamically evolving graph of semantically linked atomic notes, enabling richer associative recall.
 
-A-MEM~\citep{amem} takes inspiration from the Zettelkasten note-taking method, organizing memories as a dynamically evolving graph with semantic links between atomic notes.
-While the graph structure supports rich associative retrieval, the system lacks mechanisms to prevent hallucinated or stale information from contaminating the memory store over time.
+Production systems adopt more pragmatic variants of the same idea. Claude Code~\citep{claudecode} persists project memory in Markdown files and periodically compacts conversation history, while Manus~\citep{manus} maintains a chronological event trace and external artifacts such as \texttt{todo.md} for plan tracking. These designs extend the effective horizon of the agent, but they remain largely append-only: information is accumulated, summarized, or retrieved, rather than rigorously filtered and distilled into denser validated representations.
 
-Among production systems, Claude Code~\citep{claudecode} persists memory as flat Markdown files and triggers compaction---a summarization pass that condenses the conversation---when context utilization approaches its ceiling.
-Manus~\citep{manus} maintains a chronological event stream as working memory and offloads longer-term state to file-based artifacts such as \texttt{todo.md} for plan tracking.
-Both designs are predominantly append-only: new information is accumulated but rarely condensed, compressed, or actively verified against ground truth.
-
-A common shortcoming across these systems is the absence of strict verification mechanisms that guard against hallucination contamination of the memory store.
-Updates are largely additive, and no system performs active condensation that distills accumulated knowledge into progressively denser representations.
-GenericAgent addresses these gaps through its L0--L3 hierarchical memory architecture and a ``No Execution, No Memory'' verification principle that conditions every memory update on an observed action outcome, ensuring that only empirically validated information enters the persistent store.
+This leaves two gaps. First, existing systems provide limited protection against hallucinated or stale information entering persistent memory. Second, they rarely turn accumulated experience into progressively higher-density forms. GenericAgent addresses both through an L0--L3 hierarchical memory and a ``No Execution, No Memory'' rule, so memory updates are grounded in observed outcomes and actively compressed rather than merely accumulated.
 
 \subsection{Self-Evolution and Experience Accumulation}
 
-A growing body of work investigates how agents can improve autonomously by accumulating and leveraging experience.
-Voyager~\citep{voyager} introduced the first LLM-based lifelong learning agent, constructing an ever-growing library of executable skills within the Minecraft environment; each skill is a verified JavaScript program that the agent can compose to tackle increasingly complex tasks.
+Research on self-evolving agents asks how experience can be converted into better future behavior, but most methods still stop at textual abstractions. Voyager~\citep{voyager} is the strongest exception: in Minecraft it continually expands a library of verified executable skills that can be recomposed for harder tasks. Beyond such domain-specific lifelong learning, however, the broader literature mainly distills experience into language.
 
-A recent survey on self-evolving agents~\citep{selfevolvesurvey} provides a comprehensive taxonomy along three axes: \emph{what} to evolve (model parameters, memory, or tool repertoire), \emph{when} to evolve (intra-test-time versus inter-test-time), and \emph{how} to evolve (using scalar or textual feedback).
-Within this taxonomy, several concrete methods have been proposed.
-EvolveR~\citep{evolver} performs offline self-distillation of successful trajectories into strategic principles, which are then retrieved online to guide future decisions.
-FLEX~\citep{flex} builds a structured experience library through continual reflection on both successes and failures, selecting relevant past experiences at inference time.
-AgentEvolver~\citep{agentevolver} represents experience as structured knowledge units expressed in natural language and injects them into the agent's context for in-context learning.
-The self-evolving lifelong learning framework~\citep{selfevolvinglifelong} decomposes the evolution process into three stages---experience exploration, skill learning, and knowledge internalization---providing a principled progression from raw observations to reusable capabilities.
+A recent survey on self-evolving agents~\citep{selfevolvesurvey} organizes the space by what evolves, when evolution occurs, and what feedback drives it. Representative methods follow this pattern. EvolveR~\citep{evolver} distills successful trajectories into strategic principles; FLEX~\citep{flex} builds a reflection-based experience library from both successes and failures; AgentEvolver~\citep{agentevolver} stores structured knowledge units in natural language; and the self-evolving lifelong learning framework~\citep{selfevolvinglifelong} stages evolution from exploration to skill learning to knowledge internalization.
 
-Despite their diversity, existing self-evolution approaches share a common limitation: they distill experience exclusively into textual guidelines---natural-language summaries, principles, or structured notes.
-None take the further step of codifying distilled experience into executable programs, thereby missing an opportunity for order-of-magnitude reductions in token cost.
-An SOP that requires hundreds of tokens to describe in prose can often be implemented as a short function consuming only a handful of tokens to invoke.
-GenericAgent's three-stage evolution pipeline---from natural-language experience to structured SOPs to executable code and reusable skills---bridges this gap, enabling progressively denser and more efficient representations of accumulated knowledge.
+The shared limitation is that, outside specialized environments such as Voyager's Minecraft setting, experience is usually retained as notes, principles, or contextual guidance. General-purpose agent systems rarely push distillation all the way into reusable executable procedures. GenericAgent explicitly does so through a three-stage pipeline that turns natural-language experience into structured SOPs and then into code and reusable skills, yielding denser and cheaper representations at inference time.
 
 \subsection{Tool Design and Context Engineering}
 
-Tool augmentation has become a standard technique for extending LLM capabilities.
-Toolformer~\citep{toolformer} demonstrated that language models can learn to insert API calls into their own generations, while Gorilla~\citep{gorilla} and ToolBench~\citep{toolbench} address the challenge of selecting from large-scale tool repositories with hundreds or thousands of available APIs.
-Function calling interfaces, initially popularized alongside GPT-4~\citep{gpt4} and subsequently adopted across providers, now provide the dominant paradigm for structured tool invocation in production systems.
+Tool use has become a standard way to extend LLM agents, but capability gains often come with growing context overhead. Toolformer~\citep{toolformer} showed that models can learn where to invoke APIs within generation, while Gorilla~\citep{gorilla} and ToolBench~\citep{toolbench} study tool selection at repository scale. In production, function calling interfaces popularized alongside GPT-4~\citep{gpt4} have become the default pattern for structured tool invocation, and Manus~\citep{manus} pushes this idea further through CodeAct, where executable code serves as a universal action language. Anthropic's discussions of effective agents and context engineering~\citep{anthropic_agents,anthropic_context} make the systems lesson explicit: tool schemas, retrieved state, and historical traces all compete for a limited token budget.
 
-The Manus system~\citep{manus} pushes this further with its CodeAct paradigm, in which executable Python code serves as a universal action format---subsuming individual tool calls within a more expressive programming abstraction.
-On the design-philosophy side, Anthropic's ``Building Effective Agents''~\citep{anthropic_agents} and ``Context Engineering''~\citep{anthropic_context} documents offer the most systematic industry articulation of context efficiency principles to date, advocating system prompts written at the right level of abstraction, token-efficient tool definitions, just-in-time information retrieval, and aggressive compaction of historical context.
+This trade-off is especially sharp in practical agent systems. Rich toolsets such as those in Claude Code~\citep{claudecode} and OpenHands~\citep{openhands} expand capability, but each additional tool also increases schema overhead. Web interaction exposes the same problem on the observation side. Whether an agent consumes screenshots, raw HTML, or accessibility trees, benchmarks such as WebArena~\citep{webarena} and Mind2Web~\citep{mind2web} show that a substantial fraction of the input consists of boilerplate structure or interface chrome that may be necessary for execution yet remains low-value for reasoning.
 
-In practice, however, existing systems tend to address capability gaps by adding specialized tools: Claude Code~\citep{claudecode} ships with approximately 24 built-in tools, and OpenHands~\citep{openhands} exposes a rich and extensible toolset.
-Each additional tool definition consumes context tokens for its schema, description, and usage examples, creating a tension between capability breadth and context efficiency.
-
-Web browsing presents a particularly acute instance of this tension.
-Vision-based approaches such as Anthropic's Computer Use~\citep{computeruse} operate on screenshot pixels, while DOM-based methods parse the page's HTML or accessibility tree.
-WebArena~\citep{webarena} and Mind2Web~\citep{mind2web} have established standard benchmarks for evaluating web agents, revealing that both raw HTML and accessibility-tree representations contain substantial irrelevant information---navigation bars, decorative elements, tracking scripts---that dilutes the context with low-density tokens.
-
-GenericAgent takes a fundamentally different approach.
-Rather than expanding the tool repertoire, it defines a minimal atomic set of only seven tools whose principled composition achieves full environmental control.
-Combined with DOM-level content compression that strips irrelevant markup before it enters the context window, this design simultaneously minimizes tool-definition overhead and maximizes the information density of web interaction observations.
+GenericAgent therefore pursues a different design point. Rather than continually expanding the tool inventory, it relies on a minimal atomic set of seven tools and combines this with DOM-level compression before observations enter the context window. The goal is not just to act in more environments, but to do so with higher information density per token.
