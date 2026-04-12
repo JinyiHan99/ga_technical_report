@@ -24,7 +24,7 @@ The central objective of this principle is to maximize decision-relevant informa
 
 These three constraints form a minimal and complementary set. Completeness ensures that no required information is missing. Conciseness removes all non-essential content. Naturalness preserves the interpretability of the remaining information. Together, they define a high-density contextual representation that is both information-complete and cognitively tractable.
 
-Based on these constraints, GA introduces four system-level mechanisms to enforce high-density context construction. (1) First, it adopts a minimal and orthogonal tool interface composed of a fixed set of atomic tools. This prevents tool-space expansion and removes redundant interface definitions, improving conciseness at the action level. (2)Second, GA employs an index-driven hierarchical memory mechanism.  Historical information is first filtered through a lightweight index and only selectively expanded when needed. This ensures completeness without requiring full-history injection. (3) Third, repeated workflows are distilled into structured SOPs and compiled into executable skill units. This replaces multi-step reasoning traces with compact reusable abstractions, improving conciseness while preserving structural clarity. (4) Finally, web content is processed through DOM simplification and incremental updates. Only semantically meaningful content and changes are introduced into the context, which maintains both conciseness and naturalness. 
+Based on these constraints, GA introduces four system-level mechanisms to enforce high-density context construction. (1) First, it adopts a minimal and orthogonal tool interface composed of a fixed set of atomic tools. This prevents tool-space expansion and removes redundant interface definitions, improving conciseness at the action level. (2) Second, GA employs an index-driven hierarchical memory mechanism.  Historical information is first filtered through a lightweight index and only selectively expanded when needed. This ensures completeness without requiring full-history injection. (3) Third, repeated workflows are distilled into structured SOPs and compiled into executable skill units. This replaces multi-step reasoning traces with compact reusable abstractions, improving conciseness while preserving structural clarity. (4) Finally, web content is processed through DOM simplification and incremental updates. Only semantically meaningful content and changes are introduced into the context, which maintains both conciseness and naturalness. 
 
 Through these mechanisms, GA shifts context construction from passive accumulation to active optimization. The context is transformed from a long sequence of tokens into a compact, high-value information substrate for decision making.
 
@@ -70,7 +70,10 @@ Besides, GA does not rely on specialized tools to expand functionality. Instead,
     \centering
     \caption{The nine atomic tools in GenericAgent.}
     \label{tab:tools}
-    \begin{tabular}{ll}
+    {\footnotesize
+    \setlength{\tabcolsep}{3pt}
+    \renewcommand{\arraystretch}{0.95}
+    \begin{tabularx}{\linewidth}{@{}lX@{}}
     \toprule
     \textbf{Tool} & \textbf{Brief Description} \\
     \midrule
@@ -88,12 +91,13 @@ Besides, GA does not rely on specialized tools to expand functionality. Instead,
     Inject and execute JavaScript in the user’s browser, capturing return values. \\
     \texttt{ask\_user} &
     Issue a synchronous query to the user and wait for an explicit response. \\
-    \texttt{update\_working\_checkpoint} &
+    \shortstack[l]{\texttt{update\_working\_}\\\texttt{checkpoint}} &
     Update a short-term working notepad injected in subsequent reasoning turns. \\
-    \texttt{start\_long\_term\_update} &
+    \shortstack[l]{\texttt{start\_long\_term\_}\\\texttt{update}} &
     Trigger long-term memory distillation over recent execution traces. \\
     \bottomrule
-    \end{tabular}
+    \end{tabularx}
+    }
     \end{table}
 
 \subsubsection{Hierarchical Memory Mechanism}
