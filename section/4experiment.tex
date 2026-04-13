@@ -12,7 +12,7 @@ In this section, we evaluate GA from five complementary perspectives.
 We compare four representative agent systems, including GA, Claude Code, OpenClaw, and Codex. The backbone models include Claude Sonnet 4.6, Claude Opus 4.6, Minimax M2.7, and GPT-5.4.
 
 \paragraph{Benchmark.}
-We evaluate the systems on three complementary benchmarks. (1) \textbf{SOP-Bench}~\citep{sopbench} tests multi-step SOP execution. (2) \textbf{Lifelong AgentBench} tests sequential tasks with cross-task dependency. (3) \textbf{RealFin-benchmark} tests realistic financial tasks that require domain understanding and reliable execution.
+We evaluate the systems on three complementary benchmarks. (1) \textbf{SOP-Bench}~\citep{sopbench} tests multi-step SOP execution. (2) \textbf{Lifelong AgentBench}~\citep{lifelongagentbench} tests sequential tasks with cross-task dependency. (3) \textbf{RealFin-benchmark}~\citep{realfin} tests realistic financial tasks that require domain understanding and reliable execution.
 
 \subsubsection{Results}
 
@@ -217,9 +217,9 @@ Overall, this experiment shows that GA benefits most from memory that stores onl
 \subsubsection{Long-Term Fact Retention}
 
 This experiment examines whether GA has long term factual memory and whether it can remain competitive on factual recall and multi hop reasoning tasks without relying on an additional embedding model or a vector database. 
-The compared methods include embedding based approaches, namely Mem0 and A-MEM, and non embedding approaches, namely OpenClaw and GA. 
+The compared methods include embedding based approaches, namely Mem0~\citep{mem0} and A-MEM, and non embedding approaches, namely OpenClaw and GA. 
 All methods use gpt5.4, and for the embedding based methods we adopt text-embedding-3-small as the embedding model. 
-The evaluation is conducted on the first subset of LoCoMo~\citep{locomo}, with Category 5 summary tasks removed to avoid interference from summarization ability. 
+The evaluation is conducted on the first subset of LoCoMo~\citep{locomo}, with Category 5 summary tasks removed to avoid interference from summarization ability.
 We use F1 to measure the correctness and completeness of factual content, and BLEU-1 to measure the lexical similarity between the generated answer and the reference answer.
 
 \begin{table}[htbp]
@@ -282,8 +282,8 @@ GA differs from OpenClaw mainly in its browser tool design, combining \texttt{we
 Accordingly, the evaluation focuses on three aspects, namely end to end browser interaction, multi hop web search, and head to head comparison with OpenClaw on complex custom tasks.
 
 We use three task sets. 
-\textbf{(1) WebCanvas:} measuring basic browser interaction such as navigation, clicking, filtering, and information extraction. 
-\textbf{(2) BrowseComp-ZH:} measuring multi hop web search and chain based reasoning in the Chinese web setting. 
+\textbf{(1) WebCanvas}~\citep{webcanvas}: measuring basic browser interaction such as navigation, clicking, filtering, and information extraction. 
+\textbf{(2) BrowseComp-ZH}~\citep{browsecomp_zh}: measuring multi hop web search and chain based reasoning in the Chinese web setting. 
 \textbf{(3) Custom Tasks:} measuring real world usability on academic platforms, social media, content sites, utility websites, e commerce platforms, and public retrieval services. 
 For the direct comparison with OpenClaw, we use a 22 task subset of Custom Tasks and score each task on a 0 to 3 scale through manual review with GPT-5.4 assisted judgment. 
 Both GA and OpenClaw use the same underlying model, claude-opus-4-6, in this head to head comparison.
