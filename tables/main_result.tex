@@ -1,54 +1,38 @@
-\setlength\tabcolsep{5.7pt}
-\begin{table*}[t]
+\begin{table*}[htbp]
 \centering
-\def\arraystretch{.99}
-\setlength{\tabcolsep}{0.42em}
+\caption{\textbf{Task completion rate and token efficiency across the main agent benchmarks and RealFin-benchmark.} Each block reports the original metrics used in the corresponding benchmark. Since the efficiency ratio is normalized with different token scales across benchmarks, its absolute values should only be compared within the same benchmark block.}
+\def\arraystretch{0.99}
+\setlength{\tabcolsep}{0.45em}
 \resizebox{1.0\linewidth}{!}{
-\begin{tabular}{ll BBBBB ddd R}
+\begin{tabular}{llccccc}
 \toprule
-\multirow{2}{*}{\textbf{Models}} & \multirow{2}{*}{\textbf{Method}} 
-& \multicolumn{5}{c}{\textbf{In-Domain}} & \multicolumn{3}{c}{\textbf{Out-of-Domain}} &\cellcolor{white}{\multirow{2}{*}{\textbf{AVG}}}\\
-
-
-\cmidrule(lr){3-7} \cmidrule(lr){8-10} 
-& & \cellcolor{white}{MATH500} & \cellcolor{white}{AIME24} & \cellcolor{white}{AIME25} & \cellcolor{white}{Olympiad} & \cellcolor{white}{AMC} &\cellcolor{white}{ARC}   & \cellcolor{white}{MMLU} & \cellcolor{white}{GPQA} \\ 
+\textbf{Agent} & \textbf{Model} & \textbf{Accuracy} & \textbf{Input Tokens} & \textbf{Output Tokens} & \textbf{Total Tokens} & \textbf{Efficiency} \\
 \midrule
-\multirow{7}{*}{\textbf{Qwen2.5-7B-Instuct}} 
-&Base&75.60 	&11.00 	&6.00 	&39.70 	&42.05 	&84.39 	&55.80 	&33.84	&43.55 \\
-&Self-Refine &68.40 	&9.33 	&5.67 	&36.44 	&38.67 	&57.51 	&55.90 	&34.85	&38.35 \\
-&GRPO &77.40 	&11.33 	&10.33 	&42.81 	&50.60 	&85.49 	&57.00 	&37.88	&46.60 \\
-&SFT + GRPO &78.80 	&15.33 	&11.67 	&42.81 	&50.84 	&80.63 	&57.80 	&35.86	&46.72 \\
-\cdashlinelr{2-11}
-&\method-SFT &74.20 	&9.33 	&4.00 	&34.67 	&35.18 	&72.95 	&49.10 	&33.84	&39.16 \\
-&\method-Stage I &77.00 	&11.33 	&9.00 	&42.07 	&44.46 	&80.63 	&51.50 	&35.35	&43.92 \\
-& \method(Ours) &80.00 	&13.67 	&13.67 	&45.63 	&50.12 	&86.43 	&56.30 	&38.38	&\textbf{48.03} \\
-
-\hline
-\multirow{7}{*}{\textbf{Qwen2.5-3B-Instuct}} 
-&Base &66.60 	&7.00 	&2.33 	&29.93 	&27.95 	&69.20 	&39.60 	&29.80 	&34.05 \\ 
-&Self-Refine &65.60 	&6.67 	&3.00 	&29.78 	&29.52 	&63.57 	&43.50 	&32.32 	&34.25 \\
-&GRPO &70.20 	&6.00 	&5.00 	&33.04 	&35.90 	&81.14 	&44.60 	&36.36 	&39.03\\ 
-&SFT + GRPO &70.00 	&7.33 	&3.67 	&35.11 	&35.06 	&79.01 	&45.30 	&36.36 	&38.98 \\
-\cdashlinelr{2-11}
-&\method-SFT &63.80 	&2.33 	&2.33 	&24.59 	&23.86 	&29.69 	&38.40 	&27.27 	&26.53 \\
-&\method-Stage I &65.20 	&4.33 	&2.00 	&29.04 	&29.16 	&67.32 	&41.30 	&39.39 	&34.72 \\
-& \method(Ours) &70.40 	&7.33 	&4.00 	&37.03 	&36.02 	&79.35 	&44.50 	&39.39 	&\textbf{39.75} \\ 
-\hline
-\multirow{7}{*}{\textbf{Llama3.1-8B-Instruct}} 
-&Base &42.80 	&2.00 	&0.00 	&15.85 	&12.77 	&57.08 	&42.40 	&24.75 	&24.71 \\
- &Self-Refine &13.40 	&2.00 	&0.00 	&5.04 	&7.23 	&8.79 	&9.90 	&22.73 	&8.64 \\ 
- &GRPO&52.20 	&8.33 	&1.00 	&20.15 	&24.22 	&70.31 	&45.50 	&31.31 	&31.63 \\ 
- &SFT + GRPO &57.60 	&6.00 	&0.67 	&22.52 	&28.67 	&84.73 	&43.00 	&24.24 	&33.43 \\ 
- \cdashlinelr{2-11}
- &\method-SFT &53.40 	&3.00 	&1.33 	&19.11 	&19.04 	&74.06 	&39.10 	&24.75 	&29.22 \\ 
-&\method-Stage I &55.80 	&4.00 	&1.67 	&23.41 	&26.51 	&82.17 	&42.20 	&31.82 	&33.45 \\ 
-&\method(Ours) &60.80 	&5.33 	&4.67 	&23.70 	&24.46 	&84.56 	&43.20 	&27.27 	&\textbf{34.25} \\ 
+\rowcolor{bgcolor}
+\multicolumn{7}{c}{\textbf{SOP-Bench}} \\
+GA & Claude Sonnet 4.6 & 100\% & 2.02M & 53k & 2.08M & 0.48 \\
+OpenClaw & Claude Sonnet 4.6 & 100\% & 2.60M & 40k & 2.64M & 0.38 \\
+Claude Code & Claude Sonnet 4.6 & 85\% & 1.23M & 23k & 1.25M & 0.68 \\
+GA & Minimax M2.7 & 90\% & 893k & 32k & 924k & 0.97 \\
+OpenClaw & Minimax M2.7 & 95\% & 2.91M & 46k & 2.96M & 0.32 \\
+\midrule
+\rowcolor{bgcolor}
+\multicolumn{7}{c}{\textbf{Lifelong AgentBench}} \\
+GA & Claude Sonnet 4.6 & 100\% & 222k & 20k & 241k & 4.15 \\
+OpenClaw & Claude Sonnet 4.6 & 70\% & 1.43M & 21k & 1.45M & 0.48 \\
+Claude Code & Claude Sonnet 4.6 & 75\% & 800k & 14k & 814k & 0.92 \\
+GA & Minimax M2.7 & 90\% & 400k & 23k & 423k & 2.12 \\
+OpenClaw & Minimax M2.7 & 70\% & 1.20M & 17k & 1.22M & 0.57 \\
+\midrule
+\rowcolor{bgcolor}
+\multicolumn{7}{c}{\textbf{RealFin-benchmark}} \\
+GA & Claude Sonnet 4.6 & 65\% & 102k & 12k & 114k & 5.70 \\
+Claude Code & Claude Opus 4.6 & 60\% & 290k & 17k & 307k & 1.95 \\
+Claude Code & Claude Sonnet 4.6 & 55\% & 226k & 12k & 238k & 2.31 \\
+OpenClaw & Claude Sonnet 4.6 & 35\% & 249k & 2k & 115k & 3.04 \\
+Codex & GPT-5.4 & 60\% & 838k & 54k & 892k & 0.67 \\
 \bottomrule
 \end{tabular}
 }
-\caption{\textbf{\method vs other baselines.} Compared to the Base, \method achieves an
-average performance improvement of 4.48\%, 5.70\% and 9.54\% on the three models, respectively. The best results are highlighted in bold. \method-SFT denotes models trained with SFT only; \method-Stage I denotes SFT followed by Stage I; \method denotes the full two-stage RL training (default).}
-\vspace{-0.2cm}
-\vspace{-0.3cm}
-\label{tab:main}
+\label{tab:dimension1_task_completion}
 \end{table*}
