@@ -9,7 +9,7 @@ In this section, we evaluate GA from five complementary perspectives.
 \subsubsection{Setup}
 
 \paragraph{Agents and Models.}
-We compare four representative agent systems, including GA, Claude Code~\citep{claudecode}, OpenClaw~\citep{openclaw_rl}, and Codex~\citep{codex}. The backbone models include Claude Sonnet 4.6, Claude Opus 4.6, Minimax M2.7, and GPT-5.4.
+We compare four representative agent systems, including GA, Claude Code, OpenClaw, and Codex. The backbone models include Claude Sonnet 4.6, Claude Opus 4.6, Minimax M2.7, and GPT-5.4.
 
 \paragraph{Benchmark.}
 We evaluate the systems on three complementary benchmarks. (1) \textbf{SOP-Bench}~\citep{sopbench} tests multi-step SOP execution. (2) \textbf{Lifelong AgentBench}~\citep{lifelongagentbench} tests sequential tasks with cross-task dependency. (3) \textbf{RealFin-benchmark}~\citep{realfin} tests realistic financial tasks that require domain understanding and reliable execution.
@@ -96,7 +96,7 @@ Once the workflow is codified, the system enters a narrow convergence band of ro
 \subsubsection{Setup}
 
 \paragraph{Baseline.}
-All compared systems use the same backbone model, Claude Sonnet 4.6. We evaluate three representative tool-use designs. (1) \textbf{GA}, which uses a minimal atomic-tool design based on a small set of general-purpose tools. (2) \textbf{Claude Code}~\citep{claudecode}, which serves as a strong baseline with a richer specialized tool ecosystem. (3) \textbf{OpenClaw}~\citep{openclaw_rl}, which represents a less minimal multi-tool design with several specialized or environment-dependent capabilities.
+All compared systems use the same backbone model, Claude Sonnet 4.6. We evaluate three representative tool-use designs. (1) \textbf{GA}, which uses a minimal atomic-tool design based on a small set of general-purpose tools. (2) \textbf{Claude Code}, which serves as a strong baseline with a richer specialized tool ecosystem. (3) \textbf{OpenClaw}, which represents a less minimal multi-tool design with several specialized or environment-dependent capabilities.
 
 \paragraph{Tool.}
 \input{tables/tool_inventory_overview}
@@ -165,7 +165,7 @@ To validate the effectiveness of GA's memory system, we design four experiments.
 \subsubsection{Continuous Efficiency Improvement}
 
 Aiming to evaluate whether the condensed memory framework enables GA to improve through continued real-world use, we focus on the agent’s performance trajectory across repeated runs to assess gains in efficiency and reduced token consumption driven by accumulated experience.
-To this end, we compare CodeX~\citep{codex}, Claude Code~\citep{claudecode}, OpenClaw~\citep{openclaw_rl}, and GA under the gpt-5.4. 
+To this end, we compare CodeX, Claude Code, OpenClaw, and GA under the gpt-5.4. 
 Each experimental run consists of downloading five different datasets from HuggingFace. 
 To avoid contamination from residual context, every download task is conducted in a fresh session. 
 
@@ -217,7 +217,7 @@ Overall, this experiment shows that GA benefits most from memory that stores onl
 \subsubsection{Long-Term Fact Retention}
 
 This experiment examines whether GA has long term factual memory and whether it can remain competitive on factual recall and multi hop reasoning tasks without relying on an additional embedding model or a vector database. 
-The compared methods include embedding based approaches, namely Mem0~\citep{mem0} and A-MEM~\citep{amem}, and non embedding approaches, namely OpenClaw~\citep{openclaw_rl} and GA. 
+The compared methods include embedding based approaches, namely Mem0~\citep{mem0} and A-MEM, and non embedding approaches, namely OpenClaw and GA. 
 All methods use gpt5.4, and for the embedding based methods we adopt text-embedding-3-small as the embedding model. 
 The evaluation is conducted on the first subset of Locomo10~\citep{locomo}, with Category 5 summary tasks removed to avoid interference from summarization ability. 
 We use F1 to measure the correctness and completeness of factual content, and BLEU-1 to measure the lexical similarity between the generated answer and the reference answer.
@@ -249,7 +249,7 @@ Overall, these results show that long term factual memory can be achieved throug
 \subsubsection{Context Explosion Prevention}
 
 
-To evaluate whether GA can prevent memory explosion under long term use and continuous skill expansion, we compare GA, Claude Code~\citep{claudecode}, CodeX~\citep{codex}, and OpenClaw~\citep{openclaw_rl} after installing 20 skills for each agent and using them intensively over time. 
+To evaluate whether GA can prevent memory explosion under long term use and continuous skill expansion, we compare GA, Claude Code, CodeX, and OpenClaw after installing 20 skills for each agent and using them intensively over time. 
 We then issue a minimal request ``Hello'' and measure the Full prompt length of each agent to assess how well its memory system controls context growth after prolonged use.
 
 \begin{table}[htbp]
@@ -285,7 +285,7 @@ We use three task sets.
 \textbf{(1) WebCanvas}~\citep{webcanvas}: measuring basic browser interaction such as navigation, clicking, filtering, and information extraction. 
 \textbf{(2) BrowseComp-ZH}~\citep{browsecomp_zh}: measuring multi hop web search and chain based reasoning in the Chinese web setting. 
 \textbf{(3) Custom Tasks:} measuring real world usability on academic platforms, social media, content sites, utility websites, e commerce platforms, and public retrieval services. 
-For the direct comparison with OpenClaw~\citep{openclaw_rl}, we use a 22 task subset of Custom Tasks and score each task on a 0 to 3 scale through manual review with GPT-5.4 assisted judgment. 
+For the direct comparison with OpenClaw, we use a 22 task subset of Custom Tasks and score each task on a 0 to 3 scale through manual review with GPT-5.4 assisted judgment. 
 Both GA and OpenClaw use the same underlying model, claude-opus-4-6, in this head to head comparison.
 
 \begin{table}[htbp]

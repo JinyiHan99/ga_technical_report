@@ -1,11 +1,11 @@
 The recent emergence of agentic systems such as Claude Code~\citep{claudecode} and OpenClaw~\citep{openclaw_rl} signals a broader shift in the role of large language models (LLMs).
-Instead of serving solely as passive text generators, LLMs are increasingly deployed as goal-directed agents that operate through terminals, file systems, browsers, and external tools~\citep{react,anthropic_agents}.
+Instead of serving solely as passive text generators, LLMs are increasingly deployed as goal-directed agents that operate through terminals, file systems, browsers, and external tools.
 This transition substantially expands their functional scope, while introducing new systems-level challenges.
-In long-horizon tasks, success depends jointly on the reasoning capability of the underlying model and the system's ability to manage context, retrieve relevant information, and accumulate useful experience over time~\citep{anthropic_context}.
+In long-horizon tasks, success depends jointly on the reasoning capability of the underlying model and the system’s ability to manage context, retrieve relevant information, and accumulate useful experience over time.
 These requirements give rise to two fundamental challenges.
 
 The second challenge is \textbf{how to enable effective continual self-evolution}.
-Without mechanisms for distilling experience, agents fail to improve from repeated interactions in long-horizon environments~\citep{voyager,selfevolvesurvey}.
+Without mechanisms for distilling experience, agents fail to improve from repeated interactions in long-horizon environments.
 They repeatedly fall into similar failure states, leading to unnecessary token consumption without capability gains.
 As a result, the agent system enters a stagnation loop where performance remains unchanged despite continued interaction.
 
