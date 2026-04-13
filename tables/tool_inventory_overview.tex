@@ -1,0 +1,53 @@
+\setlength\tabcolsep{5.2pt}
+\begin{table*}[t]
+\centering
+\def\arraystretch{1.02}
+\setlength{\tabcolsep}{0.45em}
+\resizebox{0.98\linewidth}{!}{
+\begin{tabular}{p{0.33\linewidth} p{0.33\linewidth} p{0.24\linewidth}}
+\toprule
+\textbf{Claude Code} & \textbf{OpenClaw} & \textbf{GA} \\
+\midrule
+\makecell[tl]{\texttt{AgentTool}\\
+\texttt{TaskOutputTool}\\
+\texttt{BashTool}\\
+\texttt{GlobTool}\\
+\texttt{GrepTool}\\
+\texttt{FileReadTool}\\
+\texttt{FileEditTool}\\
+\texttt{FileWriteTool}\\
+\texttt{NotebookEditTool}\\
+\texttt{WebFetchTool}\\
+\ldots\\
+\textit{53 source-level built-in tools:}\\
+\textit{20 base + 33 conditional.}}
+&
+\makecell[tl]{\texttt{browser}\\
+\texttt{canvas}\\
+\texttt{nodes}\\
+\texttt{cron}\\
+\texttt{message}\\
+\texttt{tts}\\
+\texttt{gateway}\\
+\texttt{agents-list}\\
+\texttt{sessions-list}\\
+\texttt{sessions-history}\\
+\ldots\\
+\textit{18 source-level tool factories;}\\
+\textit{runtime may include plugins.}}
+&
+\makecell[tl]{\texttt{file\_read}\\
+\texttt{file\_write}\\
+\texttt{file\_patch}\\
+\texttt{code\_run}\\
+\texttt{web\_scan}\\
+\texttt{web\_execute\_js}\\
+\texttt{ask\_user}\\
+\texttt{update\_working\_}\\
+\texttt{checkpoint}} \\
+\bottomrule
+\end{tabular}
+}
+\caption{\textbf{Source-level tool inventory overview of Claude Code, OpenClaw, and GA.} We list representative native tools for Claude Code and OpenClaw and show the full atomic tool set of GA. The counts refer to source-level built-in tools/tool factories rather than the exact runtime-visible tool set, which may vary with configuration, feature flags, permissions, and plugin-based dynamic injection.}
+\label{tab:tool_inventory_overview}
+\end{table*}
