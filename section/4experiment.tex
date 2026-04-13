@@ -283,6 +283,8 @@ We evaluate GA's web browsing capability on three benchmarks.
 \textbf{(3) Custom Tasks:} 22 real world tasks covering academic platforms, social media, content sites, utility websites, e commerce platforms, and public retrieval services, scored on a 0 to 3 scale through manual review with GPT-5.4 assisted judgment.
 Both GA and OpenClaw use claude-opus-4-6 as the backbone model.
 
+\subsubsection{Results}
+
 \begin{table}[t]
 \centering
 \small
@@ -300,9 +302,6 @@ Custom Tasks & 22 & Human + LLM & \textbf{0.577} & 0.50 & \textbf{0.26} & 0.76 \
 \end{tabular}
 \label{tab:web_browsing_results}
 \end{table}
-
-
-\subsubsection{Results}
 
 As shown in Table~\ref{tab:web_browsing_results}, GA outperforms OpenClaw across all three benchmarks while consuming significantly fewer tokens. On WebCanvas, GA achieves 0.834 score with 0.18M tokens versus OpenClaw's 0.722 score with 0.71M tokens. On BrowseComp-ZH, GA reaches 0.60 accuracy compared to OpenClaw's 0.20, using 0.47M versus 1.31M tokens. On Custom Tasks, GA scores 0.577 versus 0.50, winning 10 tasks against 6, while using only 0.26M tokens compared to 0.76M for OpenClaw.
 
