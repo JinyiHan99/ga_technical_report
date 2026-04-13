@@ -84,29 +84,30 @@ Overall, GA builds an extremely compact tool system through capability compressi
     \caption{Atomic tools in GA.}
     \label{tab:tools}
     {\footnotesize
-    \setlength{\tabcolsep}{3pt}
+    \setlength{\tabcolsep}{1.5pt}
     \renewcommand{\arraystretch}{0.95}
-    \begin{tabularx}{\linewidth}{@{}lX@{}}
+    \begin{tabularx}{\linewidth}{@{}p{0.30\linewidth}@{\hspace{4pt}}X@{}}
     \toprule
+    \rowcolor{blue!8}
     \textbf{Tool} & \textbf{Brief Description} \\
     \midrule
-    \texttt{code\_run} &
+    \mbox{\texttt{code\_run}} &
     Execute Python or shell code with timeout and abort control. \\
-    \texttt{file\_read} &
+    \mbox{\texttt{file\_read}} &
     Read local files by line range, with optional keyword-based lookup. \\
-    \texttt{file\_write} &
+    \mbox{\texttt{file\_write}} &
     Create files or write large content blocks in overwrite, append, or prepend mode. \\
-    \texttt{file\_patch} &
+    \mbox{\texttt{file\_patch}} &
     Apply precise, context-checked updates to existing file regions. \\
-    \texttt{web\_scan} &
+    \mbox{\texttt{web\_scan}} &
     Extract the current browser page as simplified HTML or text, together with tab metadata. \\
-    \texttt{web\_execute\_js} &
+    \mbox{\texttt{web\_execute\_js}} &
     Inject and execute JavaScript in the user’s browser and capture the return value. \\
-    \texttt{ask\_user} &
+    \mbox{\texttt{ask\_user}} &
     Issue a synchronous query to the user and wait for an explicit response. \\
-    \shortstack[l]{\texttt{update\_working\_}\\\texttt{checkpoint}} &
+    \mbox{\texttt{update\_working\_checkpoint}} &
     Update a short-term working note that is injected into subsequent reasoning turns. \\
-    \shortstack[l]{\texttt{start\_long\_term\_}\\\texttt{update}} &
+    \mbox{\texttt{start\_long\_term\_update}} &
     Trigger long-term memory distillation over recent execution traces. \\
     \bottomrule
     \end{tabularx}

@@ -174,11 +174,11 @@
 \tcbset{
   aibox/.style={
     width=\linewidth,
-    top=8pt,
-    bottom=4pt,
-    colback=blue!6!white,
+    top=2pt,
+    bottom=2pt,
+    colback=hjy_blue,
     colframe=black,
-    enhanced,
+    % enhanced,
     center,
   }
 }
@@ -203,10 +203,10 @@
 \newcommand{\chg}[1]{\scalebox{0.7}{(#1)}}
 \newcommand{\fix}{\marginpar{FIX}}
 \newcommand{\new}{\marginpar{NEW}}
-
+\definecolor{hjy_blue}{HTML}{F2F6FD}
 \tcbset{
     training_data/.style={
-        colback=blue!5,      % 浅蓝色背景
+        colback=hjy_blue,      % 浅蓝色背景
         colframe=black,      % 黑色边框
         sharp corners,       % 直角
         left=3pt, right=3pt, top=3pt, bottom=3pt,

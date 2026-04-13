@@ -1,4 +1,4 @@
-\begin{figure*}[htbp]
+\begin{figure*}[t]
     \centering
     \includegraphics[width=0.98\linewidth]{image/framework.pdf}
     \caption{\textbf{Overall framework of GA.} GA follows a unified agent loop that constructs an execution context from the current task and relevant memory, generates outputs or tool calls, and updates the system through structured feedback.
@@ -81,34 +81,37 @@ Overall, GA builds an extremely compact tool system through capability compressi
 
 \begin{table}[t]
     \centering
-    \caption{The nine atomic tools in GenericAgent.}
+    \caption{Atomic tools in GA.}
     \label{tab:tools}
-    \setlength{\tabcolsep}{3pt}
+    {\footnotesize
+    \setlength{\tabcolsep}{1.2pt}
     \renewcommand{\arraystretch}{0.95}
-    \begin{tabularx}{\linewidth}{@{}p{0.28\linewidth}X@{}}
-        \toprule
-        \textbf{Tool} & \textbf{Brief Description} \\
-        \midrule
-        \texttt{code\_run} &
-        Execute Python or shell code with timeout and abort control. \\
-        \texttt{file\_read} &
-        Read local files by line range, with optional keyword-based location. \\
-        \texttt{file\_write} &
-        Create new files or write large content blocks. \\
-        \texttt{file\_patch} &
-        Apply precise patch updates to existing file regions. \\
-        \texttt{web\_scan} &
-        Extract the current browser page as simplified HTML or text. \\
-        \texttt{web\_execute\_js} &
-        Execute JavaScript in the browser and return results. \\
-        \texttt{ask\_user} &
-        Query the user and wait for a response. \\
-        \shortstack[l]{\texttt{update\_working\_}\\\texttt{checkpoint}} &
-        Update short-term working memory. \\
-        \shortstack[l]{\texttt{start\_long\_term\_}\\\texttt{update}} &
-        Trigger long-term memory distillation. \\
-        \bottomrule
+    \begin{tabularx}{\linewidth}{@{}p{0.25\linewidth}@{\hspace{4pt}}X@{}}
+    \toprule
+    \rowcolor{blue!8}
+    \textbf{Tool} & \multicolumn{1}{c}{\textbf{Brief Description}} \\
+    \midrule
+    \mbox{\texttt{code\_run}} &
+    Execute Python or shell code with timeout and abort control. \\
+    \mbox{\texttt{file\_read}} &
+    Read local files by line range, with optional keyword-based lookup. \\
+    \mbox{\texttt{file\_write}} &
+    Create new files or write large content blocks (overwrite/append/prepend). \\
+    \mbox{\texttt{file\_patch}} &
+    Apply precise, context-checked updates to existing file regions. \\
+    \mbox{\texttt{web\_scan}} &
+    Extract the current browser page as simplified HTML or text, with tab metadata. \\
+    \mbox{\texttt{web\_execute\_js}} &
+    Inject and execute JavaScript in the user’s browser, capturing return values. \\
+    \mbox{\texttt{ask\_user}} &
+    Issue a synchronous query to the user and wait for an explicit response. \\
+    \mbox{\texttt{update\_working\_checkpoint}} &
+    Update a short-term working notepad injected in subsequent reasoning turns. \\
+    \mbox{\texttt{start\_long\_term\_update}} &
+    Trigger long-term memory distillation over recent execution traces. \\
+    \bottomrule
     \end{tabularx}
+    }
 \end{table}
 
 \subsubsection{Hierarchical Memory Mechanism}
@@ -121,7 +124,7 @@ GA follows a four-layer architecture with hierarchical distillation and taxonomy
 
 Before each task, GA queries L1 and retrieves only relevant memory entries. This keeps the active context sparse even as the memory base grows. The L1 index is maintained at around 30 lines, keeping retrieval overhead low.
 
-\textbf{L2: Fact Store.}  L2 stores verified environmental facts. It includes information that cannot be easily inferred, such as directory structures, configurations, API endpoints, and system constraints.
+\textbf{L2: Fact Store.} L2 stores verified environmental facts that cannot be easily inferred, such as directory structures, configurations, API endpoints, and system constraints. All entries are validated through tool execution or external signals. Information is organized by topic and incrementally summarized to reduce fragmentation and improve retrieval clarity.
 
 All entries are validated through tool execution or external signals. Information is organized by topic and incrementally summarized. This reduces fragmentation and improves retrieval clarity.
 
