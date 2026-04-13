@@ -1,9 +1,9 @@
 \subsection{Task completion and token efficiency}
 In this section, we evaluate GA from five complementary perspectives. 
 (1) We study task completion and token efficiency to measure overall capability and cost effectiveness across benchmarks. 
-(2) We examine self-evolution capability to test whether GA can compress successful trajectories into reusable SOPs and executable procedures. 
-(3) We analyze tool-use efficiency to evaluate whether a minimal atomic-tool design can support complex tasks with lower interaction overhead. 
-(4) We evaluate memory system effectiveness to test repeated-use improvement, condensed memory, long-term fact retention, and context explosion prevention. 
+(2) We analyze tool-use efficiency to evaluate whether a minimal atomic-tool design can support complex tasks with lower interaction overhead. 
+(3) We evaluate memory system effectiveness to test repeated-use improvement, condensed memory, long-term fact retention, and context explosion prevention. 
+(4) We examine self-evolution capability to test whether GA can compress successful trajectories into reusable SOPs and executable procedures. 
 (5) We assess web browsing capability to examine GA's end-to-end browser interaction, multi-hop web search, and real-world web task performance.
 
 \subsubsection{Setup}
@@ -26,69 +26,6 @@ On SOP-Bench, GA uses 2.02M input tokens, which is lower than OpenClaw at 2.60M 
 
 \textbf{GA achieves the best trade-off between task completion and token cost across benchmarks.}
 On SOP-Bench, Claude Code shows a higher efficiency ratio only at the cost of reduced accuracy, with 85\% versus 100\% for GA, whereas GA maintains full completion. On Lifelong AgentBench, GA achieves both the highest accuracy and the highest efficiency ratio of 4.15, outperforming Claude Code at 0.92 and OpenClaw at 0.48. On RealFin-benchmark, GA again provides the best trade-off, reaching 65\% accuracy with 114k total tokens and an efficiency ratio of 5.70, compared to 2.31 for Claude Code Sonnet, 1.95 for Claude Code Opus, 3.04 for OpenClaw, and 0.67 for Codex.
-
-
-\subsection{Self-Evolution Capability}
-\label{sec:self_evolution_capability}
-
-\subsubsection{Setup}
-
-\paragraph{Task and Setting.}
-We evaluate GA's self-evolution process in two complementary settings. The first is a nine-round longitudinal study where GA repeatedly performs similar GitHub research tasks. Each round operates on a different task instance, allowing us to observe how accumulated experience translates into efficiency gains across structurally similar workflows. The second is an eight-task web benchmark used to test whether the same efficiency gains transfer across task types. The longitudinal study reveals the full trajectory from first execution to convergence, while the benchmark study tests whether the same pattern generalizes beyond a single workflow.
-
-\paragraph{Evolution Stages.}
-We summarize GA's self-evolution into three stages. \textbf{Stage 1: Natural-language execution}, where GA solves the task mainly through in-context reasoning and trial-and-error interaction. \textbf{Stage 2: SOP distillation}, where accumulated experience is compressed into a textual SOP. \textbf{Stage 3: Code-based execution}, where the verified workflow is further converted into executable logic.
-
-\subsubsection{Iteration-Wise Efficiency Trajectory}
-
-\begin{table*}[t]
-\centering
-\caption{\textbf{Nine-round evolution trajectory on similar GitHub research tasks.} The experiment starts from scratch in Round \#1, iteratively refines a textual SOP in Rounds \#2--\#5, and enters the codified execution regime in Rounds \#6--\#9. Reduction Ratio measures relative decrease against the first run or the no-SOP baseline.}
-\def\arraystretch{0.99}
-\setlength{\tabcolsep}{0.42em}
-\resizebox{1.0\linewidth}{!}{
-\begin{tabular}{l l c c c c c c c}
-\toprule
-\textbf{Round} & \textbf{Stage} & \textbf{Time} & \textbf{LLM Calls} & \textbf{Input} & \textbf{Output} & \textbf{Cache Create} & \textbf{Cache Read} & \textbf{Total} \\
-\midrule
-
-\#1 & Initial run & 7m30s & 32 & 15,581 & 7,647 & 15,600 & 183,375 & 222,203 \\
-\#2 & SOP optimization & 4m19s & 12 & 5,045 & 4,860 & 4,553 & 51,883 & 66,341 \\
-\#3 & SOP optimization & 2m53s & 8 & 2,538 & 4,598 & 3,155 & 39,534 & 49,825 \\
-\#4 & SOP optimization & 2m29s & 9 & 3,265 & 3,682 & 3,435 & 41,376 & 51,758 \\
-\#5 & SOP optimization & 2m50s & 7 & 2,568 & 3,276 & 2,424 & 27,268 & 35,536 \\
-\#6 & Codified SOP & 2m24s & 6 & 1,855 & 1,064 & 1,930 & 20,913 & 25,762 \\
-\#7 & Codified SOP & 1m41s & 5 & 1,931 & 1,126 & 1,708 & 18,249 & 23,014 \\
-\#8 & Codified SOP & 1m35s & 5 & 1,884 & 990 & 1,586 & 18,229 & 22,689 \\
-\#9 & Codified SOP & 1m38s & 5 & 1,323 & 994 & 1,659 & 19,034 & 23,010 \\
-
-\bottomrule
-\end{tabular}
-}
-\label{tab:self_evolution_rounds}
-\end{table*}
-
-\textbf{The nine-round trajectory shows a phase transition from high-entropy exploration to a stable low-cost execution regime.} 
-As shown in Table~\ref{tab:self_evolution_rounds}, relative to Round \#1, the final execution in Round \#9 reduces runtime from 7m30s to 1m38s, a reduction of 78.2\%, reduces LLM calls from 32 to 5, a reduction of 84.4\%, and reduces total tokens from 222,203 to 23,010, a reduction of 89.6\%. 
-The key pattern is not just the large first-to-last gap, but the structure of the transition itself. 
-During the textual SOP stage, token cost decreases overall from 66k to 36k, despite minor fluctuations, which indicates that SOP compression removes most redundant exploration while still incurring a limited adaptation cost when the stored procedure must be aligned with newly encountered edge cases.
-Once the workflow is codified, the system enters a narrow convergence band of roughly 23k$\pm$1k tokens across Rounds \#6--\#9, indicating that execution has become predictable rather than exploratory.
-
-\textbf{Most of the efficiency gain comes from eliminating repeated reasoning cycles rather than merely shortening individual responses.} The dominant change is the collapse in call count, which removes entire understand--reason--generate loops from the execution trace. This is consistent with the token composition: cache-read tokens fall from 183,375 in Round \#1 to 19,034 in Round \#9, and input tokens fall from 15,581 to 1,323, showing that the agent no longer rebuilds large amounts of context at runtime. Per-call token load also drops substantially over the course of evolution, from 6,944 tok/call in Round \#1 to about 4.5k--4.6k tok/call in Rounds \#7--\#9, but this effect is secondary to the structural reduction in the number of calls. The larger implication is that textual SOPs already compress the search space, while code-level execution removes the remaining interpretation overhead and turns the learned workflow into a deterministic asset.
-
-
-\subsubsection{Cross-Task Efficiency Gains}
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.99\linewidth]{image/cross_task_convergence.pdf}
-\caption{\textbf{Cross-task token convergence across repeated runs for OpenClaw and GA.} Each panel corresponds to one benchmark task and plots total token consumption over the first, second, and third executions.}
-\label{fig:cross_task_convergence}
-\end{figure*}
-\textbf{The efficiency gains transfer across tasks rather than remaining confined to a single hand-optimized workflow.} As shown in Figure~\ref{fig:cross_task_convergence}, on all eight benchmark tasks, GA consumes fewer tokens than the no-memory baseline, with savings ranging from 61.0\% to 92.4\% and an overall reduction of 79.3\%. This consistency matters more than any individual best case: it shows that SOP self-evolution is not just memorizing one task, but systematically converting prior successful trajectories into reusable execution shortcuts. The strongest gains appear in long-horizon tasks with state transfer and recovery (Category D, 92.0\%), where repeated failure handling and path search dominate the baseline cost. In those cases, SOP acts as path compression: once the verified route is stored, the agent can bypass most exploratory branches entirely.
-
-\textbf{GA exhibits a clear ``cold start + rapid convergence'' pattern across repeated executions of the same task.} Across the three runs of each benchmark task, GA shows the same internal trend: the first run has substantially higher token cost, while the second and third runs quickly converge to a stable low-cost regime. This indicates that even with SOP memory, the first execution still incurs an SOP adaptation cost, because the agent must map generalized SOP knowledge onto the concrete page structure and interaction flow of the current task instance. However, this adaptation happens only once. After the successful path is aligned with the environment, later executions can directly reuse that result and rapidly drop to a stable token level. By contrast, OpenClaw shows no comparable convergence pattern across its three runs. On B2, for example, token usage changes from 1,370k to 2,330k to 2,130k, which means the system keeps re-exploring rather than reusing prior experience. This distinction is important for deployment: GA pays a one-time adaptation cost on a new task, but its marginal cost quickly approaches zero, whereas the baseline remains expensive on every execution.
-
-\textbf{The benefit of SOP memory tends to increase with task complexity.} When the tasks are ordered by OpenClaw's average token consumption as a proxy for intrinsic task complexity, a positive relationship emerges between complexity and saving rate. High-complexity tasks with OC averages above 1,000k tokens, such as A1, B2, and D1, achieve an average saving of 83.5\%, while mid-complexity tasks average 72.5\%. Although D2 is low in absolute token cost, its 90.1\% saving rate is consistent with the same mechanism because it still contains long-horizon dependency structure. The broader implication is that SOP self-evolution becomes more valuable as tasks require more multi-step reasoning, navigation, and recovery from branching execution paths: in simple tasks it is helpful, but in complex tasks it becomes structurally decisive.
 
 \subsection{Tool-use efficiency}
 \label{sec:dimension4_tool_use_efficiency}
@@ -270,6 +207,68 @@ As shown in Table~\ref{tab:context_explosion}, the Full prompt length of GA is f
 This advantage comes from its hierarchical memory management, where \textbf{memory is not directly injected into the context but is retrieved only when the model actually needs it. }
 Overall, the results show that GA can preserve long term memory capability without causing uncontrolled context expansion.
 
+\subsection{Self-Evolution Capability}
+\label{sec:self_evolution_capability}
+
+\subsubsection{Setup}
+
+\paragraph{Task and Setting.}
+We evaluate GA's self-evolution process in two complementary settings. The first is a nine-round longitudinal study where GA repeatedly performs similar GitHub research tasks. Each round operates on a different task instance, allowing us to observe how accumulated experience translates into efficiency gains across structurally similar workflows. The second is an eight-task web benchmark used to test whether the same efficiency gains transfer across task types. The longitudinal study reveals the full trajectory from first execution to convergence, while the benchmark study tests whether the same pattern generalizes beyond a single workflow.
+
+\paragraph{Evolution Stages.}
+We summarize GA's self-evolution into three stages. \textbf{Stage 1: Natural-language execution}, where GA solves the task mainly through in-context reasoning and trial-and-error interaction. \textbf{Stage 2: SOP distillation}, where accumulated experience is compressed into a textual SOP. \textbf{Stage 3: Code-based execution}, where the verified workflow is further converted into executable logic.
+
+\subsubsection{Iteration-Wise Efficiency Trajectory}
+
+\begin{table*}[t]
+\centering
+\caption{\textbf{Nine-round evolution trajectory on similar GitHub research tasks.} The experiment starts from scratch in Round \#1, iteratively refines a textual SOP in Rounds \#2--\#5, and enters the codified execution regime in Rounds \#6--\#9. Reduction Ratio measures relative decrease against the first run or the no-SOP baseline.}
+\def\arraystretch{0.99}
+\setlength{\tabcolsep}{0.42em}
+\resizebox{1.0\linewidth}{!}{
+\begin{tabular}{l l c c c c c c c}
+\toprule
+\textbf{Round} & \textbf{Stage} & \textbf{Time} & \textbf{LLM Calls} & \textbf{Input} & \textbf{Output} & \textbf{Cache Create} & \textbf{Cache Read} & \textbf{Total} \\
+\midrule
+
+\#1 & Initial run & 7m30s & 32 & 15,581 & 7,647 & 15,600 & 183,375 & 222,203 \\
+\#2 & SOP optimization & 4m19s & 12 & 5,045 & 4,860 & 4,553 & 51,883 & 66,341 \\
+\#3 & SOP optimization & 2m53s & 8 & 2,538 & 4,598 & 3,155 & 39,534 & 49,825 \\
+\#4 & SOP optimization & 2m29s & 9 & 3,265 & 3,682 & 3,435 & 41,376 & 51,758 \\
+\#5 & SOP optimization & 2m50s & 7 & 2,568 & 3,276 & 2,424 & 27,268 & 35,536 \\
+\#6 & Codified SOP & 2m24s & 6 & 1,855 & 1,064 & 1,930 & 20,913 & 25,762 \\
+\#7 & Codified SOP & 1m41s & 5 & 1,931 & 1,126 & 1,708 & 18,249 & 23,014 \\
+\#8 & Codified SOP & 1m35s & 5 & 1,884 & 990 & 1,586 & 18,229 & 22,689 \\
+\#9 & Codified SOP & 1m38s & 5 & 1,323 & 994 & 1,659 & 19,034 & 23,010 \\
+
+\bottomrule
+\end{tabular}
+}
+\label{tab:self_evolution_rounds}
+\end{table*}
+
+\textbf{The nine-round trajectory shows a phase transition from high-entropy exploration to a stable low-cost execution regime.} 
+As shown in Table~\ref{tab:self_evolution_rounds}, relative to Round \#1, the final execution in Round \#9 reduces runtime from 7m30s to 1m38s, a reduction of 78.2\%, reduces LLM calls from 32 to 5, a reduction of 84.4\%, and reduces total tokens from 222,203 to 23,010, a reduction of 89.6\%. 
+The key pattern is not just the large first-to-last gap, but the structure of the transition itself. 
+During the textual SOP stage, token cost decreases overall from 66k to 36k, despite minor fluctuations, which indicates that SOP compression removes most redundant exploration while still incurring a limited adaptation cost when the stored procedure must be aligned with newly encountered edge cases.
+Once the workflow is codified, the system enters a narrow convergence band of roughly 23k$\pm$1k tokens across Rounds \#6--\#9, indicating that execution has become predictable rather than exploratory.
+
+\textbf{Most of the efficiency gain comes from eliminating repeated reasoning cycles rather than merely shortening individual responses.} The dominant change is the collapse in call count, which removes entire understand--reason--generate loops from the execution trace. This is consistent with the token composition: cache-read tokens fall from 183,375 in Round \#1 to 19,034 in Round \#9, and input tokens fall from 15,581 to 1,323, showing that the agent no longer rebuilds large amounts of context at runtime. Per-call token load also drops substantially over the course of evolution, from 6,944 tok/call in Round \#1 to about 4.5k--4.6k tok/call in Rounds \#7--\#9, but this effect is secondary to the structural reduction in the number of calls. The larger implication is that textual SOPs already compress the search space, while code-level execution removes the remaining interpretation overhead and turns the learned workflow into a deterministic asset.
+
+
+\subsubsection{Cross-Task Efficiency Gains}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.99\linewidth]{image/cross_task_convergence.pdf}
+\caption{\textbf{Cross-task token convergence across repeated runs for OpenClaw and GA.} Each panel corresponds to one benchmark task and plots total token consumption over the first, second, and third executions.}
+\label{fig:cross_task_convergence}
+\end{figure*}
+\textbf{The efficiency gains transfer across tasks rather than remaining confined to a single hand-optimized workflow.} As shown in Figure~\ref{fig:cross_task_convergence}, on all eight benchmark tasks, GA consumes fewer tokens than the no-memory baseline, with savings ranging from 61.0\% to 92.4\% and an overall reduction of 79.3\%. This consistency matters more than any individual best case: it shows that SOP self-evolution is not just memorizing one task, but systematically converting prior successful trajectories into reusable execution shortcuts. The strongest gains appear in long-horizon tasks with state transfer and recovery (Category D, 92.0\%), where repeated failure handling and path search dominate the baseline cost. In those cases, SOP acts as path compression: once the verified route is stored, the agent can bypass most exploratory branches entirely.
+
+\textbf{GA exhibits a clear ``cold start + rapid convergence'' pattern across repeated executions of the same task.} Across the three runs of each benchmark task, GA shows the same internal trend: the first run has substantially higher token cost, while the second and third runs quickly converge to a stable low-cost regime. This indicates that even with SOP memory, the first execution still incurs an SOP adaptation cost, because the agent must map generalized SOP knowledge onto the concrete page structure and interaction flow of the current task instance. However, this adaptation happens only once. After the successful path is aligned with the environment, later executions can directly reuse that result and rapidly drop to a stable token level. By contrast, OpenClaw shows no comparable convergence pattern across its three runs. On B2, for example, token usage changes from 1,370k to 2,330k to 2,130k, which means the system keeps re-exploring rather than reusing prior experience. This distinction is important for deployment: GA pays a one-time adaptation cost on a new task, but its marginal cost quickly approaches zero, whereas the baseline remains expensive on every execution.
+
+\textbf{The benefit of SOP memory tends to increase with task complexity.} When the tasks are ordered by OpenClaw's average token consumption as a proxy for intrinsic task complexity, a positive relationship emerges between complexity and saving rate. High-complexity tasks with OC averages above 1,000k tokens, such as A1, B2, and D1, achieve an average saving of 83.5\%, while mid-complexity tasks average 72.5\%. Although D2 is low in absolute token cost, its 90.1\% saving rate is consistent with the same mechanism because it still contains long-horizon dependency structure. The broader implication is that SOP self-evolution becomes more valuable as tasks require more multi-step reasoning, navigation, and recovery from branching execution paths: in simple tasks it is helpful, but in complex tasks it becomes structurally decisive.
+
 \subsection{Web Browsing Capability}
 \label{sec:exp_browsing}
 
@@ -285,7 +284,7 @@ Both GA and OpenClaw use claude-opus-4-6 as the backbone model.
 
 As shown in Table~\ref{tab:web_browsing_results}, GA outperforms OpenClaw across all three benchmarks while consuming significantly fewer tokens. On WebCanvas, GA achieves 0.834 score with 0.18M tokens versus OpenClaw's 0.722 score with 0.71M tokens. On BrowseComp-ZH, GA reaches 0.60 accuracy compared to OpenClaw's 0.20, using 0.47M versus 1.31M tokens. On Custom Tasks, GA scores 0.577 versus 0.50, winning 10 tasks against 6, while using only 0.26M tokens compared to 0.76M for OpenClaw.
 
-\begin{table}[htbp]
+\begin{table}[t]
 \centering
 \small
 \caption{Web browsing evaluation results across three benchmarks. GA and OpenClaw both use claude-opus-4-6 as the backbone model.}
