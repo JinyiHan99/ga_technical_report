@@ -1,19 +1,41 @@
-The recent emergence of agentic systems such as Claude Code and OpenClaw signals a broader shift in the role of large language models. They are no longer used only as passive text generators, but are increasingly deployed as goal-directed agents capable of operating through terminals, file systems, browsers, and external tools. This transition significantly expands the capabilities of language models, while also introducing a new systems-level challenge. However, in long-horizon tasks, success depends not only on the reasoning ability of the underlying model, but also on how effectively the agent system manages context, retrieves relevant information, and accumulates useful experience over time. These requirements give rise to two fundamental challenges.
+The recent emergence of agentic systems such as Claude Code and OpenClaw signals a broader shift in the role of large language models. 
+They are no longer used only as passive text generators, but are increasingly deployed as goal-directed agents capable of operating through terminals, file systems, browsers, and external tools. 
+This transition significantly expands the capabilities of language models, while also introducing a new systems-level challenge. 
+In particular, in long-horizon tasks, success depends not only on the reasoning ability of the underlying model, but also on how effectively the agent system manages context, retrieves relevant information, and accumulates useful experience over time. 
+These requirements give rise to two fundamental challenges.
 
+The first challenge is \textbf{context explosion}. 
+As the agent interacts with the environment, the prompt grows beyond the initial user request. 
+It accumulates tool definitions, retrieved memory, intermediate observations, prior traces, and raw web content. 
+While these components support execution, they are not equally relevant to the next step and even compete with key instructions and evidence. 
+This leads to redundant history, irrelevant memory, and poorly structured compression, which dilute attention and increase errors such as missed constraints, state confusion, and hallucinated facts~\cite{lost_in_middle,multi_turn_lost,anthropic_context}.
 
-The first challenge is \textbf{context explosion}. As the agent interacts with the environment, the prompt grows beyond the initial user request. It accumulates tool definitions, retrieved memory, intermediate observations, prior traces, and raw web content. While these components support execution, they are not equally relevant to the next step and even compete with key instructions and evidence. This leads to redundant history, irrelevant memory, and poorly structured compression, which dilute attention and increase errors such as missed constraints, state confusion, and hallucinated facts~\cite{lost_in_middle,multi_turn_lost,anthropic_context}.
+The second challenge is \textbf{how to enable effective continual self-evolution}. 
+Real environments exhibit recurring structures such as workflows, tool-use patterns, and failure modes. 
+These repetitions create potential learning signals. 
+However, current agents mainly retain interaction traces rather than distilling them into reusable procedures. 
+As a result, experience remains non-cumulative and fails to close the learning loop. 
+The system does not improve with exposure to repeated environments, and instead repeatedly pays the same reasoning cost while reproducing similar errors~\cite{voyager,selfevolvinglifelong}.
 
+To overcome these challenges, we propose \textbf{GenericAgent (GA)}, a self-evolving LLM agent system built around a fundamental principle: \textbf{maximizing contextual information density}. 
+The core view is that agent performance is not determined by context length alone, but by how much decision-relevant information can be introduced, maintained, and updated within a limited context budget.
 
-The second challenge is \textbf{how to enable effective continual self-evolution}. Real environments exhibit recurring structures such as workflows, tool-use patterns, and failure modes. These repetitions create potential learning signals. However, current agents mainly retain interaction traces rather than distilling them into reusable procedures. As a result, experience remains non-cumulative and fails to close the learning loop. The system does not improve with exposure to repeated environments, and instead repeatedly pays the same reasoning cost while reproducing similar errors~\cite{voyager,selfevolvinglifelong}.
+GA realizes this principle through four mechanisms that operate across the lifecycle of contextual information. 
+(1) A minimal atomic tool set reduces persistent tool overhead, preventing low-value interface information from occupying the context before task execution. 
+(2) A hierarchical memory mechanism selectively retains only verified and task-relevant knowledge, shaping what information persists over time. 
+(3) A reflection-driven self-evolution pipeline compresses interaction trajectories into reusable SOPs (Standard Operating Procedure), code, and skills, progressively transforming experience into compact and structured capability. 
+(4) A structured browser extraction module converts noisy web pages into dense, execution-oriented observations before they enter the context. 
+Together, these mechanisms continuously reshape the context from a passive accumulation of information into a high-density, decision-centric representation. 
 
-
-In this paper, we propose \textbf{GenericAgent (GA)}, a self-evolving LLM agent system built around a fundamental principle: \textbf{maximizing contextual information density}. The core view is that agent performance is not determined by context length alone, but by how much decision-relevant information can be introduced, maintained, and updated within a limited context budget.
-
-GA realizes this principle through four mechanisms that operate across the lifecycle of contextual information. A minimal atomic tool set reduces persistent tool overhead, preventing low-value interface information from occupying the context before task execution. A hierarchical memory mechanism selectively retains only verified and task-relevant knowledge, shaping what information persists over time. A reflection-driven self-evolution pipeline compresses interaction trajectories into reusable SOPs (Standard Operating Procedure), code, and skills, progressively transforming experience into compact and structured capability. A structured browser extraction module converts noisy web pages into dense, execution-oriented observations before they enter the context. Together, these mechanisms continuously reshape the context from a passive accumulation of information into a high-density, decision-centric representation. 
-
-We evaluate GA at both the task and system levels. Across multiple benchmarks, GA achieves strong task completion performance while consistently reaching a superior trade-off between completion and token cost. Beyond performance alone, GA demonstrates systematic efficiency gains under repeated execution, as interaction traces are progressively distilled into reusable SOPs and code. This behavior is enabled by its core components, where a minimal atomic tool set reduces interaction overhead without constraining capability, a hierarchical memory mechanism strengthens reuse while preventing context expansion, and a structured browser stack ensures stable and efficient web interaction.We release GA as open-source to support research on long-horizon autonomous agents.
-
-
+We evaluate GA at both the task and system levels. 
+Across multiple benchmarks, GA achieves strong task completion performance while consistently reaching a superior trade-off between completion and token cost. 
+Beyond performance alone, GA demonstrates systematic efficiency gains under repeated execution, as interaction traces are progressively distilled into reusable SOPs and code. 
+This behavior is enabled by its core components, where 
+\textbf{(1) a minimal atomic tool set reduces interaction overhead without constraining capability, 
+(2) a hierarchical memory mechanism strengthens reuse while preventing context expansion, 
+(3) a reflection-driven self-evolution pipeline enables cumulative improvement by distilling experience into reusable knowledge, 
+and (4) a structured browser stack ensures stable and efficient web interaction.}
+We release GA as open-source to support research on long-horizon autonomous agents.
 
 Our main contributions are as follows:
 \begin{itemize}[leftmargin=*]

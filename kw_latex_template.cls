@@ -231,83 +231,150 @@
 % Titlebox %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+% \newcommand{\mymaketitle}{%
+%   %\tcbset{enhanced,frame hidden}
+%   \tcbset{enhanced}
+%   \tcbset{left=8mm}
+%   \tcbset{right=8mm}
+%   \tcbset{top=6mm}
+%   \tcbset{bottom=6mm}
+%   \tcbset{colback=white}  
+%    % 框线颜色
+%   \tcbset{colframe=seedbg} 
+%   % 调整框线粗细
+%   \tcbset{boxrule=0.5pt} 
+%   \tcbset{before skip=0pt}
+%   \tcbset{grow to left by=1.5pt}
+%   \tcbset{grow to right by=1.5pt}
+%   \tcbset{arc=2.5mm}
+%       {
+%       \setlength{\parskip}{0mm}
+%       \centering
+%       \nohyphens
+%       %
+      
+%       {
+%       \@toptitlebar
+%       \noindent
+%       \begin{minipage}[c]{0.22\textwidth}
+%         \centering
+%         \includegraphics[height=18mm]{seed/ga_logo.jpg}
+%       \end{minipage}\hspace{-0.1em}
+%       \begin{minipage}[c]{0.77\textwidth}
+%         \titlelist\par
+%       \end{minipage}
+%          \@bottomtitlebar
+%       }
+%       \vskip 6mm
+%       \authorlist
+%       \vskip 3mm
+%       %
+%       \affiliationlist\par
+%       \vskip 3mm
+%       %
+%       \contributionlist\par
+%     }
+%    \vskip 6mm   
+   
+%   \begin{tcolorbox}
+%     \setlength{\parindent}{0cm}
+%     \setlength{\parskip}{0cm}
+
+%     %
+    
+%     \begin{center}
+%         \beginabstract
+%         \vskip 3mm
+%     \end{center}
+    
+%     \abstractlist\par
+%     %
+%     \vskip 3mm
+%     % %
+%     % {
+%     %   \setlength{\parskip}{0cm}
+%     %   \ifdefempty{\checkdatalist}{\vspace*{0.65cm}}{\checkdatalist\par}
+%     % }
+%   \end{tcolorbox}
+%   \tcbset{reset}
+%   \FloatBarrier
+
+%   %加入页眉页脚
+%   \thispagestyle{firststyle}
+%   %去除页眉页脚横线
+%   \renewcommand{\headrulewidth}{0pt} 
+% }
+
+
+% \renewcommand{\maketitle}{
+%   \mymaketitle
+%   \vskip 8mm
+%   %\setlength{\parskip}{4mm}
+% }%
 \newcommand{\mymaketitle}{%
-  %\tcbset{enhanced,frame hidden}
   \tcbset{enhanced}
-  \tcbset{left=8mm}
-  \tcbset{right=8mm}
-  \tcbset{top=6mm}
-  \tcbset{bottom=6mm}
-  \tcbset{colback=white}  
-   % 框线颜色
-  \tcbset{colframe=seedbg} 
-  % 调整框线粗细
-  \tcbset{boxrule=0.5pt} 
+  \tcbset{left=4mm}
+  \tcbset{right=4mm}
+  \tcbset{top=4mm}
+  \tcbset{bottom=4mm}
+  \tcbset{colback=white}
+  \tcbset{colframe=seedbg}
+  \tcbset{boxrule=0.5pt}
   \tcbset{before skip=0pt}
   \tcbset{grow to left by=1.5pt}
   \tcbset{grow to right by=1.5pt}
   \tcbset{arc=2.5mm}
-      {
-      \setlength{\parskip}{0mm}
-      \centering
-      \nohyphens
-      %
-      
-      {
+
+  {
+    \setlength{\parskip}{0mm}
+    \centering
+    \nohyphens
+
+    {
       \@toptitlebar
       \noindent
-      \begin{minipage}[c]{0.22\textwidth}
-        \centering
-        \includegraphics[height=18mm]{seed/ga_logo.jpg}
-      \end{minipage}\hspace{-0.1em}
-      \begin{minipage}[c]{0.77\textwidth}
+      \begin{minipage}[c]{0.12\textwidth}
+        \raggedleft
+        \includegraphics[height=24mm]{seed/ga_logo_new.png}
+      \end{minipage}\hspace{0.6em}
+      \begin{minipage}[c]{0.84\textwidth}
+        \raggedright
         \titlelist\par
       \end{minipage}
-         \@bottomtitlebar
-      }
-      \vskip 6mm
-      \authorlist
-      \vskip 3mm
-      %
-      \affiliationlist\par
-      \vskip 3mm
-      %
-      \contributionlist\par
+      \@bottomtitlebar
     }
-   \vskip 6mm   
-   
+
+    \vskip 3mm
+    \authorlist
+    \vskip 1.5mm
+    \affiliationlist\par
+    \vskip 1.5mm
+    \contributionlist\par
+  }
+
+  \vskip 4mm
+
   \begin{tcolorbox}
     \setlength{\parindent}{0cm}
     \setlength{\parskip}{0cm}
 
-    %
-    
     \begin{center}
-        \beginabstract
-        \vskip 3mm
+      \beginabstract
+      \vskip 2mm
     \end{center}
-    
+
     \abstractlist\par
-    %
-    \vskip 3mm
-    % %
-    % {
-    %   \setlength{\parskip}{0cm}
-    %   \ifdefempty{\checkdatalist}{\vspace*{0.65cm}}{\checkdatalist\par}
-    % }
+    \vskip 2mm
   \end{tcolorbox}
+
   \tcbset{reset}
   \FloatBarrier
 
-  %加入页眉页脚
   \thispagestyle{firststyle}
-  %去除页眉页脚横线
-  \renewcommand{\headrulewidth}{0pt} 
+  \renewcommand{\headrulewidth}{0pt}
 }
-
 
 \renewcommand{\maketitle}{
   \mymaketitle
-  \vskip 8mm
-  %\setlength{\parskip}{4mm}
-}%
+  \vskip 4mm
+}
