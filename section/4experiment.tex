@@ -98,32 +98,10 @@ Once the workflow is codified, the system enters a narrow convergence band of ro
 \paragraph{Baseline.}
 All compared systems use the same backbone model, Claude Sonnet 4.6. We evaluate three representative tool-use designs. (1) \textbf{GA}, which uses a minimal atomic-tool design based on a small set of general-purpose tools. (2) \textbf{Claude Code}~\citep{claudecode}, which serves as a strong baseline with a richer specialized tool ecosystem. (3) \textbf{OpenClaw}~\citep{openclaw_rl}, which represents a less minimal multi-tool design with several specialized or environment-dependent capabilities.
 
-\paragraph{Basic Tool Alignment.}
-We align the systems at the capability level rather than at the tool-name level. The first column defines the target capability category, and the remaining three columns list the corresponding tool or mechanism used by each system to realize that capability.
-\begin{table*}[htbp]
-\centering
-\caption{\textbf{Capability-level alignment of the basic tooling environment.} Each row maps one capability category to the corresponding tool in Claude Code, OpenClaw, and GA.}
-\def\arraystretch{0.99}
-\setlength{\tabcolsep}{0.42em}
-\resizebox{1.0\linewidth}{!}{
-\begin{tabular}{llll}
-\toprule
-\textbf{Capability Category} & \multicolumn{3}{c}{\textbf{Corresponding Tool / Mechanism}} \\
-\cmidrule(lr){2-4}
- & \textbf{Claude Code} & \textbf{OpenClaw} & \textbf{GA} \\
-\midrule
-Code execution & BashTool & exec / process / nodes & code\_run \\
-File reading & FileReadTool & read & file\_read \\
-File writing & FileWriteTool & write & file\_write \\
-Local file editing & FileEditTool & write / patch-like editing & file\_patch \\
-Web reading  & WebFetchTool / browser read & browser base reading & web\_scan \\
-Web interaction & WebBrowserTool / browser actions & browser interaction & web\_execute\_js \\
-Working memory & TodoWriteTool / BriefTool & session history / status-like ability & update\_working\_checkpoint \\
-\bottomrule
-\end{tabular}
-}
-\label{tab:tooluse_basic_alignment}
-\end{table*}
+\paragraph{Tool.}
+\input{tables/tool_inventory_overview}
+Table~\ref{tab:tool_inventory_overview} first gives a source-level inventory overview. Claude Code exposes 53 built-in tools at the source level (20 base tools and 33 conditional tools), while OpenClaw provides 18 source-level tool factories, with the runtime-visible set further varying by plugin injection and environment configuration. GA does not attempt to reproduce these full inventories one by one. Instead, it keeps only a small set of core atomic tools that cover the capabilities most frequently required in our evaluation tasks, and each of these capabilities has a clear prototype in both Claude Code and OpenClaw; a more detailed capability-level alignment is provided in Appendix~\ref{app:atomic_tool_alignment} (Table~\ref{tab:appendix_tool_alignment}).
+
 
 \paragraph{Benchmark.}
 The benchmark contains two complementary task groups. (1) \textbf{Simple tool-generalization tasks}, which test whether baseline specialized tool capabilities can be reproduced through GA's atomic-tool composition. (2) \textbf{Long-horizon complex tasks}, which test whether the same minimal tool design remains effective on realistic multi-step workflows.
@@ -153,7 +131,16 @@ OpenClaw & 5 & 80.0\% & 633,101 & 183.1 & 15.0 & 16.6 & 4.2 / 3.2 \\
 
 \textbf{GA reduces token overhead while preserving task performance.} Although it matches Claude Code on success, GA uses only 188,829 accounted tokens, which is 35.1\% of Claude Code's 537,413 and 29.8\% of OpenClaw's 633,101. The same pattern appears in the interaction trace: GA reduces requests from 32.6 to 11.0 and tool calls from 22.6 to 12.8 relative to Claude Code, while OpenClaw remains both less stable and more expensive. The result indicates that GA's advantage comes from lower context and tool-process overhead, not from sacrificing quality.
 
+\subsubsection{Tool Usage Distribution}
 
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.9\linewidth]{image/pie.pdf}
+\caption{\textbf{Tool usage distribution across Claude Code, OpenClaw, and GA.} Each donut chart summarizes the proportion of tool calls attributed to each major tool category in the corresponding system.}
+\label{fig:tooluse_distribution}
+\end{figure*}
+
+\textbf{Tool usage is highly concentrated in a few high-frequency tools, while the remaining long-tail tools are invoked only rarely.} As shown in Figure~\ref{fig:tooluse_distribution}, although Claude Code and OpenClaw expose dozens of built-in tools or tool factories, their actual execution traces are still dominated by a small subset of tools. In Claude Code, \texttt{AgentTool} alone accounts for 50.4\% of calls, followed by \texttt{WebFetchTool} (22.1\%), \texttt{FileReadTool} (10.6\%), and \texttt{FileWriteTool} (8.9\%), while many other tools appear only in the tail. OpenClaw shows a similar concentration pattern. This means that a substantial number of low-frequency tools still occupy prompt context and enlarge the action space even though they contribute little to actual execution. By comparison, GA makes the active tool loop explicit through a compact atomic-tool set centered on \texttt{code\_run}, \texttt{file\_read}, \texttt{web\_execute\_js}, and \texttt{web\_scan}, which is consistent with its lower request count, lower tool-call count, and lower token cost in Table~\ref{tab:tooluse_long_horizon}.
 
 \subsubsection{Dimension-Wise Tool Efficiency Comparison}
 
@@ -364,4 +351,3 @@ Although OpenClaw has a slightly higher full score rate of \texttt{31.8\%}, its 
 % 3) The tool-use efficiency experiments show that a minimal atomic-tool design can match or exceed richer tool ecosystems with substantially lower interaction overhead.
 % 4) The memory experiments show that selective and on-demand memory improves repeated-use efficiency, supports long-term fact retention, and avoids context explosion.
 % 5) The web browsing experiments show that GA combines lightweight perception with precise execution, enabling better task quality, efficiency, and stability than OpenClaw on real web tasks.
-

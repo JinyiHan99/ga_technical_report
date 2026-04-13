@@ -40,6 +40,39 @@
 \renewcommand{\thesubsection}{\arabic{subsection}}
 \renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
 
+\subsection{Atomic Tool Alignment}
+\label{app:atomic_tool_alignment}
+
+This subsection provides a detailed capability-level alignment for the core atomic tools discussed in the main text.
+The purpose is not to enumerate the full runtime tool inventories of Claude Code or OpenClaw, but to show that the core capabilities retained by GA each have corresponding prototypes in both systems.
+
+\begin{table*}[t]
+\centering
+\caption{\textbf{Capability-level alignment of the basic tooling environment.} Each row maps one capability category to the corresponding tool in Claude Code, OpenClaw, and GA.}
+\def\arraystretch{0.99}
+\setlength{\tabcolsep}{0.42em}
+\resizebox{1.0\linewidth}{!}{
+\begin{tabular}{llll}
+\toprule
+\textbf{Capability Category} & \multicolumn{3}{c}{\textbf{Corresponding Tool / Mechanism}} \\
+\cmidrule(lr){2-4}
+ & \textbf{Claude Code} & \textbf{OpenClaw} & \textbf{GA} \\
+\midrule
+Code execution & BashTool & exec / process / nodes & code\_run \\
+File reading & FileReadTool & read & file\_read \\
+File writing & FileWriteTool & write & file\_write \\
+Local file editing & FileEditTool & write / patch-like editing & file\_patch \\
+Web reading  & WebFetchTool / browser read & browser base reading & web\_scan \\
+Web interaction & WebBrowserTool / browser actions & browser interaction & web\_execute\_js \\
+Working memory & TodoWriteTool / BriefTool & session history / status-like ability & update\_working\_checkpoint \\
+\bottomrule
+\end{tabular}
+}
+\label{tab:appendix_tool_alignment}
+\end{table*}
+
+\FloatBarrier
+
 \subsection{Case Studies}
 \label{app:case_studies}
 
