@@ -219,7 +219,11 @@ Overall, this experiment shows that GA benefits most from memory that stores onl
 This experiment examines whether GA has long term factual memory and whether it can remain competitive on factual recall and multi hop reasoning tasks without relying on an additional embedding model or a vector database. 
 The compared methods include embedding based approaches, namely Mem0~\citep{mem0} and A-MEM, and non embedding approaches, namely OpenClaw and GA. 
 All methods use gpt5.4, and for the embedding based methods we adopt text-embedding-3-small as the embedding model. 
+<<<<<<< Updated upstream
 The evaluation is conducted on the first subset of Locomo10~\citep{locomo}, with Category 5 summary tasks removed to avoid interference from summarization ability. 
+=======
+The evaluation is conducted on the first subset of LoCoMo~\citep{locomo}, with Category 5 summary tasks removed to avoid interference from summarization ability. 
+>>>>>>> Stashed changes
 We use F1 to measure the correctness and completeness of factual content, and BLEU-1 to measure the lexical similarity between the generated answer and the reference answer.
 
 \begin{table}[htbp]
