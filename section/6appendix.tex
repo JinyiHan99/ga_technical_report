@@ -70,6 +70,54 @@ Working memory & TodoWriteTool / BriefTool & session history / status-like abili
 \label{tab:appendix_tool_alignment}
 \end{table*}
 
+Table~\ref{tab:appendix_tool_replacement_examples} complements the capability-level mapping above with representative task-level replacement examples.
+Rather than claiming that GA reproduces every specialized tool one by one, the point is that many benchmarked capabilities can be reconstructed through short compositions of a few atomic tools.
+
+\begingroup
+\small
+\def\arraystretch{1.02}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlength{\tabcolsep}{0.5em}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.14\textwidth} >{\raggedright\arraybackslash}p{0.17\textwidth} >{\raggedright\arraybackslash}p{0.20\textwidth} >{\raggedright\arraybackslash}p{0.20\textwidth} >{\raggedright\arraybackslash}p{0.23\textwidth}}
+\caption{\textbf{Representative task-level substitutions from specialized tools to GA atomic-tool compositions.} Each row shows one concrete capability test, the original specialized tool or mechanism used by the baseline system, and the corresponding GA composition that can complete the same class of task.}
+\label{tab:appendix_tool_replacement_examples} \\
+\toprule
+\textbf{Source} & \textbf{Specialized Tool / Capability} & \textbf{Representative Task} & \textbf{GA Replacement Composition} & \textbf{Argument} \\
+\midrule
+\endfirsthead
+
+\caption[]{\textbf{Representative task-level substitutions from specialized tools to GA atomic-tool compositions} (continued).} \\
+\toprule
+\textbf{Source} & \textbf{Specialized Tool / Capability} & \textbf{Representative Task} & \textbf{GA Replacement Composition} & \textbf{Argument} \\
+\midrule
+\endhead
+
+\bottomrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+Claude Code & \texttt{GlobTool} & \texttt{task\_cc\_01\_glob\_markdown\_list} & \texttt{code\_run} & File-pattern matching can be completed through general code execution. \\
+
+Claude Code & \texttt{GrepTool} & \texttt{task\_cc\_02\_grep\_todo\_hits} & \texttt{code\_run} + \texttt{file\_read} & Text search and localization can be implemented by combining general execution with file reading. \\
+\cmidrule(lr){1-5}
+
+Claude Code & \texttt{WebFetchTool} & \texttt{task\_cc\_03\_webfetch\_example\_brief} & \texttt{web\_scan} + \texttt{web\_execute\_js} + \texttt{code\_run} & Web fetching, cleaning, and summarization can be reconstructed by combining browser primitives with code-based post-processing. \\
+
+Claude Code & \texttt{AgentTool} & \texttt{task\_cc\_04\_agent\_fact\_extract} & \texttt{file\_read} + \texttt{code\_run} + \texttt{update\_working\_checkpoint} & Explicit agent delegation can be approximated through stored subagent strategies in memory together with general execution triggers. \\
+\cmidrule(lr){1-5}
+
+Claude Code & \texttt{WebSearchTool} & \texttt{task\_cc\_05\_websearch\_example\_results} & \texttt{web\_execute\_js} + \texttt{web\_scan} & Online search can be completed through browser interaction plus webpage reading. \\
+
+Claude Code & \texttt{NotebookEditTool} & \texttt{task\_cc\_06\_notebook\_inspect} & \texttt{file\_read} + \texttt{code\_run} & Notebook-structure inspection can be handled by reading the \texttt{.ipynb} JSON and executing a parsing script. \\
+\cmidrule(lr){1-5}
+
+OpenClaw & \texttt{nodes} / structured data & \texttt{task\_oc\_02\_csv\_stats} & \texttt{code\_run} & CSV statistics can be completed through general code execution without a dedicated structured-data tool. \\
+\end{longtable}
+\endgroup
+
 \FloatBarrier
 
 \subsection{Web Browsing Visualization}
