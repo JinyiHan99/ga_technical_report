@@ -1,31 +1,61 @@
 \begin{thebibliography}{10}
 
-\bibitem{lost_in_middle}
-Lost in the middle: How language models use long contexts.
-\newblock \url{https://arxiv.org/abs/2307.03172}, 2023.
+\bibitem{claudecode}
+{Anthropic}.
+\newblock Claude code.
+\newblock \url{https://www.anthropic.com/product/claude-code}, 2025.
 
-\bibitem{multi_turn_lost}
-Llms get lost in multi-turn conversation.
-\newblock \url{https://arxiv.org/abs/2505.06120}, 2025.
+\bibitem{openclaw_rl}
+Xingyao Wang et~al.
+\newblock Openclaw-rl: Training agents via interaction.
+\newblock {\em arXiv preprint arXiv:2603.10165}, 2026.
 
-\bibitem{anthropic_context}
-Aditya Rajasekaran et~al.
-\newblock Effective context engineering for ai agents.
-\newblock
-  \url{https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents},
-  September 2025.
+\bibitem{sopbench}
+Subhrangshu Nandi, Arghya Datta, Rohith Nama, Udita Patel, Nikhil Vichare,
+  Indranil Bhattacharya, Prince Grover, Shivam Asija, Giuseppe Carenini, Wei
+  Zhang, Arushi Gupta, Sreyoshi Bhaduri, Jing Xu, Huzefa Raja, Shayan Ray,
+  Aaron Chan, Esther~Xu Fei, Gaoyuan Du, Zuhaib Akhtar, Harshita Asnani, Weian
+  Chan, Ming Xiong, Francesco Carbone, and Jeetu Mirchandani.
+\newblock Sop-bench: Complex industrial sops for evaluating llm agents.
+\newblock {\em arXiv preprint arXiv:2506.08119}, 2025.
 
-\bibitem{voyager}
-Guanzhi Wang, Yuqi Xie, Yunfan Jiang, Ajay Mandlekar, Chaowei Xiao, Yuke Zhu,
-  Linxi Fan, and Anima Anandkumar.
-\newblock Voyager: An open-ended embodied agent with large language models.
-\newblock {\em arXiv preprint arXiv:2305.16291}, 2023.
+\bibitem{lifelongagentbench}
+Junhao Zheng, Xidi Cai, Qiuke Li, Duzhen Zhang, ZhongZhi Li, Yingying Zhang,
+  Le~Song, and Qianli Ma.
+\newblock Lifelongagentbench: Evaluating llm agents as lifelong learners.
+\newblock {\em arXiv preprint arXiv:2505.11942}, 2025.
 
-\bibitem{selfevolvinglifelong}
-Tianyu Cai et~al.
-\newblock Building self-evolving agents via experience-driven lifelong
-  learning.
-\newblock {\em arXiv preprint arXiv:2508.19005}, 2025.
+\bibitem{realfin}
+Yuyang Dai, Yan Lin, Zhuohan Xie, and Yuxia Wang.
+\newblock Realfin: How well do llms reason about finance when users leave
+  things unsaid?
+\newblock {\em arXiv preprint arXiv:2602.07096}, 2026.
+
+\bibitem{mem0}
+Prateek Chhikara, Dev Khant, Saket Aryan, Taranjeet Singh, and Deshraj Yadav.
+\newblock Mem0: Building production-ready ai agents with scalable long-term
+  memory.
+\newblock {\em arXiv preprint arXiv:2504.19413}, 2025.
+
+\bibitem{locomo}
+Adyasha Maharana, Dong-Ho Lee, Sergey Tulyakov, Mohit Bansal, Francesco
+  Barbieri, and Yuwei Fang.
+\newblock Evaluating very long-term conversational memory of llm agents.
+\newblock {\em arXiv preprint arXiv:2402.17753}, 2024.
+
+\bibitem{webcanvas}
+Yichen Pan, Dehan Kong, Sida Zhou, Cheng Cui, Yifei Leng, Bing Jiang, Hangyu
+  Liu, Yanyi Shang, Shuyan Zhou, Tongshuang Wu, and Zhengyang Wu.
+\newblock Webcanvas: Benchmarking web agents in online environments.
+\newblock {\em arXiv preprint arXiv:2406.12373}, 2024.
+
+\bibitem{browsecomp_zh}
+Peilin Zhou, Bruce Leon, Xiang Ying, Can Zhang, Yifan Shao, Qichen Ye, Dading
+  Chong, Zhiling Jin, Chenxuan Xie, Meng Cao, Yuxin Gu, Sixin Hong, Jing Ren,
+  Jian Chen, Chao Liu, and Yining Hua.
+\newblock Browsecomp-zh: Benchmarking web browsing ability of large language
+  models in chinese.
+\newblock {\em arXiv preprint arXiv:2504.19314}, 2025.
 
 \bibitem{react}
 Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan,
@@ -51,6 +81,13 @@ Sirui Hong, Mingchen Zhuge, Jonathan Chen, Xiawu Zheng, Yuheng Cheng, Ceyao
 \newblock Metagpt: Meta programming for a multi-agent collaborative framework.
 \newblock In {\em International Conference on Learning Representations}, 2024.
 
+\bibitem{codeact}
+Xingyao Wang, Yangyi Chen, Lifan Yuan, Yizhe Zhang, Yunzhu Li, Hao Peng, and
+  Heng Ji.
+\newblock Executable code actions elicit better llm agents.
+\newblock {\em arXiv preprint arXiv:2402.01030}, 2024.
+\newblock Accepted at ICML 2024.
+
 \bibitem{devin}
 {Cognition Labs}.
 \newblock Devin: Ai software engineer.
@@ -71,16 +108,6 @@ Xingyao Wang, Boxuan Jiang, Ziniu Lu, Yufan Liu, Abishek~Sridhar Li, Bolun Shi,
   agents.
 \newblock In {\em International Conference on Learning Representations}, 2025.
 
-\bibitem{openhands_sdk}
-Xingyao Wang et~al.
-\newblock Openhands software agent sdk.
-\newblock {\em arXiv preprint arXiv:2511.03690}, 2025.
-
-\bibitem{claudecode}
-{Anthropic}.
-\newblock Claude code.
-\newblock \url{https://www.anthropic.com/product/claude-code}, 2025.
-
 \bibitem{codex}
 {OpenAI}.
 \newblock Introducing codex.
@@ -90,11 +117,6 @@ Xingyao Wang et~al.
 Yichao Shen et~al.
 \newblock Manus: From mind to machine.
 \newblock {\em arXiv preprint arXiv:2505.02024}, 2025.
-
-\bibitem{openclaw_rl}
-Xingyao Wang et~al.
-\newblock Openclaw-rl: Training agents via interaction.
-\newblock {\em arXiv preprint arXiv:2603.10165}, 2026.
 
 \bibitem{memgpt}
 Charles Packer, Vivian Fang, Shishir~G. Patil, Kevin Lin, Sarah Wooders, and
@@ -107,10 +129,39 @@ Wujiang Xu et~al.
 \newblock A-mem: Agentic memory for llm agents.
 \newblock {\em Advances in Neural Information Processing Systems}, 38, 2025.
 
+\bibitem{longllmlingua}
+Huiqiang Jiang, Qianhui Wu, Xufang Luo, Dongsheng Li, Chin-Yew Lin, Yuqing
+  Yang, and Lili Qiu.
+\newblock Longllmlingua: Accelerating and enhancing llms in long context
+  scenarios via prompt compression.
+\newblock In {\em Proceedings of the 62nd Annual Meeting of the Association for
+  Computational Linguistics (Volume 1: Long Papers)}, 2024.
+
+\bibitem{anthropic_context}
+Aditya Rajasekaran et~al.
+\newblock Effective context engineering for ai agents.
+\newblock
+  \url{https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents},
+  September 2025.
+
 \bibitem{selfevolvesurvey}
 Zhiyuan Gao et~al.
 \newblock A survey of self-evolving agents.
 \newblock {\em Transactions on Machine Learning Research}, 2026.
+
+\bibitem{agentpro}
+Wenqi Zhang, Ke~Tang, Hai Wu, Mengna Wang, Yongliang Shen, Guiyang Hou, Zeqi
+  Tan, Peng Li, Yueting Zhuang, and Weiming Lu.
+\newblock Agent-pro: Learning to evolve via policy-level reflection and
+  optimization.
+\newblock In {\em Proceedings of the 62nd Annual Meeting of the Association for
+  Computational Linguistics (Volume 1: Long Papers)}, pages 5348--5375, 2024.
+
+\bibitem{voyager}
+Guanzhi Wang, Yuqi Xie, Yunfan Jiang, Ajay Mandlekar, Chaowei Xiao, Yuke Zhu,
+  Linxi Fan, and Anima Anandkumar.
+\newblock Voyager: An open-ended embodied agent with large language models.
+\newblock {\em arXiv preprint arXiv:2305.16291}, 2023.
 
 \bibitem{evolver}
 Xuechen Wu et~al.
@@ -128,5 +179,11 @@ Anonymous.
 Anonymous.
 \newblock Agentevolver: Towards efficient self-evolving agent system.
 \newblock {\em arXiv preprint arXiv:2511.10395}, 2025.
+
+\bibitem{selfevolvinglifelong}
+Tianyu Cai et~al.
+\newblock Building self-evolving agents via experience-driven lifelong
+  learning.
+\newblock {\em arXiv preprint arXiv:2508.19005}, 2025.
 
 \end{thebibliography}

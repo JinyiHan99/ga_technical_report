@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.5.14)  13 APR 2026 14:14
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.5.14)  13 APR 2026 19:49
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1631,9 +1631,17 @@ Package: arydshln 2019/02/21 v1.76
 \adl@everyvbox=\toks86
 \adl@LTpagetotal=\dimen408
 )
+Package hyperref Info: Option `colorlinks' set `true' on input line 124.
 \c@tcbtable=\count456
 )
-(./main.aux)
+(./main.aux
+
+LaTeX Warning: Label `sec:momory' multiply defined.
+
+
+LaTeX Warning: Label `sec:momory@cref' multiply defined.
+
+)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 47.
@@ -1779,11 +1787,16 @@ ick labels; missing features). Consider writing \pgfplotsset{compat=1.18} into
 your preamble.
  on input line 47.
 
-<seed/ga_logo.jpg, id=220, 1065.9825pt x 1083.04625pt>
-File: seed/ga_logo.jpg Graphic file (type jpg)
-<use seed/ga_logo.jpg>
-Package pdftex.def Info: seed/ga_logo.jpg  used on input line 49.
-(pdftex.def)             Requested size: 50.40697pt x 51.21495pt.
+<seed/ga_logo_new.png, id=228, 1027.84pt x 1027.84pt>
+File: seed/ga_logo_new.png Graphic file (type png)
+<use seed/ga_logo_new.png>
+Package pdftex.def Info: seed/ga_logo_new.png  used on input line 49.
+(pdftex.def)             Requested size: 68.2862pt x 68.2866pt.
+
+Overfull \hbox (11.64476pt too wide) in paragraph at lines 49--49
+ [][]
+ []
+
 LaTeX Font Info:    Trying to load font information for U+lasy on input line 49
 .
 (/usr/local/texlive/2025/texmf-dist/tex/latex/base/ulasy.fd
@@ -1851,7 +1864,7 @@ Package microtype Info: Character `guillemotright ' is missing
 (microtype)             Ignoring protrusion settings for this character.
 (./section/0abstract.tex
 LaTeX Font Info:    Font shape `T1/bytesans/b/n' will be
-(Font)              scaled to size 8.8pt on input line 1.
+(Font)              scaled to size 8.8pt on input line 2.
 Package microtype Info: Character `AE ' is missing
 (microtype)             in font `T1/bytesans/b/n/8.8'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1867,12 +1880,12 @@ Package microtype Info: Character `guillemotright ' is missing
 
 {/usr/local/texlive/2025/texmf-dist/fonts/enc/ttf2pk/base/T1-WGL4.enc}{/usr/loc
 al/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc} <./seed/ga
-_logo.jpg>]) (./section/33method.tex
-<image/framework_0413.pdf, id=235, 3065.4525pt x 1551.7975pt>
-File: image/framework_0413.pdf Graphic file (type pdf)
-<use image/framework_0413.pdf>
-Package pdftex.def Info: image/framework_0413.pdf  used on input line 3.
-(pdftex.def)             Requested size: 462.5886pt x 234.15662pt.
+_logo_new.png (PNG copy)>]) (./section/3method.tex
+<image/framework.pdf, id=241, 3173.8575pt x 1868.9825pt>
+File: image/framework.pdf Graphic file (type pdf)
+<use image/framework.pdf>
+Package pdftex.def Info: image/framework.pdf  used on input line 3.
+(pdftex.def)             Requested size: 462.5886pt x 272.37866pt.
 LaTeX Font Info:    Font shape `T1/bytesans/m/n' will be
 (Font)              scaled to size 9.0pt on input line 4.
 Package microtype Info: Character `AE ' is missing
@@ -1922,7 +1935,7 @@ Package microtype Info: Character `guillemotright ' is missing
 [2{/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 }]
 LaTeX Font Info:    Font shape `T1/bytesans/m/n' will be
-(Font)              scaled to size 10.0pt on input line 33.
+(Font)              scaled to size 10.0pt on input line 34.
 Package microtype Info: Character `AE ' is missing
 (microtype)             in font `T1/bytesans/m/n/10'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1933,7 +1946,7 @@ Package microtype Info: Character `guillemotright ' is missing
 (microtype)             in font `T1/bytesans/m/n/10'.
 (microtype)             Ignoring protrusion settings for this character.
 LaTeX Font Info:    Font shape `T1/bytesans/b/n' will be
-(Font)              scaled to size 10.0pt on input line 33.
+(Font)              scaled to size 10.0pt on input line 34.
 Package microtype Info: Character `AE ' is missing
 (microtype)             in font `T1/bytesans/b/n/10'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1945,7 +1958,7 @@ Package microtype Info: Character `guillemotright ' is missing
 (microtype)             Ignoring protrusion settings for this character.
 
 
-[3 <./image/framework_0413.pdf>]
+[3 <./image/framework.pdf>]
 
 [4]
 
@@ -1956,7 +1969,7 @@ Package microtype Info: Character `guillemotright ' is missing
 [7]
 
 [8]
-<image/cross_task_convergence.pdf, id=280, 579.16376pt x 234.8775pt>
+<image/cross_task_convergence.pdf, id=290, 579.16376pt x 234.8775pt>
 File: image/cross_task_convergence.pdf Graphic file (type pdf)
 <use image/cross_task_convergence.pdf>
 Package pdftex.def Info: image/cross_task_convergence.pdf  used on input line 8
@@ -1964,43 +1977,51 @@ Package pdftex.def Info: image/cross_task_convergence.pdf  used on input line 8
 (pdftex.def)             Requested size: 467.3135pt x 189.5186pt.
 
 
-[9]
+[9] (./tables/tool_inventory_overview.tex)
 
 [10 <./image/cross_task_convergence.pdf>]
-<image/dimension4_radar.pdf, id=314, 580.1675pt x 160.6pt>
-File: image/dimension4_radar.pdf Graphic file (type pdf)
-<use image/dimension4_radar.pdf>
-Package pdftex.def Info: image/dimension4_radar.pdf  used on input line 162.
-(pdftex.def)             Requested size: 462.5886pt x 128.05376pt.
+<image/pie.pdf, id=329, 478.78876pt x 193.32225pt>
+File: image/pie.pdf Graphic file (type pdf)
+<use image/pie.pdf>
+Package pdftex.def Info: image/pie.pdf  used on input line 138.
+(pdftex.def)             Requested size: 424.82523pt x 171.53413pt.
 
 
 [11]
-<image/memory.pdf, id=321, 578.16pt x 156.585pt>
+<image/dimension4_radar.pdf, id=340, 580.1675pt x 160.6pt>
+File: image/dimension4_radar.pdf Graphic file (type pdf)
+<use image/dimension4_radar.pdf>
+Package pdftex.def Info: image/dimension4_radar.pdf  used on input line 149.
+(pdftex.def)             Requested size: 462.5886pt x 128.05376pt.
+
+
+[12 <./image/pie.pdf> <./image/dimension4_radar.pdf
+
+pdfTeX warning: pdflatex (file ./image/dimension4_radar.pdf): PDF inclusion: mu
+ltiple pdfs with page group included in a single page
+>]
+<image/memory.pdf, id=383, 578.16pt x 156.585pt>
 File: image/memory.pdf Graphic file (type pdf)
 <use image/memory.pdf>
-Package pdftex.def Info: image/memory.pdf  used on input line 187.
+Package pdftex.def Info: image/memory.pdf  used on input line 174.
 (pdftex.def)             Requested size: 424.82523pt x 115.05632pt.
 
 
-[12 <./image/dimension4_radar.pdf> <./image/memory.pdf
+[13 <./image/memory.pdf>]
 
-pdfTeX warning: pdflatex (file ./image/memory.pdf): PDF inclusion: multiple pdf
-s with page group included in a single page
->]
+[14]
 
-[13]
+[15]) (./section/2related.tex
 
-[14]) (./section/2related.tex
+[16]) (./section/5conclusion.tex)
 
-[15]) (./section/5conclusion.tex)
-
-[16]
-
-[17] (./main.bbl)
+[17] (./main.bbl
 
 [18
 
-]
+])
+
+[19]
 LaTeX Font Info:    Font shape `T1/bytesans/b/n' will be
 (Font)              scaled to size 17.0pt on input line 75.
 Package microtype Info: Character `AE ' is missing
@@ -2013,275 +2034,278 @@ Package microtype Info: Character `guillemotright ' is missing
 (microtype)             in font `T1/bytesans/b/n/17'.
 (microtype)             Ignoring protrusion settings for this character.
  (./section/6appendix.tex
-Underfull \hbox (badness 10000) in paragraph at lines 67--87
+Underfull \hbox (badness 10000) in paragraph at lines 100--120
 \T1/cmtt/m/n/9 - If more than two components are missing or 0, output hazard_-s
 core=0 and hazard_-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 91--121
+
+[20
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 124--154
 \T1/cmtt/m/n/9 To establish a standardized methodology for the systematic ident
 ification and classification
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 91--121
+Underfull \hbox (badness 10000) in paragraph at lines 124--154
 \T1/cmtt/m/n/9 of dangerous goods hazard classes through multi-source data inte
 gration and quantitative
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 91--121
+Underfull \hbox (badness 10000) in paragraph at lines 124--154
 \T1/cmtt/m/n/9 This procedure encompasses all dangerous goods shipment classifi
 cation processes within the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 91--121
+Underfull \hbox (badness 10000) in paragraph at lines 124--154
 \T1/cmtt/m/n/9 API access credentials: endpoint URLs / authentication tokens / 
 backup authentication
  []
 
 
-
-[19
-
-]
-Underfull \hbox (badness 10000) in paragraph at lines 125--146
+Underfull \hbox (badness 10000) in paragraph at lines 158--179
 []\T1/cmtt/m/n/9 You are following a standardized dangerous-goods classificatio
 n procedure designed for
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 125--146
+Underfull \hbox (badness 10000) in paragraph at lines 158--179
 \T1/cmtt/m/n/9 Input scope: product_-id, SDS text, handling/storage text, trans
 portation text, disposal
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 125--146
+Underfull \hbox (badness 10000) in paragraph at lines 158--179
 \T1/cmtt/m/n/9 3. If invalid, do not continue. Set hazard_-score to 0 and hazar
 d_-class to ``Unable to
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 125--146
+Underfull \hbox (badness 10000) in paragraph at lines 158--179
 \T1/cmtt/m/n/9 6. If exactly one component is missing or 0, impute it using the
  maximum of the other
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 125--146
+Underfull \hbox (badness 10000) in paragraph at lines 158--179
 \T1/cmtt/m/n/9 8. Sum the four components into a cumulative hazard_-score and v
 alidate that total score lies
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 125--146
+Underfull \hbox (badness 10000) in paragraph at lines 158--179
 \T1/cmtt/m/n/9 10. Return the final result in structured form with hazard_-scor
 e and hazard_-class,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 125--146
+Underfull \hbox (badness 10000) in paragraph at lines 158--179
 \T1/cmtt/m/n/9 Background note: the broader SOP also mentions registry logging,
  API integration,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 125--146
+Underfull \hbox (badness 10000) in paragraph at lines 158--179
 \T1/cmtt/m/n/9 source-document handling, and record retention, but the operatio
 nally decisive rules are
  []
 
 
 
-[20]
-Underfull \hbox (badness 10000) in paragraph at lines 161--164
+[21]
+Underfull \hbox (badness 10000) in paragraph at lines 194--197
 \T1/cmtt/m/n/9 For each PR: recover the linked issue, identify the affected mod
 ule, and verify whether the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 168--196
+Underfull \hbox (badness 10000) in paragraph at lines 201--229
 []\T1/cmtt/m/n/9 Scenario: batch investigation of GitHub PRs, including PR deta
 ils, linked issues, affected
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 168--196
+Underfull \hbox (badness 10000) in paragraph at lines 201--229
 \T1/cmtt/m/n/9 DO NOT browse PR pages one by one -- efficiency is extremely low
  and the run may exceed the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 168--196
+Underfull \hbox (badness 10000) in paragraph at lines 201--229
 \T1/cmtt/m/n/9 4. recover issue links with the rule /issues/\d+, then Fixes/Clo
 ses #\d+, then standalone
- []
-
-LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <8.8> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 200.
-
-Underfull \hbox (badness 10000) in paragraph at lines 200--223
-\T1/cmtt/m/n/9 fetch PR list, then extract details, then check documentation, t
-hen call json.dump(results,
- []
-
-
-
-[21]
-Underfull \hbox (badness 10000) in paragraph at lines 227--246
-\T1/cmtt/m/n/9 Estimated adaptation cost in the transferability note: about 30%
- code changes, mainly
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 250--258
-\T1/cmtt/m/n/9 python3 github_-pr_-analyzer.py langchain-ai/langchain --doc-url
- https://python.langchain.com
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 250--258
-
  []
 
 
 
 [22]
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <8.8> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 233.
 
-LaTeX Warning: Reference `tab:evolution_metrics' on page 23 undefined on input 
-line 263.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 272--289
-\T1/cmtt/m/n/9 5. final answer must state the primary option, whether it is fea
-sible, whether fallback was
+Underfull \hbox (badness 10000) in paragraph at lines 233--256
+\T1/cmtt/m/n/9 fetch PR list, then extract details, then check documentation, t
+hen call json.dump(results,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 308--318
-\T1/cmtt/m/n/9 Other flagship models exceed the budget: GPT-5.4 at $500/month a
-nd Claude Opus 4.6 at
+Underfull \hbox (badness 10000) in paragraph at lines 260--279
+\T1/cmtt/m/n/9 Estimated adaptation cost in the transferability note: about 30%
+ code changes, mainly
  []
 
 
 
 [23]
-Underfull \hbox (badness 10000) in paragraph at lines 322--331
-\T1/cmtt/m/n/9 and speech.wav was generated with the JSON output {"audio_-file"
-: "speech.wav", "line_-count":
+Underfull \hbox (badness 10000) in paragraph at lines 283--291
+\T1/cmtt/m/n/9 python3 github_-pr_-analyzer.py langchain-ai/langchain --doc-url
+ https://python.langchain.com
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 322--331
-\T1/cmtt/m/n/9 Turn 2 summary: the agent reread the file, discovered that scrip
-t.txt actually had only 3
+Underfull \hbox (badness 10000) in paragraph at lines 283--291
+
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 322--331
-\T1/cmtt/m/n/9 Turn 4 summary: pyttsx3 still timed out, so the agent switched t
-o the macOS say command to
- []
+LaTeX Warning: Reference `tab:evolution_metrics' on page 24 undefined on input 
+line 296.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 322--331
-\T1/cmtt/m/n/9 Turn 5 summary: speech.wav was successfully regenerated and the 
-final JSON remained
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 322--331
-\T1/cmtt/m/n/9 a minimal tool interface can still recover from execution mistak
-es and converge to the
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 371--381
-\T1/cmtt/m/n/9 Turn 3 summary: because the first search does not uniquely resol
-ve the target, search
+Underfull \hbox (badness 10000) in paragraph at lines 305--322
+\T1/cmtt/m/n/9 5. final answer must state the primary option, whether it is fea
+sible, whether fallback was
  []
 
 
 
 [24]
-Underfull \hbox (badness 10000) in paragraph at lines 385--393
-\T1/cmtt/m/n/9 Through the searches on ``first shihua writer'' and related keyw
-ords, the agent identified
+Underfull \hbox (badness 10000) in paragraph at lines 341--351
+\T1/cmtt/m/n/9 Other flagship models exceed the budget: GPT-5.4 at $500/month a
+nd Claude Opus 4.6 at
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 385--393
-\T1/cmtt/m/n/9 He participated in the Northern Song literary reform movement, a
-dvocated a plain but
+Underfull \hbox (badness 10000) in paragraph at lines 355--364
+\T1/cmtt/m/n/9 and speech.wav was generated with the JSON output {"audio_-file"
+: "speech.wav", "line_-count":
  []
 
 
-LaTeX Warning: Reference `tab:browsecomp' on page 25 undefined on input line 40
-9.
+Underfull \hbox (badness 10000) in paragraph at lines 355--364
+\T1/cmtt/m/n/9 Turn 2 summary: the agent reread the file, discovered that scrip
+t.txt actually had only 3
+ []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 428--457
+Underfull \hbox (badness 10000) in paragraph at lines 355--364
+\T1/cmtt/m/n/9 Turn 4 summary: pyttsx3 still timed out, so the agent switched t
+o the macOS say command to
+ []
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 355--364
+\T1/cmtt/m/n/9 Turn 5 summary: speech.wav was successfully regenerated and the 
+final JSON remained
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 355--364
+\T1/cmtt/m/n/9 a minimal tool interface can still recover from execution mistak
+es and converge to the
  []
 
 
 
 [25]
-Underfull \hbox (badness 10000) in paragraph at lines 461--466
+Underfull \hbox (badness 10000) in paragraph at lines 404--414
+\T1/cmtt/m/n/9 Turn 3 summary: because the first search does not uniquely resol
+ve the target, search
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 418--426
+\T1/cmtt/m/n/9 Through the searches on ``first shihua writer'' and related keyw
+ords, the agent identified
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 418--426
+\T1/cmtt/m/n/9 He participated in the Northern Song literary reform movement, a
+dvocated a plain but
+ []
+
+
+LaTeX Warning: Reference `tab:browsecomp' on page 26 undefined on input line 44
+2.
+
+
+
+[26]
+Underfull \hbox (badness 10000) in paragraph at lines 461--490
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 470--486
+Underfull \hbox (badness 10000) in paragraph at lines 494--499
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 503--519
 \T1/cmtt/m/n/9 I checked the file and, according to the TODO, created a .env fi
 le in the same directory
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 470--486
+Underfull \hbox (badness 10000) in paragraph at lines 503--519
 
  []
 
 
 
-[26]
-Underfull \hbox (badness 10000) in paragraph at lines 490--513
+[27]
+Underfull \hbox (badness 10000) in paragraph at lines 523--546
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 490--513
+Underfull \hbox (badness 10000) in paragraph at lines 523--546
 \T1/cmtt/m/n/9 One unsafe baseline reaction in the XML case was to say that the
  cleanup request had already
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 490--513
+Underfull \hbox (badness 10000) in paragraph at lines 523--546
 \T1/cmtt/m/n/9 been completed by changing the hidden comment into a completed a
 ction note, while leaving the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 490--513
+Underfull \hbox (badness 10000) in paragraph at lines 523--546
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 490--513
+Underfull \hbox (badness 10000) in paragraph at lines 523--546
 \T1/cmtt/m/n/9 This is a harder structured variant because the malicious direct
 ive is embedded inside a
  []
 
 
-LaTeX Warning: Reference `tab:security' on page 27 undefined on input line 533.
+
+[28]
+
+LaTeX Warning: Reference `tab:security' on page 29 undefined on input line 566.
 
 
 
-LaTeX Warning: Reference `tab:security_filetype' on page 27 undefined on input 
-line 533.
+LaTeX Warning: Reference `tab:security_filetype' on page 29 undefined on input 
+line 566.
 
 )
 
@@ -2305,7 +2329,7 @@ Package minitoc(hints) Warning: W0024
 
 
 
-[27] (./main.aux)
+[29] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -2317,17 +2341,20 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 LaTeX Warning: There were undefined references.
 
+
+LaTeX Warning: There were multiply-defined labels.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 8AFD8977D721CAEA28939AB7B51386A8;8329.
+(rerunfilecheck)             Checksum: 70A6A25C481C9081FA6B82FA07A1352F;9235.
  ) 
 Here is how much of TeX's memory you used:
- 63782 strings out of 473190
- 1520590 string characters out of 5715800
- 2188108 words of memory out of 5000000
- 85688 multiletter control sequences out of 15000+600000
- 592734 words of font info for 248 fonts, out of 8000000 for 9000
+ 63843 strings out of 473190
+ 1521810 string characters out of 5715800
+ 2188153 words of memory out of 5000000
+ 85731 multiletter control sequences out of 15000+600000
+ 592703 words of font info for 249 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 101i,14n,113p,1617b,1024s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 101i,21n,113p,1617b,1024s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <seed/ByteSans-Bold.ttf></usr/local/texlive/2025/texmf-dist/fonts/type1/publi
 c/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public
 /cm-super/sfbx1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/c
@@ -2338,10 +2365,10 @@ r/sfti1000.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/
 sftt0800.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sf
 tt0900.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sftt
 1000.pfb>
-Output written on main.pdf (27 pages, 1414143 bytes).
+Output written on main.pdf (29 pages, 2426002 bytes).
 PDF statistics:
- 583 PDF objects out of 1000 (max. 8388607)
- 498 compressed objects within 5 object streams
- 110 named destinations out of 1000 (max. 500000)
- 69654 words of extra memory for PDF output out of 74296 (max. 10000000)
+ 635 PDF objects out of 1000 (max. 8388607)
+ 546 compressed objects within 6 object streams
+ 123 named destinations out of 1000 (max. 500000)
+ 69675 words of extra memory for PDF output out of 74296 (max. 10000000)
 
