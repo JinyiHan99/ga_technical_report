@@ -1,15 +1,14 @@
-\definecolor{caseprompttitle}{RGB}{196,129,44}
-\definecolor{casepromptbg}{RGB}{248,239,220}
-\definecolor{casetracetitle}{RGB}{67,119,183}
-\definecolor{casetracebg}{RGB}{231,239,250}
-\definecolor{caseanswertitle}{RGB}{76,133,68}
-\definecolor{caseanswerbg}{RGB}{231,242,229}
+% --- Case study box styles (two-color scheme) ---
+\definecolor{caseblueframe}{RGB}{67,119,183}
+\definecolor{casebluebg}{RGB}{231,239,250}
+\definecolor{casegrayframe}{RGB}{120,120,120}
+\definecolor{casegraybg}{RGB}{243,243,243}
 
 \newtcolorbox{CasePromptBox}[1]{
   breakable,
-  colback=casepromptbg,
-  colframe=caseprompttitle,
-  colbacktitle=caseprompttitle,
+  colback=casebluebg,
+  colframe=caseblueframe,
+  colbacktitle=caseblueframe,
   coltitle=white,
   fonttitle=\bfseries,
   title={#1}
@@ -17,9 +16,9 @@
 
 \newtcolorbox{CaseTraceBox}[1]{
   breakable,
-  colback=casetracebg,
-  colframe=casetracetitle,
-  colbacktitle=casetracetitle,
+  colback=casebluebg,
+  colframe=caseblueframe,
+  colbacktitle=caseblueframe,
   coltitle=white,
   fonttitle=\bfseries,
   title={#1}
@@ -27,9 +26,9 @@
 
 \newtcolorbox{CaseAnswerBox}[1]{
   breakable,
-  colback=caseanswerbg,
-  colframe=caseanswertitle,
-  colbacktitle=caseanswertitle,
+  colback=casegraybg,
+  colframe=casegrayframe,
+  colbacktitle=casegrayframe,
   coltitle=white,
   fonttitle=\bfseries,
   title={#1}
@@ -76,10 +75,20 @@ Working memory & TodoWriteTool / BriefTool & session history / status-like abili
 \subsection{Case Studies}
 \label{app:case_studies}
 
-Here we provide expanded case-study exhibits for the qualitative behaviors discussed in the experimental section.
-The presentation style follows a ``prompt $\rightarrow$ trace / artifact $\rightarrow$ final outcome'' pattern.
-Once a case is selected for display, we present it in a relatively full form rather than reducing it to a short summary.
-The goal is to make the appendix read like a set of worked examples that directly expose the evidence behind the aggregate results.
+We present five case studies that correspond to the five evaluation dimensions in the main text.
+Each case follows a ``task setup $\rightarrow$ artifacts / trace $\rightarrow$ observed outcome'' pattern and is shown in relatively full form to expose the evidence behind the aggregate results.
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Case A1 (Memory).} Dangerous-goods hazard classification under three memory variants---condensed, full, and redundant---illustrating why information density matters more than information volume (Section~\ref{sec:exp_memory}).
+
+\item \textbf{Case A2 (Self-Evolution).} GitHub PR research task showing the progression from natural-language SOP to compiled Python code and a transferability note, demonstrating how GA converts experience into reusable executable assets (Section~\ref{sec:self_evolution_capability}).
+
+\item \textbf{Case A3 (Tool Use).} LLM API procurement decision requiring web browsing, structured data extraction, conditional planning, and file generation---showing that a minimal atomic-tool set can handle complex multi-step workflows (Section~\ref{sec:dimension4_tool_use_efficiency}).
+
+\item \textbf{Case A4 (Web Browsing).} A BrowseComp-ZH multi-hop reasoning chain where GA identifies a historical figure through iterative search refinement, illustrating structured browser extraction in practice (Section~\ref{sec:exp_browsing}).
+
+\item \textbf{Case A5 (Security).} Indirect prompt-injection attacks embedded in benign-looking deployment files, where baseline agents execute the hidden directives while GA treats them as untrusted document content (Section~\ref{app:case_security}).
+\end{itemize}
 
 \subsubsection{Case A1. Dangerous-Goods Memory Variants}
 \label{app:case_memory}
@@ -352,15 +361,12 @@ No fallback to a dual-model plan is needed.
 
 \begin{CaseAnswerBox}{Observed Outcome}
 \small\ttfamily
-Turn 1 summary: script.txt was initially counted as 15 total lines and 12 non-empty lines, \\
-and speech.wav was generated with the JSON output \{"audio\_file": "speech.wav", "line\_count": 12\}. \\
-Turn 2 summary: the agent reread the file, discovered that script.txt actually had only 3 non-empty lines, \\
-and regenerated the artifact, yielding \{"audio\_file": "speech.wav", "line\_count": 3\}. \\
-Turn 3 summary: pyttsx3 became unavailable, so the agent attempted installation and retry. \\
-Turn 4 summary: pyttsx3 still timed out, so the agent switched to the macOS say command to generate the waveform. \\
-Turn 5 summary: speech.wav was successfully regenerated and the final JSON remained \{"audio\_file": "speech.wav", "line\_count": 3\}. \\
-This shorter task is not the main exhibit here, but it shows the same pattern: \\
-a minimal tool interface can still recover from execution mistakes and converge to the required artifact.
+GA completed the task in 21 requests and 364,385 total tokens (324.6s). \\
+All grading criteria passed: cost\_comparison.csv and decision\_04.json both created with correct schema. \\
+Final recommendation: Gemini 2.5 Pro as a single-model plan at exactly \$300/month. \\
+Cost breakdown: 80M input $\times$ \$1.25/MTok + 20M output $\times$ \$10.00/MTok = \$300.0. \\
+Other flagship models exceeded the budget: GPT-5.4 at \$500/month, Claude Opus 4.6 at \$900/month. \\
+No fallback to a dual-model plan was needed.
 \end{CaseAnswerBox}
 
 \begin{table}[t]
@@ -381,7 +387,7 @@ OpenClaw & 12 & 428,402 & 108.42 & Yes \\
 \paragraph{Case Study.}
 Presented in this order, the case reads like a real workflow: a nontrivial prompt, a concrete intermediate artifact, a structured final decision, and only then the efficiency comparison.
 This makes the tool-usage result easier to interpret than a bare token table.
-For reference, the same directional pattern also appears in the simple TTS-to-audio task, where GenericAgent used 34,556 total tokens versus 103,583 for OpenClaw while still producing the required \texttt{speech.wav} file and final JSON output.
+Notably, all three systems succeeded on this task, but GA achieved the result with the fewest tokens (364k vs.\ 485k for Claude Code and 428k for OpenClaw), confirming that atomic-tool composition does not sacrifice capability.
 
 \FloatBarrier
 
