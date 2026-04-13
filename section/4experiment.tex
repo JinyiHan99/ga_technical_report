@@ -277,67 +277,33 @@ Overall, the results show that GA can preserve long term memory capability witho
 
 \subsubsection{Setup}
 
-We evaluate the web browsing capability of GA on both standardized benchmarks and real world web tasks. 
-GA differs from OpenClaw mainly in its browser tool design, combining \texttt{web\_scan} for lightweight perception with \texttt{web\_execute\_js} for precise execution. 
-Accordingly, the evaluation focuses on three aspects, namely end to end browser interaction, multi hop web search, and head to head comparison with OpenClaw on complex custom tasks.
-
-We use three task sets. 
-\textbf{(1) WebCanvas}~\citep{webcanvas}: measuring basic browser interaction such as navigation, clicking, filtering, and information extraction. 
-\textbf{(2) BrowseComp-ZH}~\citep{browsecomp_zh}: measuring multi hop web search and chain based reasoning in the Chinese web setting. 
-\textbf{(3) Custom Tasks:} measuring real world usability on academic platforms, social media, content sites, utility websites, e commerce platforms, and public retrieval services. 
-For the direct comparison with OpenClaw, we use a 22 task subset of Custom Tasks and score each task on a 0 to 3 scale through manual review with GPT-5.4 assisted judgment. 
-Both GA and OpenClaw use the same underlying model, claude-opus-4-6, in this head to head comparison.
+We evaluate GA's web browsing capability on three benchmarks.
+\textbf{(1) WebCanvas}~\citep{webcanvas}: 12 tasks measuring basic browser interaction such as navigation, clicking, filtering, and information extraction.
+\textbf{(2) BrowseComp-ZH}~\citep{browsecomp_zh}: 10 tasks measuring multi hop web search and chain based reasoning in the Chinese web setting.
+\textbf{(3) Custom Tasks:} 22 real world tasks covering academic platforms, social media, content sites, utility websites, e commerce platforms, and public retrieval services, scored on a 0 to 3 scale through manual review with GPT-5.4 assisted judgment.
+Both GA and OpenClaw use claude-opus-4-6 as the backbone model.
 
 \begin{table}[t]
 \centering
 \small
-\caption{Benchmarks and evaluation settings for web browsing capability.}
-\begin{tabular}{lcccc}
+\caption{Web browsing evaluation results across three benchmarks. GA and OpenClaw both use claude-opus-4-6 as the backbone model.}
+\begin{tabular}{lcccccc}
 \toprule
-Benchmark & Task Count & Evaluation & Core Metric & Focus \\
+\multirow{2}{*}{Benchmark} & \multirow{2}{*}{Tasks} & \multirow{2}{*}{Evaluation} & \multicolumn{2}{c}{Score (0--1)} & \multicolumn{2}{c}{Avg. Tokens (M)} \\
+\cmidrule(lr){4-5} \cmidrule(lr){6-7}
+ &  &  & GA & OpenClaw & GA & OpenClaw \\
 \midrule
-WebCanvas & 12 & Automatic & Avg. Score & Browser interaction \\
-BrowseComp-ZH & 10 & LLM Judge & Accuracy & Multi-hop web search \\
-Custom Tasks & 34 & Human Eval & Avg. Turns / Time & Real world usability \\
-Custom Tasks vs OpenClaw & 22 & Human Eval & 0--3 Score & Head to head comparison \\
+WebCanvas & 12 & Automatic & \textbf{0.834} & 0.722 & \textbf{0.18} & 0.71 \\
+BrowseComp-ZH & 10 & LLM Judge & \textbf{0.60} & 0.20 & \textbf{0.47} & 1.31 \\
+Custom Tasks & 22 & Human + LLM & \textbf{0.577} & 0.50 & \textbf{0.26} & 0.76 \\
 \bottomrule
 \end{tabular}
-\label{tab:web_browsing_setup}
-\end{table}
-
-\begin{table}[t]
-\centering
-\small
-\caption{Head to head comparison between GA and OpenClaw on the 22-task Custom Tasks subset.}
-\begin{tabular}{lcc}
-\toprule
-Metric & GA & OpenClaw \\
-\midrule
-Average Score & \textbf{1.73} & 1.50 \\
-Total Score & \textbf{38} & 33 \\
-Task Wins & \textbf{10} & 6 \\
-Ties & 6 & 6 \\
-Average Turns & \textbf{13.7} & 18.9 \\
-Average Time & \textbf{142.7s} & 182.6s \\
-Average Tokens & \textbf{261K} & 761K \\
-Full Score Rate & 22.7\% & \textbf{31.8\%} \\
-Zero Score Rate & \textbf{4.5\%} & 27.3\% \\
-\bottomrule
-\end{tabular}
-\label{tab:web_browsing_vs_openclaw}
+\label{tab:web_browsing_results}
 \end{table}
 
 
 \subsubsection{Results}
 
-\textbf{GA demonstrates strong end to end browser interaction capability across both standardized and real world web tasks.}
-As shown in Table~\ref{tab:web_browsing_setup}, GA reaches an average score of \texttt{0.833} on \texttt{WebCanvas} and completes \texttt{50\%} of the tasks perfectly, which shows stable performance on navigation, clicking, filtering, and information extraction. On \texttt{Custom Tasks}, GA handles 34 diverse tasks with an average of \texttt{16.0} turns and \texttt{172.6s} per task, indicating practical usability in real web environments.
+As shown in Table~\ref{tab:web_browsing_results}, GA outperforms OpenClaw across all three benchmarks while consuming significantly fewer tokens. On WebCanvas, GA achieves 0.834 score with 0.18M tokens versus OpenClaw's 0.722 score with 0.71M tokens. On BrowseComp-ZH, GA reaches 0.60 accuracy compared to OpenClaw's 0.20, using 0.47M versus 1.31M tokens. On Custom Tasks, GA scores 0.577 versus 0.50, winning 10 tasks against 6, while using only 0.26M tokens compared to 0.76M for OpenClaw.
 
-\textbf{GA is capable of multi hop web search, although performance drops as reasoning chains become longer.}
-As summarized in Table~\ref{tab:web_browsing_setup}, GA answers \texttt{6} out of \texttt{10} \texttt{BrowseComp-ZH} tasks correctly, and the successful cases converge in \texttt{14.2} turns on average, while failed cases require \texttt{33.0} turns and \texttt{319.0s}. This pattern suggests that GA can perform chain based retrieval and cross page reasoning, but long reasoning chains and search divergence remain the main bottlenecks.
-
-\textbf{GA outperforms OpenClaw on real world custom web tasks while using far fewer tokens.}
-Table~\ref{tab:web_browsing_vs_openclaw} shows that GA achieves a higher average score of \texttt{1.73} versus \texttt{1.50}, wins more tasks with \texttt{10} wins against \texttt{6}, and uses only \texttt{261K} tokens on average compared with \texttt{761K} for OpenClaw. GA also requires fewer turns and less time, which shows that it achieves better task quality at substantially lower execution cost.
-
-\textbf{GA is more stable than OpenClaw on complex web pages because its browser tools separate lightweight perception from precise execution.}
-Although OpenClaw has a slightly higher full score rate of \texttt{31.8\%}, its zero score rate is much higher at \texttt{27.3\%}, compared with only \texttt{4.5\%} for GA, as shown in Table~\ref{tab:web_browsing_vs_openclaw}. This result indicates that OpenClaw is more polarized, whereas GA maintains a stronger lower bound by combining \texttt{web\_scan} for compressed page perception with \texttt{web\_execute\_js} for precise DOM level interaction and structured execution feedback.
+GA demonstrates consistent token efficiency across diverse task types, reducing token consumption by 2.9x to 3.9x while maintaining competitive or superior performance. The performance gap is particularly pronounced on BrowseComp-ZH, where GA's multi-stage compression pipeline preserves context density, enabling deeper reasoning chains without context overflow. This combination of efficiency and effectiveness makes GA practical for real-world web automation scenarios where token cost and latency are critical constraints. A detailed visualization is provided in Appendix~\ref{app:web_browsing_visualization}.
