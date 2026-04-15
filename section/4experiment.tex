@@ -5,7 +5,7 @@
 In this section, we evaluate GA from five complementary perspectives. 
 (1) We study task completion and token efficiency to measure overall capability and cost effectiveness across benchmarks. 
 (2) We analyze tool-use efficiency to evaluate whether a minimal atomic-tool design can support complex tasks with lower interaction overhead. 
-(3) We evaluate memory system effectiveness to test repeated-use improvement, condensed memory, long-term fact retention, and context explosion prevention. 
+(3) We evaluate memory system effectiveness to test repeated-use improvement, Condensed memory, long-term fact retention, and context explosion prevention. 
 (4) We examine self-evolution capability to test whether GA can compress successful trajectories into reusable SOPs and executable procedures. 
 (5) We assess web browsing capability to examine GA's end-to-end browser interaction, multi-hop web search, and real-world web task performance.
 
@@ -96,14 +96,14 @@ OpenClaw & 5 & 80.0\% & 633,101 & 183.1 & 15.0 & 16.6 & 4.2 / 3.2 \\
 
 To validate the effectiveness of GA's memory system, we design four experiments. 
 (1) We test whether GA becomes more efficient through repeated use, 
-(2) we examine whether condensed memory is more effective than full or redundant memory, 
-(3) we evaluate whether GA can support long term factual memory without an additional embedding model or vector database, and 
+(2) we examine whether Condensed memory is more effective than full or redundant memory, 
+(3) we evaluate whether GA can support long-term factual memory without an additional embedding model or vector database, and 
 (4) we study whether its hierarchical memory management can prevent memory explosion by retrieving memory only when it is actually needed.
 
 \subsubsection{Continuous Efficiency Improvement}
 \label{sec:exp_continuous_efficiency}
 
-Aiming to evaluate whether the condensed memory framework enables GA to improve through continued real-world use, we focus on the agent’s performance trajectory across repeated runs to assess gains in efficiency and reduced token consumption driven by accumulated experience.
+Aiming to evaluate whether the Condensed memory framework enables GA to improve through continued real-world use, we focus on the agent’s performance trajectory across repeated runs to assess gains in efficiency and reduced token consumption driven by accumulated experience.
 To this end, we compare CodeX, Claude Code, OpenClaw, and GA under the gpt-5.4. 
 Each experimental run consists of downloading five different datasets from HuggingFace. 
 To avoid contamination from residual context, every download task is conducted in a fresh session. 
@@ -115,20 +115,20 @@ To avoid contamination from residual context, every download task is conducted i
 \label{fig:memory}
 \end{figure*}
 
-As shown in Figure~\ref{fig:memory}, CodeX, Claude Code, and OpenClaw remained largely stable across runs, whereas GA improved markedly, with operation time dropping from 102 seconds to 62 to 70 seconds and token consumption falling from 200,439 to around 100,000. 
+As shown in Figure~\ref{fig:memory}, CodeX, Claude Code, and OpenClaw remained largely stable across runs, whereas GA improved markedly, with operation time decreasing from 102 seconds in the first run to approximately 66 seconds in later runs, and token consumption dropping from 200,439 to 100,000.
 This steady reduction indicates that \textbf{GA does not simply accumulate history, but converts task experience into reusable L3 SOPs that reduce repeated understanding, unnecessary reasoning, and decision overhead in later runs. }
-More importantly, the gain comes not from storing more content, but from preserving high value information that the model does not already know and that directly affects behavior. 
+More importantly, the gain comes not from storing more content, but from preserving high-value information that the model does not already know and that directly affects behavior. 
 Overall, the results show that GA becomes more efficient through continued use, which is precisely the intended effect of its memory system.
 
 
-\subsubsection{Effectiveness of Condensed Memory}
+\subsubsection{Effectiveness of Condensed memory}
 \label{sec:exp_condensed_memory}
 
-To examine whether our Condensed-Memory, which retains only the key rules that directly affect the final decision, can achieve comparable or better performance at lower cost, we compare four memory settings under the same GA framework with GPT-5.4. 
+To examine whether our Condensed memory, which retains only the key rules that directly affect the final decision, can achieve comparable or better performance at lower cost, we compare four memory settings under the same GA framework with GPT-5.4. 
 The other three settings are 
 (1) No-Memory, which provides no SOP or external memory and relies only on the task input and tool descriptions, 
 (2) Full-Memory, which uses the complete SOP as external knowledge, and 
-(3) Redundant-Memory, which extends condensed memory with background descriptions, definitions, and weakly relevant information in order to test whether extra content brings additional benefit.
+(3) Redundant-Memory, which extends Condensed memory with background descriptions, definitions, and weakly relevant information in order to test whether extra content brings additional benefit.
 The evaluation is conducted on the dangerous goods subset of SOP-Bench~\citep{sopbench}.
 We use Task Success Rate (TSR) to measure behavioral performance and Memory Size to measure contextual cost, and we further compare the performance gain achieved per unit of token cost across different memory settings.
 
@@ -144,14 +144,14 @@ We use Task Success Rate (TSR) to measure behavioral performance and Memory Size
 No-Memory & 0 & 13.87 \\
 Full-Memory & 575 & 52.44 \\
 Redundant-Memory & 288 & 66.48 \\
-Condensed-Memory & 165 & \textbf{66.48} \\
+Condensed memory & 165 & \textbf{66.48} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 As shown in Table~\ref{tab:memory_ablation}, No-Memory performed substantially worse than all memory based settings, which shows that external procedural memory is necessary for this task. 
-Condensed-Memory achieved the same highest TSR as Redundant-Memory and outperformed Full-Memory while using far fewer tokens, which indicates that \textbf{filtered high density memory is more effective than the original full SOP. }
-Redundant-Memory provided no gain over Condensed-Memory despite using more tokens, which suggests that background descriptions, definitions, and explanatory text add contextual burden without contributing additional behavioral value. 
+Condensed memory achieved the same highest TSR as Redundant-Memory and outperformed Full-Memory while using far fewer tokens, which indicates that \textbf{filtered high density memory is more effective than the original full SOP. }
+Redundant-Memory provided no gain over Condensed memory despite using more tokens, which suggests that background descriptions, definitions, and explanatory text add contextual burden without contributing additional behavioral value. 
 Overall, this experiment shows that GA benefits most from memory that stores only the small set of task critical information the model does not already know.
 
 \subsubsection{Long-Term Fact Retention}
