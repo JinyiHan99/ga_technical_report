@@ -1,14 +1,13 @@
 \input{tables/main_result}
 \input{tables/tool_inventory_overview}
-\subsection{Task completion and token efficiency}
 \label{sec:exp_task_completion}
 In this section, we evaluate GA from five complementary perspectives. 
 (1) We study task completion and token efficiency to measure overall capability and cost effectiveness across benchmarks. 
 (2) We analyze tool-use efficiency to evaluate whether a minimal atomic-tool design can support complex tasks with lower interaction overhead. 
 (3) We evaluate memory system effectiveness to test repeated-use improvement, Condensed memory, long-term fact retention, and context explosion prevention. 
 (4) We examine self-evolution capability to test whether GA can compress successful trajectories into reusable SOPs and executable procedures. 
-(5) We assess web browsing capability to examine GA's end-to-end browser interaction, multi-hop web search, and real-world web task performance.
-
+(5) As a core differentiating capability of GA, we assess web browsing to examine its end-to-end browser interaction, multi-hop web search, and real-world web task performance.
+\subsection{Task completion and token efficiency}
 \subsubsection{Setup}
 \label{sec:exp_task_completion_setup}
 We compare four representative agent systems, including GA, Claude Code, OpenClaw, and Codex. The backbone models include Claude Sonnet 4.6, Claude Opus 4.6, Minimax M2.7, and GPT-5.4.
@@ -30,7 +29,7 @@ As shown in Table~\ref{tab:dimension1_task_completion}, this trend is consistent
 On SOP-Bench, GA uses 2.02M input tokens, which is lower than OpenClaw at 2.60M but higher than Claude Code at 1.23M, while still achieving 100\% accuracy. In contrast, on Lifelong AgentBench, GA uses 222k input tokens, significantly lower than Claude Code at 800k and OpenClaw at 1.43M, while maintaining 100\% accuracy. A similar pattern is observed on RealFin-benchmark.
 
 \textbf{GA achieves the strongest overall performance in task completion and efficiency across the main benchmarks.}
-On both Lifelong AgentBench and RealFin-benchmark, GA achieves the strongest combined result in terms of task completion and token efficiency, reaching 100\% accuracy with an efficiency ratio of 4.15 on Lifelong AgentBench and 65\% accuracy with an efficiency ratio of 5.70 on RealFin-benchmark. On SOP-Bench, although Claude Code reaches a higher efficiency ratio of 0.68, its accuracy drops to 85\%, whereas GA maintains 100\% accuracy with an efficiency ratio of 0.48.
+Within each benchmark, GA achieves the best combined result in terms of task completion and token efficiency. On Lifelong AgentBench, GA reaches 100\% accuracy with an efficiency ratio of 4.15; on RealFin-benchmark, it attains 65\% accuracy with an efficiency ratio of 5.70. On SOP-Bench, although Claude Code reaches a higher efficiency ratio of 0.68, its accuracy drops to 85\%, whereas GA maintains 100\% accuracy with an efficiency ratio of 0.48.
 
 \subsection{Tool-use efficiency}
 \label{sec:dimension4_tool_use_efficiency}
@@ -55,7 +54,7 @@ We report \textbf{Success}, \textbf{Total Tokens}, \textbf{Time}, \textbf{Reques
 
 \begin{table*}[t]
 \centering
-\caption{\textbf{Results on long-horizon complex tasks.} This table reports the average outcomes over the long-horizon task set rather than expanding into per-task detail.}
+\caption{\textbf{Results on long-horizon complex tasks.} The five tasks cover document generation (PDF/PPT creation), SQL copilot query generation, experiment analysis report writing, procurement decision-making with web retrieval, and research paper reproduction feasibility analysis. This table reports the average outcomes over the long-horizon task set rather than expanding into per-task detail.}
 \def\arraystretch{0.99}
 \setlength{\tabcolsep}{0.42em}
 \resizebox{1.0\linewidth}{!}{
@@ -198,7 +197,7 @@ Overall, these results show that long term factual memory can be achieved throug
 
 \subsubsection{Context Explosion Prevention}
 \label{sec:exp_context_explosion}
-To evaluate whether GA can prevent memory explosion under long term use and continuous skill expansion, we compare GA, Claude Code, CodeX, and OpenClaw after installing 20 skills for each agent and using them intensively over time. 
+To evaluate whether GA can prevent memory explosion under long term use and continuous skill expansion, we compare GA, Claude Code, CodeX, and OpenClaw after installing the same set of 20 skills for each agent and using them intensively over time. 
 We then issue a minimal request ``Hello'' and measure the Full prompt length of each agent to assess how well its memory system controls context growth after prolonged use.
 
 \begin{table}[t]
@@ -231,7 +230,7 @@ Overall, the results show that GA can preserve long term memory capability witho
 We evaluate GA's self-evolution process in two complementary settings. The first is a nine-round longitudinal study where GA repeatedly performs similar GitHub research tasks. Each round operates on a different task instance, allowing us to observe how accumulated experience translates into efficiency gains across structurally similar workflows. The second is an eight-task web benchmark used to test whether the same efficiency gains transfer across task types. The longitudinal study reveals the full trajectory from first execution to convergence, while the benchmark study tests whether the same pattern generalizes beyond a single workflow.
 
 \paragraph{Evolution Stages.}
-We summarize GA's self-evolution into three stages. \textbf{Stage 1: Natural-language execution}, where GA solves the task mainly through in-context reasoning and trial-and-error interaction. \textbf{Stage 2: SOP distillation}, where accumulated experience is compressed into a textual SOP. \textbf{Stage 3: Code-based execution}, where the verified workflow is further converted into executable logic.
+We summarize GA's self-evolution into three stages. \textbf{Stage 1: Natural-language execution}, where GA solves the task mainly through in-context reasoning and trial-and-error interaction. \textbf{Stage 2: SOP distillation}, where accumulated experience is compressed into a textual SOP. \textbf{Stage 3: Code-based execution}, where the verified workflow is further converted into executable logic. Notably, the transition between stages is triggered automatically by GA's memory management mechanism rather than by manual intervention, which is itself a key advantage of the self-evolution design.
 
 \subsubsection{Iteration-Wise Efficiency Trajectory}
 \label{sec:exp_iteration_trajectory}
