@@ -490,3 +490,256 @@ Reasoning note: the extracted final answer exactly matches the gold answer ``Wan
 \end{CaseAnswerBox}
 
 \FloatBarrier
+
+\subsection{General Capability Showcase}
+\label{app:general_capability_showcase}
+
+Beyond the four evaluation-aligned cases above, we present five additional cases drawn from a pool of more than 500 historical sessions.
+They are selected to maximize coverage of non-benchmark capability dimensions rather than to reflect average-case performance, and are intended as qualitative demonstrations rather than statistical evaluation.
+All cases come from user-authorized sessions; sensitive identities, document contents, account details, and message contents are anonymized or paraphrased when presented here, and any autonomous behaviors were executed under user-configured triggers or preset operating policies.
+Together, these cases illustrate how GA's architectural choices --- atomic tools, persistent memory, and self-evolution --- support real-world workflows that are difficult to capture in standardized benchmarks.
+Each case follows the same ``purpose and task setup $\rightarrow$ execution trace $\rightarrow$ observed outcome'' format for consistency.
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Case B1 (Cross-Device Control).} A mobile food-ordering task via ADB, followed by screen-recording retrieval and video post-processing, used to show how atomic-tool composition can bridge the PC--smartphone boundary within one execution chain.
+
+\item \textbf{Case B2 (Cross-Platform Orchestration).} A message-forwarding task from a local WeChat database to a Weibo post, used to show how GA composes heterogeneous local and web environments within a single workflow.
+
+\item \textbf{Case B3 (Autonomous Operation).} An overnight session triggered after the user leaves, used to show how self-evolution, working checkpoints, and preset patrol routines can support bounded autonomous operation.
+
+\item \textbf{Case B4 (Remote Infrastructure).} An SSH-based remote file-server deployment task, used to show how atomic tools can support end-to-end DevOps workflows including dependency installation, file transfer, service deployment, and iterative troubleshooting.
+
+\item \textbf{Case B5 (Long-Horizon Academic Workflow).} A multi-session NSFC grant proposal assistance task spanning figure design, citation verification, and batch error correction, used to show how persistent memory supports extended, multi-phase academic work.
+\end{itemize}
+
+\subsubsection{Case B1. Cross-Device Control: Mobile Food Ordering via ADB}
+\label{app:case_cross_device}
+
+\begin{CasePromptBox}{Purpose and Task Setup}
+\small\ttfamily
+Purpose: to examine whether GA can operate across the PC--smartphone boundary through ADB-based device control, \\
+we provide a real-world mobile food-ordering task followed by screen-recording retrieval and video post-processing. \\
+This task is useful because it requires coordinated control of a physical mobile device, GUI interaction with a commercial app, and multimedia processing on the host PC within a single workflow. \\
+The goal of the case is to show that a small atomic-tool set can be composed into a cross-device execution chain under a realistic consumer-app workflow. \\[6pt]
+User instruction (verbatim, translated): \\
+``Order two cups of milk tea on my phone via Meituan Waimai. Stop at the final payment page --- do not pay.'' \\[4pt]
+Follow-up instructions: \\
+1. ``Pull the screen recording from the phone.'' \\
+2. ``Trim everything before 1:10, black out the top half after 3:40.'' \\
+3. ``Convert it into a sped-up GIF.''
+\end{CasePromptBox}
+
+\begin{CaseTraceBox}{Artifact 1: Mobile Ordering Execution Trace}
+\small\ttfamily
+Step 1: Establish ADB connection to the Android device. \\
+Step 2: Launch the Meituan Waimai (food delivery) app via ADB shell am start. \\
+Step 3: Dismiss pop-up advertisements by locating and tapping the close button coordinates. \\
+Step 4: Navigate to the ``Desserts \& Drinks'' category. \\
+Step 5: Select a nearby store (Hushang Ayi, a popular milk-tea chain). \\
+Step 6: Locate the ``Must-Try Milk Tea --- Pick Any Two'' combo at \textyen 23.9. \\
+Step 7: Select flavor 1: Thick Taro Paste; select flavor 2: Brown Sugar Boba. \\
+Step 8: Confirm selections and add to cart. \\
+Step 9: Proceed to the checkout page and halt --- no payment action taken.
+\end{CaseTraceBox}
+
+\begin{CaseTraceBox}{Artifact 2: Video Post-Processing Trace}
+\small\ttfamily
+Step 1: Pull the screen recording from the phone via adb pull. \\
+Step 2: Trim the first 1 minute 10 seconds using ffmpeg -ss 00:01:10. \\
+Step 3: Black out the top half of the frame after the 3:40 mark using ffmpeg drawbox filter with overlay logic. \\
+Step 4: Re-encode and speed up the video (4x) to produce a compact GIF using ffmpeg with palettegen and paletteuse filters. \\
+Step 5: Verify the final GIF file size and frame count.
+\end{CaseTraceBox}
+
+\begin{CaseAnswerBox}{Observed Outcome}
+\small\ttfamily
+In this session, GA completed the full pipeline: ADB device connection, commercial app navigation (7 GUI interactions), screen-recording retrieval, video trimming, region-specific masking, and GIF generation. \\
+The workflow was executed through a composition of code\_run (ADB commands, ffmpeg), file\_read / file\_write (media files), and update\_working\_checkpoint (tracking multi-phase progress). \\
+No task-specific mobile-automation framework (e.g., Appium, UIAutomator) was introduced in this workflow. \\
+This case specifically illustrates the paper's claim that a compact atomic-tool set can be composed into a long execution chain that extends beyond the host PC when ADB is available as a bridge.
+\end{CaseAnswerBox}
+
+\FloatBarrier
+
+\subsubsection{Case B2. Cross-Platform Orchestration: WeChat to Weibo Message Forwarding}
+\label{app:case_cross_platform}
+
+\begin{CasePromptBox}{Purpose and Task Setup}
+\small\ttfamily
+Purpose: to examine whether GA can orchestrate data flow across heterogeneous local and web platforms, \\
+we provide a task that requires reading from a local encrypted database and publishing to a social-media platform via browser automation. \\
+This task is useful because it chains together local database decryption, contact resolution, message extraction, and browser-based content publishing --- capabilities that belong to different software stacks. \\
+The goal of the case is to show that GA can compose heterogeneous data sources and output channels into a single workflow under explicit user instruction. \\[6pt]
+User instruction (verbatim, translated): \\
+``Forward the latest message from Professor Xiao in WeChat to Weibo.'' \\[4pt]
+Presentation note: contact identity and forwarded message content are anonymized here, and the operation was performed only after the user explicitly requested the forwarding action.
+\end{CasePromptBox}
+
+\begin{CaseTraceBox}{Artifact 1: Execution Trace}
+\small\ttfamily
+Phase 1 --- WeChat Message Extraction: \\
+Step 1: Locate the local WeChat database files (EnMicroMsg.db). \\
+Step 2: Decrypt the database using SQLCipher with the derived key. \\
+Step 3: Query the contact table to resolve the anonymized alias ``Professor Xiao'' to the intended contact record. \\
+Step 4: Query the message table for the most recent private message from this contact. \\
+Step 5: Extract the latest message content (paraphrased here for privacy). \\[4pt]
+Phase 2 --- Weibo Publishing: \\
+Step 6: Open the Weibo compose page in the browser via web\_scan. \\
+Step 7: Inject JavaScript to locate the post editor textarea and fill in the extracted message. \\
+Step 8: Trigger the submit button via web\_execute\_js. \\
+Step 9: Verify that the post appears on the user's Weibo timeline.
+\end{CaseTraceBox}
+
+\begin{CaseAnswerBox}{Observed Outcome}
+\small\ttfamily
+In this session, GA bridged two heterogeneous platforms within one workflow: \\
+(1) local encrypted WeChat database $\rightarrow$ SQLCipher decryption $\rightarrow$ contact resolution $\rightarrow$ message extraction; \\
+(2) browser-based Weibo $\rightarrow$ JS injection $\rightarrow$ post creation $\rightarrow$ publication verification. \\
+The tools used were code\_run (SQLCipher operations, key derivation), file\_read (database file access), and web\_scan + web\_execute\_js (Weibo interaction). \\
+This case specifically illustrates the paper's claim that atomic tools can be composed across heterogeneous local and web environments, allowing one session to move from private local data handling to browser-side execution under explicit user intent.
+\end{CaseAnswerBox}
+
+\FloatBarrier
+
+\subsubsection{Case B3. Autonomous Operation: Unsupervised Overnight Session}
+\label{app:case_autonomous}
+
+\begin{CasePromptBox}{Purpose and Task Setup}
+\small\ttfamily
+Purpose: to examine whether GA can operate productively with limited oversight under a preset autonomy policy, \\
+we present an autonomous session triggered by the system detecting that the user has been away for over 30 minutes. \\
+This task is useful because it demonstrates self-directed task selection, execution, and self-correction over an extended period. \\
+The goal of the case is to show that GA's self-evolution capability can extend beyond benchmark settings into bounded autonomous operation. \\[6pt]
+Trigger condition: \\
+{[AUTO]} User has been away for more than 30 minutes. \\
+Operational boundary: the session was restricted to inspection, reporting, tool creation, and reversible local maintenance actions; external publication, payment, and destructive system modification were excluded by policy. \\
+No explicit task instruction was given after the trigger; GA selected and executed tasks based on its built-in patrol and self-improvement routines within the preset policy.
+\end{CasePromptBox}
+
+\begin{CaseTraceBox}{Artifact 1: Autonomous Task Inventory (Rounds 125--140+)}
+\small\ttfamily
+Category 1 --- System Security Audit: \\
+- Scanned all listening ports on the host machine. \\
+- Discovered a stock-trading application occupying 939 UDP ports and 509\,MB of memory at 3:00\,AM. \\
+- Audited startup items: 11 registry entries + 267 scheduled tasks + 86 auto-start services. \\[4pt]
+Category 2 --- Tool Creation: \\
+- Wrote port\_monitor.py: real-time port monitoring utility. \\
+- Wrote process\_watchdog.py: process resource watchdog with alerting. \\
+- Wrote startup\_auditor.py: startup-item auditing and reporting tool. \\[4pt]
+Category 3 --- Web Patrol: \\
+- Visited tech community sites (Guohe Boke, V2EX) and GitHub Trending. \\
+- Generated a summarized patrol report covering trending topics and notable repositories. \\[4pt]
+Category 4 --- Environment Hygiene: \\
+- Audited the Python environment: found 294 installed packages occupying 1.9\,GB. \\
+- Identified 2 CVE vulnerabilities in the filelock package; wrote pip\_audit.py. \\
+- Discovered and fixed an inconsistency in its own history filenames (.md vs .txt extension mismatch).
+\end{CaseTraceBox}
+
+\begin{CaseAnswerBox}{Observed Outcome}
+\small\ttfamily
+Over approximately 15+ autonomous rounds, GA performed system security auditing, created three reusable utility scripts, conducted web patrol with report generation, audited the Python environment for vulnerabilities, and self-corrected its own file-management errors. \\
+After the trigger fired, the session proceeded without additional user input and remained within the preset autonomy policy described above. \\
+Tools used: code\_run (system commands, script creation and testing), file\_read / file\_write (script files, reports), web\_scan (web patrol), and update\_working\_checkpoint (tracking progress across rounds). \\
+This case specifically illustrates the paper's claim that self-evolution, working checkpoints, and patrol routines can support bounded autonomous operation over extended periods, rather than only repeated benchmark-style tasks.
+\end{CaseAnswerBox}
+
+\FloatBarrier
+
+\subsubsection{Case B4. Remote Infrastructure: SSH-Based File Server Deployment}
+\label{app:case_remote_infra}
+
+\begin{CasePromptBox}{Purpose and Task Setup}
+\small\ttfamily
+Purpose: to examine whether GA can manage end-to-end remote infrastructure tasks, \\
+we provide a real-world deployment scenario requiring SSH access, file transfer, and iterative service configuration. \\
+This task is useful because it involves dependency management on an unfamiliar remote machine, multi-step troubleshooting, and responding to changing user requirements mid-task. \\
+The goal of the case is to show that an atomic-tool workflow can support a complete DevOps-style execution chain in this setting, without relying on infrastructure-as-code tooling. \\[6pt]
+User instruction (verbatim, translated): \\
+``SSH into user@{\it [IP address]}. Set up a file server on it and upload the zip file.'' \\
+Follow-up instruction: ``Make it publicly accessible.''
+\end{CasePromptBox}
+
+\begin{CaseTraceBox}{Artifact 1: Execution Trace}
+\small\ttfamily
+Phase 1 --- Environment Setup: \\
+Step 1: Install the paramiko library for SSH connectivity (pip install paramiko). \\
+Step 2: Establish an SSH connection to the remote Linux server. \\
+Step 3: Upload the 19\,MB zip file via SFTP. \\[4pt]
+Phase 2 --- Service Deployment: \\
+Step 4: Deploy a Python HTTP file server on the remote machine (python3 -m http.server). \\
+Step 5: Encounter and fix a Chinese filename encoding issue (UTF-8 locale configuration). \\[4pt]
+Phase 3 --- Requirement Change: \\
+Step 6: User requests public access $\rightarrow$ reconfigure the server to remove authentication. \\
+Step 7: Add directory isolation so that only the target folder is exposed. \\[4pt]
+Phase 4 --- Verification: \\
+Step 8: Test the download from the local machine. \\
+Step 9: Confirm file integrity: downloaded size = 19.01\,MB, matching the original.
+\end{CaseTraceBox}
+
+\begin{CaseAnswerBox}{Observed Outcome}
+\small\ttfamily
+In this session, GA completed the full DevOps workflow: SSH connection, dependency installation on the remote machine, file upload (19\,MB), HTTP server deployment, encoding bugfix, mid-task requirement change (public access), directory isolation, and end-to-end verification. \\
+Tools used: code\_run (paramiko SSH, SFTP, remote shell commands), file\_read / file\_write (local zip file, configuration), and update\_working\_checkpoint (phase tracking). \\
+This case specifically illustrates the paper's claim that atomic tools plus lightweight state tracking can support a complete ``connect $\rightarrow$ configure $\rightarrow$ deploy $\rightarrow$ troubleshoot $\rightarrow$ verify'' workflow over SSH in a realistic remote environment.
+\end{CaseAnswerBox}
+
+\FloatBarrier
+
+\subsubsection{Case B5. Long-Horizon Academic Workflow: NSFC Grant Proposal Assistance}
+\label{app:case_academic}
+
+\begin{CasePromptBox}{Purpose and Task Setup}
+\small\ttfamily
+Purpose: to examine whether GA can sustain coherent support over a long-horizon, multi-session academic task, \\
+we present a real-world NSFC (National Natural Science Foundation of China) grant proposal assistance case that spanned multiple sessions over several days. \\
+This task is useful because it involves reading and comprehending a full-length proposal, identifying structural weaknesses, producing academic figures, performing large-scale citation verification, and iteratively correcting errors --- capabilities that must be coordinated across sessions with persistent memory. \\
+The goal of the case is to show that GA's memory system and self-evolution capabilities can support sustained, multi-phase academic assistance beyond a single session. \\[6pt]
+Presentation note: the proposal materials were user-provided, and document-specific details are anonymized here when they are not essential to the technical point. \\
+Task phases (emerged organically from user interaction): \\
+1. Read and analyze the complete NSFC proposal document. \\
+2. Identify that the proposal contains no figures; design a figure plan. \\
+3. Generate academic figures (overview diagram + per-section illustrations). \\
+4. Verify all bibliographic entries against external sources. \\
+5. Correct discovered citation errors and regenerate the PDF.
+\end{CasePromptBox}
+
+\begin{CaseTraceBox}{Artifact 1: Figure Design and Generation}
+\small\ttfamily
+Observation: the entire proposal contained zero figures, which is a significant weakness for an NSFC application. \\
+Action plan: \\
+- Design a research overview figure showing the relationship among the three proposed research themes. \\
+- Design per-section illustrations for each research content block. \\[4pt]
+Execution: \\
+- Used Python (matplotlib, networkx) to generate vector-format overview diagrams. \\
+- Composed Gemini API prompts to generate domain-appropriate academic illustrations. \\
+- Integrated figures into the LaTeX source and verified rendering.
+\end{CaseTraceBox}
+
+\begin{CaseTraceBox}{Artifact 2: Citation Verification and Batch Correction}
+\small\ttfamily
+Approach: parsed the .bib file and extracted all bibliographic entries. \\
+For each entry: \\
+- Queried arXiv API to verify title, authors, and year. \\
+- Cross-referenced with OpenAlex API for published-venue entries. \\
+- Compared extracted metadata against the .bib fields. \\[4pt]
+Findings: \\
+- Discovered a significant number of arXiv preprint entries with incorrect metadata (wrong year, mismatched titles, incomplete author lists). \\
+- Root cause: likely auto-generated .bib entries from LLM-assisted writing without manual verification. \\[4pt]
+Correction: \\
+- Batch-updated the .bib file with verified metadata. \\
+- Logged all changes for the user's review (change log with before/after comparisons). \\
+- Regenerated the PDF with corrected references.
+\end{CaseTraceBox}
+
+\begin{CaseAnswerBox}{Observed Outcome}
+\small\ttfamily
+Across multiple sessions spanning several days, GA provided end-to-end assistance for: \\
+(1) full-document comprehension and structural analysis; \\
+(2) figure design and generation (Python vector graphics + API-generated illustrations); \\
+(3) systematic citation verification against arXiv and OpenAlex, discovering and correcting a batch of erroneous entries; \\
+(4) LaTeX integration and PDF regeneration. \\[4pt]
+Tools used: file\_read (proposal document, .bib file), code\_run (Python plotting, API queries, .bib parsing), file\_write (corrected .bib, figures), web\_scan (arXiv / OpenAlex verification), and update\_working\_checkpoint (cross-session state). \\[4pt]
+This case specifically illustrates the paper's claim that layered persistent memory (L0--L3), together with reusable procedures accumulated through self-evolution, can maintain continuity across multi-session academic workflows involving reading, generation, verification, and revision.
+\end{CaseAnswerBox}
+
+\FloatBarrier
