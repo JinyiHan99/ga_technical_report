@@ -16,6 +16,11 @@ We compare four representative agent systems, including GA, Claude Code, OpenCla
 \paragraph{Benchmark.}
 We evaluate the systems on three complementary benchmarks. (1) \textbf{SOP-Bench}~\citep{sopbench} tests multi-step SOP execution. (2) \textbf{Lifelong AgentBench}~\citep{lifelongagentbench} tests sequential tasks with cross-task dependency. (3) \textbf{RealFin-benchmark}~\citep{realfin} tests realistic financial tasks that require domain understanding and reliable execution.
 
+
+\paragraph{Metrics.}
+We report \textbf{Accuracy}, \textbf{Input Tokens}, \textbf{Output Tokens}, \textbf{Total Tokens}, and \textbf{Efficiency}. Here, \textbf{Efficiency} is defined as the achieved accuracy per million total tokens, i.e., $\text{Efficiency}=\text{Accuracy}/\text{Total Tokens (M)}$. 
+
+
 \subsubsection{Results}
 \label{sec:exp_task_completion_results}
 \textbf{GA maintains leading or near-leading task completion across different benchmarks.}
@@ -25,7 +30,7 @@ As shown in Table~\ref{tab:dimension1_task_completion}, this trend is consistent
 On SOP-Bench, GA uses 2.02M input tokens, which is lower than OpenClaw at 2.60M but higher than Claude Code at 1.23M, while still achieving 100\% accuracy. In contrast, on Lifelong AgentBench, GA uses 222k input tokens, significantly lower than Claude Code at 800k and OpenClaw at 1.43M, while maintaining 100\% accuracy. A similar pattern is observed on RealFin-benchmark.
 
 \textbf{GA achieves the strongest overall performance in task completion and efficiency across the main benchmarks.}
-On both Lifelong AgentBench and RealFin-benchmark, GA achieves the strongest combined result in terms of task completion and token efficiency, reaching 100\% accuracy with an efficiency ratio of 4.15 on Lifelong AgentBench and 65\% accuracy with 114k total tokens and an efficiency ratio of 5.70 on RealFin-benchmark. On SOP-Bench, although Claude Code reaches a higher efficiency ratio of 0.68, its accuracy drops to 85\%, whereas GA maintains 100\% accuracy with an efficiency ratio of 0.48.
+On both Lifelong AgentBench and RealFin-benchmark, GA achieves the strongest combined result in terms of task completion and token efficiency, reaching 100\% accuracy with an efficiency ratio of 4.15 on Lifelong AgentBench and 65\% accuracy with an efficiency ratio of 5.70 on RealFin-benchmark. On SOP-Bench, although Claude Code reaches a higher efficiency ratio of 0.68, its accuracy drops to 85\%, whereas GA maintains 100\% accuracy with an efficiency ratio of 0.48.
 
 \subsection{Tool-use efficiency}
 \label{sec:dimension4_tool_use_efficiency}
@@ -42,22 +47,25 @@ Table~\ref{tab:tool_inventory_overview} first gives a source-level inventory ove
 \paragraph{Benchmark.}
 The benchmark contains two complementary task groups. (1) \textbf{Simple tool-generalization tasks}, which test whether baseline specialized tool capabilities can be reproduced through GA's atomic-tool composition. (2) \textbf{Long-horizon complex tasks}, which test whether the same minimal tool design remains effective on realistic multi-step workflows.
 
+\paragraph{Metrics.}
+We report \textbf{Success}, \textbf{Total Tokens}, \textbf{Time}, \textbf{Requests}, and \textbf{Tool Calls}. \textbf{Success} denotes the fraction of tasks completed successfully in the evaluated task set. The remaining metrics measure execution cost and interaction overhead: \textbf{Total Tokens} is the total token consumption, \textbf{Time} is the average runtime in seconds, \textbf{Requests} is the average number of model requests, and \textbf{Tool Calls} is the average number of tool invocations.
+
 \subsubsection{Atomic Tool Generalization}
 \label{sec:exp_atomic_tool_generalization}
 
 \begin{table*}[t]
 \centering
-\caption{\textbf{Aggregated results on long-horizon complex tasks.} This table reports the average outcomes over the long-horizon task set rather than expanding into per-task detail.}
+\caption{\textbf{Results on long-horizon complex tasks.} This table reports the average outcomes over the long-horizon task set rather than expanding into per-task detail.}
 \def\arraystretch{0.99}
 \setlength{\tabcolsep}{0.42em}
 \resizebox{1.0\linewidth}{!}{
-\begin{tabular}{lccccccc}
+\begin{tabular}{lcccccc}
 \toprule
-\textbf{Agent} & \textbf{\#Tasks} & \textbf{Success} & \textbf{Accounted Tokens} & \textbf{Time (s)} & \textbf{Requests} & \textbf{Tool Calls} & \textbf{Distinct Tools / Caps.} \\
+\textbf{Agent} & \textbf{\#Tasks} & \textbf{Success} & \textbf{Total Tokens} & \textbf{Time (s)} & \textbf{Requests} & \textbf{Tool Calls} \\
 \midrule
-Claude Code & 5 & 100.0\% & 537,413 & 320.8 & 32.6 & 22.6 & 4.4 / 3.8 \\
-GA & 5 & 100.0\% & 188,829 & 220.8 & 11.0 & 12.8 & 3.6 / 3.6 \\
-OpenClaw & 5 & 80.0\% & 633,101 & 183.1 & 15.0 & 16.6 & 4.2 / 3.2 \\
+Claude Code & 5 & 100.0\% & 537,413 & 320.8 & 32.6 & 22.6 \\
+GA & 5 & 100.0\% & 188,829 & 220.8 & 11.0 & 12.8 \\
+OpenClaw & 5 & 80.0\% & 633,101 & 183.1 & 15.0 & 16.6 \\
 \bottomrule
 \end{tabular}
 }
