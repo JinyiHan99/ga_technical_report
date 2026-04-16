@@ -25,6 +25,22 @@ Aditya Rajasekaran et~al.
   \url{https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents},
   September 2025.
 
+\bibitem{liu2023lostmiddlelanguagemodels}
+Nelson~F. Liu, Kevin Lin, John Hewitt, Ashwin Paranjape, Michele Bevilacqua,
+  Fabio Petroni, and Percy Liang.
+\newblock Lost in the middle: How language models use long contexts, 2023.
+
+\bibitem{shi2023largelanguagemodelseasily}
+Freda Shi, Xinyun Chen, Kanishka Misra, Nathan Scales, David Dohan, Ed~Chi,
+  Nathanael Schärli, and Denny Zhou.
+\newblock Large language models can be easily distracted by irrelevant context,
+  2023.
+
+\bibitem{an2024doeseffectivecontextlength}
+Chenxin An, Jun Zhang, Ming Zhong, Lei Li, Shansan Gong, Yao Luo, Jingjing Xu,
+  and Lingpeng Kong.
+\newblock Why does the effective context length of llms fall short?, 2024.
+
 \bibitem{sopbench}
 Subhrangshu Nandi, Arghya Datta, Rohith Nama, Udita Patel, Nikhil Vichare,
   Indranil Bhattacharya, Prince Grover, Shivam Asija, Giuseppe Carenini, Wei

@@ -108,7 +108,13 @@ When such compression is still insufficient, the system trims the stored message
 Related mechanisms also help limit prompt growth at specific tool boundaries. For example, some tool paths support file-based offloading of bulky outputs, and some returned content is shortened before reinsertion into the prompt. However, these should be treated only as tool-specific support for prompt-budget management, not as a general automatic externalization mechanism for all large intermediate artifacts.
 
 Taken together, these mechanisms show that GenericAgent maintains a compact decision state without replaying the entire prior trajectory inside the active prompt. More specifically, it combines bounded injection of recent turn summaries, explicitly updated short-term task-state fields with automatic reinsertion, and length-driven compression and trimming of older history under an approximate character-length budget. These mechanisms are intended to make limited active context more sustainable during multi-step interaction. By themselves, however, they should be read as implementation-level prompt-budget management rather than as direct proof of long-horizon task success under a fixed small context window.
-
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.98\linewidth]{image/framework_0413.pdf}
+    \caption{\textbf{Overall framework of GA.} GA follows a unified agent loop that constructs an execution context from the current task and relevant memory, generates outputs or tool calls, and updates the system through structured feedback.
+It is built on four core mechanisms: a minimal tool set, hierarchical memory, reflection-driven self-evolution, and structured browser extraction.}
+    \label{fig:agent_loop}
+    \end{figure*}
 \subsection{Overview of GenericAgent}
 \label{sec:overview}
 GA is a general-purpose LLM agent system that provides automation over a local computing environment. It enables a compatible LLM backend to operate across browsers, terminals, file systems, keyboard and mouse inputs, screen-based perception, and mobile devices through configurable tool adapters. The system is model-agnostic, allowing the underlying reasoning engine (e.g., Claude, GPT, Gemini) to be replaced without affecting execution logic, tool interfaces, or memory architecture. The overall architecture is illustrated in Figure \ref{fig:agent_loop}.
@@ -121,7 +127,7 @@ After task completion, GA performs memory distillation. Execution traces are com
 
 \subsection{Core Components of GenericAgent}
 \label{sec:core_design}
-Building on the principles in Section \ref{sec:principle}, we describe the core components of GA, covering the atomic tool set, hierarchical memory management, reflection-driven self-evolution, and structured-extraction-based browser interaction.
+Building on the principles in Section \ref{sec:principle}, we describe the core components of GA, covering the atomic tool set, hierarchical memory management, self-evolution, and context compact.
 
 \subsubsection{Minimal Atomic Toolset}
 \label{sec:tools}
@@ -136,7 +142,7 @@ Each tool maintains a single responsibility.
 These tools form a complete loop covering state observation, action execution, context preservation, and intervention requests.
 
 GA adopts an authority–responsibility aligned permission model.
-Authority is strictly defined by the injected toolset, and GA cannot self-escalate beyond it.
+Authority is strictly defined by the injected toolset, and GA cannot self-escalate beyond it, though \texttt{code\_run} serves as a controlled escalation point by design.
 With read-only tools, GA can inspect and reason, but cannot modify any state;
 With patch tools, GA can edit text, subject to strict matching and parameter constraints.
 With execution and web-control tools, GA can trigger real system actions, while all interactions return structured outputs through the dispatcher, ensuring full traceability.
@@ -147,73 +153,40 @@ Each tool defines a name, a description, and a set of parameters described by JS
 At runtime, this schema is injected into the interface, allowing GA to produce structured \texttt{tool\_use} calls with explicit names and arguments.
 The dispatcher maps each call to a local executor and manages pre- and post-execution handling together with the returned results.
 This brings a clear separation between declaration, invocation, and execution. 
-It does not need to know how tools are implemented; it only needs to follow a stable interface contract.
+GA does not need to know how tools are implemented; it only needs to follow a stable interface contract.
 GA then resolves each call against that contract and dispatches it to the concrete handler, separating call semantics from implementation details.
 
+GA implements a \texttt{no\_tool} fallback that auto-triggers when the model produces no tool call, detecting empty responses, truncated output, or unsubmitted code blocks and injecting corrective prompts to re-enter the structured loop.
+Turn-based escalation policies further bound autonomous execution: periodic warnings enforce strategy switches, and a hard ceiling forces \texttt{ask\_user}, preventing unbounded runs.
 
 
 GA also specifically optimizes each atomic tool for decision efficiency and token economy.  
-\texttt{file\_read} supports segmented reads (\texttt{start}/\texttt{count}), keyword anchoring, and line-number output, so GA can inspect only relevant regions.  
+For example, \texttt{file\_read} supports segmented reads (\texttt{start}/\texttt{count}), keyword anchoring, and line-number output, so GA can inspect only relevant regions.  
 \texttt{file\_patch} enforces unique \texttt{old\_content} matching and fails fast on zero or multiple matches, reducing silent multi-location edits.  
-\texttt{web\_scan} returns a simplified page view with tab metadata, which lowers full-DOM inspection cost.  
+\texttt{web\_scan} injects a layout analysis algorithm that clones the live DOM, computes per-element visibility, classifies regions as main or non-essential through overlay and partition analysis, and removes covered or hidden elements before serialization, reducing token cost by an order of magnitude compared to raw DOM output.
 \texttt{web\_execute\_js} returns action results plus page-change observations, so many workflows proceed without another full scan.  
 GA does not merely expose raw operations.  
-It recasts real-world operations into low-ambiguity, verifiable, and cost-aware decision interfaces.
+It recasts real-world operations into low-ambiguity, verifiable, and cost-aware decision interfaces. 
+\texttt{code\_run} is restricted to one invocation per turn, ensuring each result is observed before the next action is planned.
 
 In summary, GA is not designed to make the model "do more."  
 It is designed to define what can be done, constrain how it is done, and record what was done.  
 Through atomic tool abstraction, schema contracts, unified dispatch, and structured receipts, GA aligns capability boundaries, risk boundaries, and accountability boundaries within a single operating framework.
 
-% \begin{table}[t]
-%     \centering
-%     \caption{Atomic tools in GA.}
-%     \label{tab:tools}
-%     {\footnotesize
-%     \setlength{\tabcolsep}{1.2pt}
-%     \renewcommand{\arraystretch}{0.9}
-%     \begin{tabularx}{\linewidth}{@{}p{0.25\linewidth}@{\hspace{4pt}}X@{}}
-%     \toprule
-%     \rowcolor{blue!8}
-%     \textbf{Tool} & \multicolumn{1}{c}{\textbf{Brief Description}} \\
-%     \midrule
-%     \mbox{\texttt{code\_run}} &
-%     Execute Python or shell code with timeout and abort control. \\
-%     \mbox{\texttt{file\_read}} &
-%     Read local files by line range, with optional keyword-based lookup. \\
-%     \mbox{\texttt{file\_write}} &
-%     Create new files or write large content blocks (overwrite/append/prepend). \\
-%     \mbox{\texttt{file\_patch}} &
-%     Apply precise, context-checked updates to existing file regions. \\
-%     \mbox{\texttt{web\_scan}} &
-%     Extract the current browser page as simplified HTML or text, with tab metadata. \\
-%     \mbox{\texttt{web\_execute\_js}} &
-%     Inject and execute JavaScript in the user’s browser, capturing return values. \\
-%     \mbox{\texttt{ask\_user}} &
-%     Issue a synchronous query to the user and wait for an explicit response. \\
-%     \mbox{\texttt{update\_working\_checkpoint}} &
-%     Update a short-term working notepad injected in subsequent reasoning turns. \\
-%     \mbox{\texttt{start\_long\_term\_update}} &
-%     Trigger long-term memory distillation over recent execution traces. \\
-%     \bottomrule
-%     \end{tabularx}
-%     }
-% \end{table}
-
-
 \subsubsection{Hierarchical Memory Architecture}
-\label{sec:memory}
-GA’s memory management mechanism does not directly append all historical information into the context. 
-Instead, it organizes knowledge through hierarchical structuring, on-demand retrieval, and procedural consolidation.
+
+GA’s memory management is implemented as a layered retrieval-and-update workflow rather than full-history appending. It organizes knowledge through hierarchical structuring, on-demand retrieval, and procedural consolidation.
 This design helps the agent stay coherent in long runs and turn validated experience into durable knowledge.
 
 GA starts with a global meta-memory layer.  
 This layer defines the memory map, core rules, and update boundaries.  
-At task start, GA injects this layer first.  
+At task start, GA injects a global memory scaffold as the initial frame.  
+The full meta-SOP content is loaded on demand via file reads rather than always preloaded.
 It gives the model a shared frame of reference before execution.  
 The model knows how memory is organized, what each layer is for, and how updates should be handled.  
 This reduces arbitrary writes, historical misreads, and cross-task leakage.
 
-Below the meta-memory, long-term memory is split into three layers with distinct roles.
+Below the meta-memory, long-term memory is split into four layers with distinct roles.
 \textbf{(1)L1 is the index layer.} 
 It stores compact pointers, including high-frequency entry points, keyword mappings, and a small set of hard constraints.  
 Its main role is fast navigation. It enables efficient memory routing and ensures that relevant information can be quickly located. It works as a directory that guides GA toward appropriate SOPs, factual records, and core constraints for a given task type.
@@ -228,13 +201,13 @@ This design prevents short-term noise from being stored as long-term facts.
 \textbf{(3) L3 is the SOP layer.}
 This layer stores reusable procedural knowledge.
 It includes task workflows, preconditions, key execution steps, common failure cases, and corresponding debugging or recovery strategies.
-Entries in L3 must come from real execution.
-They must also be validated across multiple tasks.
-Only knowledge that can directly guide error analysis or be reused in future tasks is included in this layer. 
-These three layers form a continuous memory chain.
-GA first uses L1 for routing and memory localization.
-It then retrieves L2 to constrain reasoning with verified facts.
-Finally, it applies L3 to obtain actionable procedures for execution.
+Entries are expected to come from action-verified execution and to show reusability across tasks.
+Only knowledge that can directly guide error analysis or be reused in future tasks is included in this layer.
+\textbf{(4) L4 is the raw session archive layer.}  Unlike L1-L3, L4 is not designed for frequent direct injection into the runtime context.
+Its role is persistence and traceability. It stores historical execution sessions so the agent can reconstruct prior trajectories, audit past decisions, and recover task context when needed.
+In other words, L4 acts as the long-horizon evidence base, while L1-L3 remain the operational memory layers for routing, factual constraints, and reusable procedures.
+
+Conceptually, GA follows an L1→L2/L3 routing chain. L1 for localization, then selective retrieval from L2/L3 when needed. In practice, this is enforced by tool calls and prompt policy, not a hardcoded mandatory pipeline.
 This layered workflow improves both retrieval efficiency and execution reliability in long-horizon tasks.
 
 During runtime, it uses an on-demand loading strategy. 
@@ -246,7 +219,7 @@ It also ensures that context budget is allocated to task-relevant information.
 For long-term consolidation, GA uses a triggered commit mechanism instead of immediate writing.
 When information is identified as potentially valuable, it enters a validation stage.
 Its usefulness and reusability are checked before being committed.
-Only verified information is written into L2 or L3 through small, incremental updates.
+Only verified information is intended to be written into L2 or L3 through small, incremental updates.
 The L1 index is updated accordingly. This separation between execution and memory writing reduces incorrect updates and prevents memory bloat.
 
 In addition to long-term memory, GA maintains a session-level working memory.
@@ -259,68 +232,325 @@ This prevents degradation of context quality in long conversations.
 
 \subsubsection{Self-Evolution Capability in GA}
 \label{sec:self-evolution}
-The self-evolution capability of GA is realized through a fixed execution loop that continuously improves its behavior over time. In each iteration, GA first retrieves prior experience together with the current task state, then performs actions through external tools, and feeds the results back into the next decision step. Finally, strategies that are verified to be effective are distilled and stored as long-term experience. In this way, capability improvement is transformed from an implicit reasoning process into an explicit and continuously optimizable execution pipeline.
+GA implements self-evolution as an explicit operational loop: at each cycle, the agent retrieves prior experience, selects a strategy under current constraints, executes actions through external tools, and feeds grounded observations back into the next step. Capability growth is therefore not an implicit side effect of reasoning, but a visible process in which each iteration can be inspected, corrected, and improved.
 
-This loop is enabled by a clear separation between base tools and higher-level evolving capabilities. 
-Base tools remain atomic and task-agnostic, covering only fundamental operations. 
-Task-specific strategies are not embedded in these tools, but represented as reusable skills and SOP-like knowledge units.
-As a result, capability improvements do not require changes to tool implementations. 
+A key enabler of this loop is \textbf{the strict separation between atomic tools and evolving task capability.} The tool layer remains stable and task-agnostic, covering only fundamental operations such as environment access and execution, while task-specific strategy is represented in reusable skills and SOP-like knowledge units. Because strategy is externalized from tool implementations, GA can evolve by updating reusable procedures and decision patterns without modifying the base toolset, which reduces regression risk and keeps the system maintainable.
 
-Memory is designed to support both decision making and stable execution over long tasks. 
-At task startup, GA loads relevant prior experience to provide an initial plan and direction. 
-During execution, each step stores a small summary of the current state, including key decisions, constraints, and progress. 
-This allows GA to keep track of what has been done without storing the full history. 
-As a result, the model does not need to re-derive the task context at every step, and it avoids drifting away from the original strategy in long-horizon execution.
+\textbf{Hierarchical Memory makes long-horizon self-evolution stable.} At task startup, GA injects a compact capability index into the system prompt, from which the agent can selectively load detailed procedures on demand; during execution, it records compact step checkpoints that preserve key decisions, progress, and immediate intent. By storing concise continuity signals instead of full history at every turn, GA avoids repeated re-derivation of context and reduces strategy drift in long tasks.
 
-To ensure reliable self-evolution, GA does not store raw execution traces directly. Instead, it only updates long-term memory at specific consolidation points.
-At these points, GA summarizes the task trajectory into useful and reusable knowledge. It keeps successful strategies and key decisions, and removes temporary or noisy information that is not stable or transferable.
-In addition, GA uses a fallback mechanism to correct the strategy when it detects repeated failures or unproductive loops. This prevents the system from reinforcing wrong behaviors.
+\textbf{Reliable self-evolution depends on controlled consolidation rather than raw trace accumulation.} GA updates long-term memory only at designated consolidation points, such as subgoal completion or failure-recovery transitions, and distills trajectories into transferable knowledge. Successful strategies, reusable decision criteria, environment constraints, and failure anti-patterns are retained, while transient logs and unstable branches are filtered out to prevent memory pollution.
 
+\textbf{Failure correction as an evolutionary safeguard.} 
+Reliable self-evolution requires that repeated failure triggers policy correction rather than blind repetition. GA escalates from error-aware retry to environment probing and then to strategy replacement or external intervention under uncertainty or irreversible risk. This ensures that repeated failure triggers policy correction instead of blind repetition, so the evolution process remains directional and reliable over time.
 
-% \subsubsection{上下文压缩}
+\section{Emergent Capabilities from a Minimal Architecture}
+When an agent is constrained to a minimal executable core and exposed as a standard command-line program, several mechanisms often treated as “advanced framework features” emerge naturally at low cost. In GA, two representative emergent capabilities are: (1) subagent through recursive self-invocation, and (2) watchdog behavior through polling and conditional checks.
 
+Many agent systems implement subagents and event handling as separate architectural modules. 
+In GA, these are not predefined subsystems.  
+They arise from a small set of stable primitives. These primitives include a callable agent entry point, a unified tool interface, a lightweight interaction protocol, and periodic condition checks.
 
-\subsection{Subagent}
+\textbf{Self-Hosted CLI as the Primary Interface.}
+This is realized through a self-hosted CLI model. In GA, the command line is not a wrapper around an internal platform; it is the native execution surface of the system. Tasks can be launched with arguments or kept running in the background. Inter-process coordination uses a simple file-based protocol: inputs are written to a task directory, outputs are persisted to disk, and external processes can append instructions or intervene at any time. GA therefore does not require plugin frameworks, event buses, or dedicated orchestration layers to support higher-level behavior. 
 
+\textbf{Subagent as Recursive Self-Invocation.}
+Once the agent can be invoked programmatically via CLI, subagents follow naturally. 
+A parent agent launches multiple identical instances to handle subtasks.
+A subagent is not a special object. It does not require a dedicated manager. 
+Parent and child are simply independent processes that follow the same interaction protocol.
+This design brings two advantages. 
+First, context is naturally isolated. Each instance maintains its own history. 
+Subtasks do not interfere with each other. 
+Second, the implementation is simple. Parallel execution, progress tracking, instruction updates, and intervention all reuse existing primitives. No extra communication layer is required.
 
+\textbf{Watchdog as Polling-Based Triggering.}
+Similarly, once the agent can be invoked programmatically, a watchdog can be implemented through an external loop. 
+GA periodically checks conditions and triggers tasks when needed. 
+The mechanism is simple: polling, condition mapping, and task injection.
+There is no need for an event bus. 
+The trigger only decides whether a new task should be created. 
+Execution still follows the standard task pipeline. 
+This keeps triggering logic decoupled from execution. 
+Rules can be maintained as standalone scripts. They can evolve without changing the core runtime.
 
+\subsubsection{Context Truncation and Compression}
+\label{sec:context-truncation}
 
+GenericAgent operates within a finite context window and must keep the
+cumulative conversation size below this limit without access to a precise
+tokenizer or LLM-based summarisation.  Instead, all budget accounting uses
+a character-domain heuristic:
 
-% GA is not a fixed prompt wrapped around a model. It is an agent system whose internal behavior is continuously shaped by execution, while its external interface remains stable and minimal.
+\begin{equation}
+  C_{\mathcal{H}} = \sum_{m \in \mathcal{H}} \mathrm{len}(m),
+  \qquad
+  B = \alpha \cdot W_{\text{tokens}},
+  \quad \alpha \approx 3 \;\text{chars/token},
+  \label{eq:char-budget}
+\end{equation}
 
-% During task execution, GA transforms raw execution traces into \textbf{structured representations} of its own decisions, rather than leaving them as unorganized dialogue history. As similar tasks recur, these representations are progressively distilled and compressed into reusable strategies and executable skills, enabling future problem solving to rely less on repeated ad-hoc reasoning and more on internal skill composition. This reduces redundant reasoning over time, leading to lower token consumption in repeated or structurally similar tasks. Specifically, this mechanism consists of three stages.
+\noindent
+where $\mathrm{len}(m)$ denotes the character length of message~$m$
+after JSON serialisation, $W_{\text{tokens}}$ is the configured token
+window, and $\alpha$ converts the token budget to a character
+budget~$B$.  All comparisons stay in the character domain, and no
+conversion back to token counts is ever performed.  This heuristic is
+slightly conservative for ASCII-dominated content ($\sim$4 actual
+chars/token), which causes mildly early eviction---a safe failure mode.
+For CJK content the situation reverses: each character typically consumes
+1--2 tokens, so the $\alpha{=}3$ ratio underestimates token usage by
+3--6$\times$, risking delayed eviction and potential context overflow.
 
-% \textbf{Stage 1: Experience Distillation into SOPs.} GA analyzes historical execution traces to extract useful information, including successful decision paths and failure patterns. These are abstracted into SOPs that describe stable execution logic.
+Context is managed by four co-operating mechanisms, ordered from finest
+to coarsest granularity.  We also describe an auxiliary schema-elision
+optimisation that reduces the tool-definition overhead.
 
-% This stage serves two purposes. First, it generalizes instance-level behavior into reusable process specifications. Second, it prioritizes high-frequency and high-error tasks. Routine or low-impact steps are discarded to improve compression and generalization.
+%% ---- Stage 1 ----
+\paragraph{Stage 1: Tool-output truncation.}
+Each tool handler truncates its return value \emph{before} it enters the
+message history, using a symmetric head--tail policy: when the output
+exceeds a threshold~$L$, the first and last $L/2$ characters are kept
+and the middle is replaced by an ellipsis.  Table~\ref{tab:tool-truncation}
+lists the thresholds for outputs that enter the LLM context.
 
-% \textbf{Stage 2: SOP Compilation into Code.} SOPs with stable structure are evaluated for compilation. If a task shows clear parameterization, deterministic logic, and explicit dependencies, it is converted into code.
+\begin{table}[h]
+\centering
+\caption{Per-tool truncation thresholds for content entering the LLM context.}
+\label{tab:tool-truncation}
+\begin{tabular}{lr}
+\toprule
+Tool / mode & $L$ (chars) \\
+\midrule
+\texttt{code\_run}                          & 10\,000 \\
+\texttt{web\_execute\_js}$^{\dagger}$       &  8\,000 \\
+\texttt{web\_scan} (\texttt{text\_only})    & 10\,000 \\
+\texttt{web\_scan} (HTML)$^{\ddagger}$      & 35\,000 \\
+\texttt{file\_read}                         & ${\sim}$1\,280/line; 20\,000 total \\
+\bottomrule
+\multicolumn{2}{l}{\footnotesize $^{\dagger}$\,With \texttt{save\_to\_file},
+  the full output is written to disk; only a short preview enters the history.} \\
+\multicolumn{2}{l}{\footnotesize $^{\ddagger}$\,DOM-level character budget
+  (subtree pruning), not head--tail truncation.}
+\end{tabular}
+\end{table}
 
-% This replaces procedural reasoning with program execution. Execution becomes structured and deterministic. Compared to SOPs, code provides clearer semantics and more stable behavior under repeated execution.
+%% ---- Stage 2 ----
+\paragraph{Stage 2: Tag-level compression.}
+Older messages accumulate redundant content inside well-known XML tags
+(reasoning traces, tool invocations, working-memory snapshots).  A
+compression pass, executed roughly every five turns to amortise cost,
+addresses this in two ways:
+(i)~superseded working-memory blocks (\texttt{<history>},
+\texttt{<key\_info>}) are replaced by a short placeholder, since
+only the most recent snapshot is informative; and
+(ii)~content inside reasoning and tool tags (\texttt{<thinking>},
+\texttt{<tool\_use>}, \texttt{<tool\_result>}) is truncated to an
+$\sim$800-character head--tail window.
+The most recent messages (default: 10) are exempt from compression.
 
-% \textbf{Stage 3: Registration as Skills.} Compiled code modules are registered as Skills in GA’s indexing system. Skills are reusable execution units. Similar tasks can directly invoke them, without intermediate reasoning.
+%% ---- Stage 3 ----
+\paragraph{Stage 3: Message eviction.}
+When $C_{\mathcal{H}}$ exceeds the character budget~$B$
+after a new message is appended, the system first re-runs Stage-2
+compression with more aggressive parameters (exempting only the 4~most
+recent messages), then evicts messages in FIFO order until
+$C_{\mathcal{H}}$ falls below a target of $0.6\,B$ or
+only 5~messages remain.  The 60\,\% target deliberately over-trims,
+providing headroom for subsequent turns.  After eviction, the new leading
+message is sanitised to maintain API protocol consistency (e.g.\ orphaned
+tool-result references are converted to plain text).  No summarisation of
+evicted content is performed; the only mechanism that preserves earlier
+context is the working-memory anchor prompt described next.
 
-% GA monitors Skill usage and updates implementations over time. Updates include interface simplification, parameter refinement, and execution optimization. This improves efficiency per token.
+%% ---- Stage 4 ----
+\paragraph{Stage 4: Working-memory anchor prompt.}
+After each tool invocation, an anchor prompt is appended to the next
+user message.  It contains: (i)~the 20 most recent one-line turn
+summaries (each compressed to roughly one hundred characters),
+(ii)~the current turn number, and (iii)~a persistent \texttt{key\_info}
+block maintained by the agent via
+\texttt{update\_working\_checkpoint}.  Because this block is injected
+into every user message, Stage~2 collapses older copies to a
+placeholder, ensuring that only the latest instance carries the full
+payload.  This mechanism provides the sole form of long-range memory
+after message eviction.
 
-% These stages form a closed loop. Reflection extracts experience, SOPs generalize behavior, code replaces reasoning, and Skills enable reuse. This process improves efficiency over time and reduces redundant computation. 
+%% ---- Auxiliary ----
+\paragraph{Auxiliary: tool-schema elision.}
+Under the text-protocol path, tool definitions are omitted from the
+prompt when the schema is unchanged from the previous turn, replaced
+by a brief natural-language reminder.  The full schema is periodically
+re-sent---either on a fixed turn interval or when accumulated prompt
+length exceeds a safety threshold---to prevent model drift.  This
+optimisation does not apply to the native API path, which sends the
+complete tool definitions on every call.
 
-% \subsubsection{Selective Extraction for Web Browser}
-% \label{sec:structured_extraction}
-% Interacting with web pages is expensive in tokens. A full DOM often contains tens of thousands of tokens, while only a small portion is useful for the current task. Sending the full DOM to the model is not practical. At the same time, aggressive filtering may remove important signals. GA addresses this with a two-stage extraction pipeline.
+\subsubsection{Autonomous Exploration}
+\label{sec:autonomous-exploration}
 
-% \textbf{Geometry-aware DOM pruning.} A JavaScript routine clones the DOM with access to layout information. Invisible nodes are removed, including hidden elements, zero-area nodes, and off-screen content. Modal dialogs and cookie banners are explicitly detected by their viewport coverage and moved to the top level. Form states such as input values and checkboxes are preserved during cloning. This ensures the snapshot matches the actual visible page state.
+Many skill-acquisition tasks are open-ended and require extended
+trial-and-error that cannot be driven interactively.  GenericAgent
+addresses this with an \emph{autonomous exploration} subsystem---a
+closed loop in which the agent plans its own curriculum, executes
+tasks without supervision, and crystallises results into a persistent
+skill library.
 
-% \textbf{Token-budget compression.} The pruned DOM is further compressed using structural filtering. Non-semantic attributes are removed. URLs are shortened. Decorative metadata is dropped. The page structure is preserved, but the token cost is greatly reduced. Large list structures are handled separately. The system detects lists using layout regularity and structural signals. Only a small number of representative items are kept. The rest are replaced with a placeholder that records the approximate size and content pattern. This keeps the structure while avoiding full expansion.
+The loop proceeds in four phases:
+\textbf{(1)}~a timer-based trigger injects an exploration prompt when
+the user is idle;
+\textbf{(2)}~a \emph{curriculum planner} inspects the current skill
+inventory and generates a prioritised task list;
+\textbf{(3)}~the agent executes the next task using its standard tool
+repertoire (web search, code execution, file I/O), bounded by a
+30-round interaction cap;
+\textbf{(4)}~outcomes are written to a structured report, from which
+new tools and usage statistics are registered in the skill tree.
+Planning and execution are strictly separated: the planner produces a
+task list and immediately yields control; execution resumes in the
+next invocation.
 
-% When the result still exceeds the token budget, a recursive truncation step is applied. The reduction is distributed across subtrees instead of using a flat cutoff. This preserves global structure.
+When no pending task list exists, the agent enters planning mode.
+Task candidates are scored along four dimensions using a weighted
+sum:
+%
+\begin{equation}
+  S(t) \;=\; w_b\,B(t) \;+\; w_d\,D(t) \;+\; w_u\,U(t) \;+\; w_i\,I(t)
+  \label{eq:task-score}
+\end{equation}
+%
+\noindent where $B$ (\emph{breadth}) rewards filling under-populated
+skill categories, $D$ (\emph{depth}) rewards enhancing frequently-used
+skills, $U$ (\emph{utility}) captures estimated practical value, and
+$I$ (\emph{innovation}) favours novel techniques or domains.  Each
+dimension is scored on a 1--10 scale.
 
-% After each browser action, GA does not re-read the full page. Each action is wrapped with a pre- and post-state snapshot. The model receives only the diff and transient UI signals such as toasts or loading indicators. This reduces redundant observation and tightens the interaction loop.
+Breadth and depth are computed from skill-tree statistics:
+%
+\begin{equation}
+  B(t) = 10 \times \max\left(0,\, 1 - \frac{|S_c|}{\bar{S} + 1}\right)
+  \label{eq:breadth}
+\end{equation}
+%
+\begin{equation}
+  D(t) = 10 \times \frac{u(t)}{u_{\max} + 1}
+  \label{eq:depth}
+\end{equation}
+%
+\noindent where $|S_c|$ is the number of skills in the target
+category, $\bar{S}$ is the mean skill count across all categories,
+$u(t)$ is the usage count of the target skill, and $u_{\max}$ is the
+maximum usage count across all skills.  The breadth formula rewards
+filling categories that are below average, while the depth formula
+prioritises enhancing frequently-invoked capabilities.  Utility and
+innovation are estimated by the LLM on the same 1--10 scale.
 
+The weights are initially set to $(w_b, w_d, w_u, w_i) = (0.3, 0.2,
+0.3, 0.2)$, prioritising breadth and utility.  After each batch of
+autonomous tasks, a \emph{reflection-based adaptation} mechanism
+adjusts these weights based on actual usage outcomes.  For each
+completed task~$t$, if its predicted score $S(t) > 8.0$ but actual
+usage $u(t) < 3$ within 30~days, the weight of the dominant dimension
+in $t$'s score vector is reduced by 10\%.  Conversely, if $S(t) <
+5.0$ but $u(t) > 5$, the corresponding weight is increased by 10\%.
+Weights are then re-normalised to sum to unity.  This feedback loop
+allows the system to discover which dimensions best predict practical
+value in the user's workflow without manual tuning.
 
+The resulting task list must span at least four distinct skill
+categories, preventing narrow concentration.
 
+Each autonomous task then proceeds through a fixed sequence:
+\emph{context loading} (retrieve recent history and pending tasks),
+\emph{skill search} (query the skill tree for relevant tools and
+identify gaps),
+\emph{execution} (research, prototype, and validate within a
+sandboxed temporary directory),
+\emph{report writing} (a Markdown document with machine-readable
+metadata tags for automatic skill-tree updates),
+\emph{skill crystallisation} (an atomic operation that archives the
+report, updates the skill tree, and increments usage counters), and
+\emph{task-list advancement}.
+Even failed experiments are documented so that future planning rounds
+can avoid repeating the same dead end.  The crystallisation step
+accepts skill annotations either as explicit arguments from the
+caller or, as a fallback, by parsing the metadata tags embedded in
+the report.  All artefacts are confined to a temporary directory;
+modifications outside this sandbox are logged in the report for human
+review, and access to secrets or core source code is unconditionally
+prohibited.
 
+Autonomous exploration can be initiated in two ways.  In
+\emph{task mode}, an external orchestrator (e.g.\ a cron job)
+submits a one-shot task via a file-system mailbox and polls for
+results.  In \emph{reflect mode}, a user-supplied callback is polled
+at a fixed interval; when it returns a non-empty string, that string
+is injected as a new prompt.  The default trigger fires every six
+minutes with a fixed prompt directing the agent to consult its
+exploration procedure.
 
+The skill tree itself is a persistent two-level map: \emph{categories}
+(e.g.\ \texttt{web\_automation}, \texttt{data\_processing}) contain
+named \emph{skills}, each recording its associated tool scripts and a
+monotonically increasing usage counter.  The tree is managed through
+an API that supports querying, mutation, usage tracking, and the
+atomic completion operation described above.  No
+constraint-enforcement or confidence-scoring logic exists in the
+current API; validation is limited to deduplication checks before
+insertion.
 
+A separate lightweight log records three kinds of entries---observed
+errors paired with corrections, explicit user preferences, and
+verified success patterns---which are injected into the system prompt
+to bias future behaviour.  This is a passive mechanism: entries are
+appended during task review, and their only effect is inclusion in
+the prompt context.
 
+Several limitations merit discussion:
+(i)~the 30-round execution cap means complex tasks may span multiple
+sessions, with continuity managed only through reports and task-list
+annotations;
+(ii)~the reflection-based weight adaptation is preliminary and has not
+yet accumulated sufficient data to validate its effectiveness across
+diverse user workflows;
+(iii)~the self-improvement log depends on manual curation, limiting
+its current influence on agent behaviour;
+(iv)~skill-tree maintenance---merging redundant categories,
+deprecating stale tools, extending the category topology---remains
+entirely manual.
 
+\subsection{Compositional Capabilities from a Minimal Primitive Set}
 
+A recurring pattern in agent framework design is to introduce dedicated subsystems for each new capability, for example a subagent manager and a scheduler daemon. GA takes a different approach. It defines a small set of runtime primitives and composes higher-level behaviors from them. The result is not that these behaviors emerge accidentally, but that their implementation cost is low enough to be realized through combination rather than through new architectural layers.
+
+\textbf{Primitive Set.}
+Three primitives underpin all compositions described below:
+
+\begin{itemize}
+  \item \emph{Callable CLI entry point.} The agent is a standard command-line program that accepts a task via arguments or files and runs to completion. It can be started in foreground, in background, or in a polling mode.
+  \item \emph{File-based interaction protocol.} Cross-process communication uses a directory convention. An input file delivers a task, an output file streams results with round-completion markers, and a reply file continues a multi-round dialogue. Three additional control files provide runtime intervention: one requests graceful termination, one injects context into working memory, and one appends instructions mid-execution.
+  \item \emph{Polling loop with hot-reload.} A polling mode loads an external script that defines a trigger condition and a check interval. The runtime evaluates the condition periodically; when it fires, the returned string is dispatched as a task through the standard pipeline. If the script file is modified on disk, it is re-executed in place without restarting the agent process.
+\end{itemize}
+
+From these three primitives, four higher-level capabilities follow.
+
+\textbf{Subagent Dispatch.}
+A parent agent instance spawns child instances by invoking the same CLI entry point in background mode. Parent and child are homogeneous processes; there is no privileged subagent runtime object. Context isolation comes for free—each process maintains its own conversation history in its own memory space—whereas typical frameworks require explicit memory-scope management to achieve the same effect.
+
+Communication between parent and child uses the file protocol described above. This is not fire-and-forget: the parent can monitor progress by reading the child's output, continue the dialogue by writing a reply, or intervene at runtime through the control files. A verbose flag causes the child to include raw tool outputs, enabling the parent to audit intermediate results rather than relying solely on the child's summary. The coordination overhead is real—the operational protocol prescribes active progress monitoring and timely intervention—but it is expressed entirely through the shared file convention rather than through a separate management layer.
+
+For embarrassingly parallel workloads, this yields a map-reduce pattern. The parent prepares independent input files, spawns one subagent per file, and merges the outputs after all children complete.
+
+\textbf{Watchdog via Polling.}
+The polling primitive directly supports watchdog behavior. A trigger script encodes an arbitrary condition; the polling loop evaluates it at a configured interval. When the condition is met, the returned string enters the standard task pipeline. Triggering and execution are thus decoupled by construction: the script decides \emph{whether} to create work, and the unchanged runtime handles the work.
+
+Because the polling loop detects file-modification timestamps and re-executes the trigger script on change, trigger rules can be updated at runtime without restarting the agent process. Operational adjustments—changing a threshold, adding a new condition—require editing a single script rather than redeploying the system.
+
+\textbf{Scheduled Tasks.}
+A cron-like scheduling system is built as a single trigger script of roughly one hundred lines. It polls a directory of JSON task definitions, each specifying a schedule, a repeat policy (daily, weekday, weekly, monthly, or once), and a maximum delay window beyond which stale tasks are skipped. Cooldown detection prevents duplicate firing, and execution reports serve as the persistence layer for last-run tracking. The scheduler requires no additions to the core runtime; it is a user-space script composed from the polling primitive and the file protocol.
+
+\textbf{Autonomous Idle Behavior.}
+A second trigger script, consisting of fewer than ten lines, illustrates the minimality of the composition. It defines a thirty-minute polling interval and returns a fixed task prompt at each check. When the user has been inactive for half an hour, the agent autonomously selects and executes a self-improvement task from a maintained backlog. The significance lies not in implementation complexity, which remains trivial, but in showing that sustained autonomous behavior emerges from a simple configuration of existing primitives rather than a distinct runtime mode.
+
+\medskip
+\noindent
+The common thread across these four capabilities is that none required extending the core loop. Subagent dispatch reuses the CLI entry and file protocol. Watchdog and scheduling reuse the polling loop. Autonomous behavior reuses both. The design bet is that a small, stable primitive set with low composition cost yields a wider range of behaviors than a framework that pre-allocates a dedicated module for each one.
