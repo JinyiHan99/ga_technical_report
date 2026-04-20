@@ -21,7 +21,6 @@
 | 字段 | 类型 | 含义 |
 |---|---|---|
 | `task_id` | string | 数据集内任务唯一标识，使用 `teb_01` 到 `teb_16` 的连续编号。 |
-| `original_task_id` | string | 原始 benchmark 任务目录名，用于追溯原始任务来源。 |
 | `task_type` | string | 任务类型，取值为 `simple` 或 `long_horizon`。 |
 | `source_suite` | string | 任务来源或设计参照；简单任务对应 `claude_code` 或 `openclaw`，长程任务对应 `dimension4_long`。 |
 | `target_tool_or_capability` | string | 该任务希望覆盖或对照的 baseline 工具/能力。 |
@@ -32,17 +31,19 @@
 
 ## 资产说明
 
-简单工具任务的输入资产来自原始 `benchmark/tools_task/<task_id>` 目录中除 `task.md` 和 `grader.py` 之外的文件。
+`assets` 字段列出了任务运行前需要放入工作区的本地输入文件。没有本地输入文件的任务，其 `assets` 字段为空列表；这类任务可能依赖公开网页信息，或只需要直接生成最终回答。
 
-长程任务的本地输入资产来自 `benchmark/assets/<task_id>`，而不是 `benchmark/tasks/<task_id>`。5 个长程任务中：
+简单工具任务的输入资产来自原始 `benchmark/tools_task` 中对应任务目录，整理后统一放在本数据集的 `assets/<task_id>/` 下。长程任务的本地输入资产来自原始 `benchmark/assets` 中对应任务目录，整理后同样放在 `assets/<task_id>/` 下。
+
+长程任务的本地输入资产情况如下：
 
 | 任务 | 本地输入资产 | 说明 |
 |---|---:|---|
-| `task_04_paper_ppt_generation` | 无 | 依赖公开论文页面和 PDF，输出 PPT 与说明文件。 |
-| `task_05_sql_copilot_query_generation` | 有 | 包含 `analytics.db`、`schema.md` 和数据库生成脚本。 |
-| `task_06_experiment_analysis_report_generation` | 有 | 包含实验分析所需的 CSV 数据文件和数据生成脚本。 |
-| `task_07_text_api_procurement_decision` | 无 | 依赖公开 API 价格页面，输出成本对比和决策 JSON。 |
-| `task_09_dapo_reproduction_feasibility` | 无 | 依赖公开论文、项目页和代码仓库，输出可行性判断 JSON。 |
+| `teb_12_paper_ppt_generation` | 无 | 依赖公开论文页面和 PDF，输出 PPT 与说明文件。 |
+| `teb_13_sql_copilot_query_generation` | 有 | 包含 `analytics.db`、`schema.md` 和数据库生成脚本。 |
+| `teb_14_experiment_analysis_report_generation` | 有 | 包含实验分析所需的 CSV 数据文件和数据生成脚本。 |
+| `teb_15_text_api_procurement_decision` | 无 | 依赖公开 API 价格页面，输出成本对比和决策 JSON。 |
+| `teb_16_dapo_reproduction_feasibility` | 无 | 依赖公开论文、项目页和代码仓库，输出可行性判断 JSON。 |
 
 ## 注意事项
 
