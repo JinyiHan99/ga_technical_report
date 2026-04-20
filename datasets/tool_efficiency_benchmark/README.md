@@ -1,6 +1,6 @@
-# 工具使用效率评测数据集
+# Tool-use efficiency benchmark
 
-本目录整理了维度 4 工具使用效率评测报告中实际使用的 16 条 benchmark 任务。该数据集只包含任务定义、输入资产和 grader，不包含历史运行结果、模型输出、token 统计或工具调用轨迹。
+本目录整理了论文 Section 4.2 “Tool-use efficiency” 中实际使用的 16 条 benchmark 任务。该数据集只包含任务定义、输入资产和 grader，不包含历史运行结果、模型输出、token 统计或工具调用轨迹。
 
 ## 文件结构
 
@@ -12,8 +12,8 @@
 
 | 任务类型 | 数量 | 来源 |
 |---|---:|---|
-| `simple` | 11 | 报告中使用的 `benchmark/tools_task` 简单工具任务 |
-| `long_horizon` | 5 | 报告中使用的 `benchmark/tasks` 长程任务 |
+| `simple_tool_generalization` | 11 | 对应论文中的 simple tool-generalization tasks |
+| `long_horizon_complex` | 5 | 对应论文中的 long-horizon complex tasks |
 | 合计 | 16 | - |
 
 ## JSONL 字段说明
@@ -21,7 +21,7 @@
 | 字段 | 类型 | 含义 |
 |---|---|---|
 | `task_id` | string | 数据集内任务唯一标识，使用 `teb_01` 到 `teb_16` 的连续编号。 |
-| `task_type` | string | 任务类型，取值为 `simple` 或 `long_horizon`。 |
+| `task_type` | string | 任务类型，取值为 `simple_tool_generalization` 或 `long_horizon_complex`，分别对应论文中的 simple tool-generalization tasks 和 long-horizon complex tasks。 |
 | `source_suite` | string | 任务来源或设计参照；简单任务对应 `claude_code` 或 `openclaw`，长程任务对应 `dimension4_long`。 |
 | `target_tool_or_capability` | string | 该任务希望覆盖或对照的 baseline 工具/能力。 |
 | `prompt` | string | 交给 agent 执行的任务指令。 |
@@ -39,11 +39,11 @@
 
 | 任务 | 本地输入资产 | 说明 |
 |---|---:|---|
-| `teb_12_paper_ppt_generation` | 无 | 依赖公开论文页面和 PDF，输出 PPT 与说明文件。 |
-| `teb_13_sql_copilot_query_generation` | 有 | 包含 `analytics.db`、`schema.md` 和数据库生成脚本。 |
-| `teb_14_experiment_analysis_report_generation` | 有 | 包含实验分析所需的 CSV 数据文件和数据生成脚本。 |
-| `teb_15_text_api_procurement_decision` | 无 | 依赖公开 API 价格页面，输出成本对比和决策 JSON。 |
-| `teb_16_dapo_reproduction_feasibility` | 无 | 依赖公开论文、项目页和代码仓库，输出可行性判断 JSON。 |
+| `teb_12_paper_ppt_generation` | 无 | 对应 document generation (PDF/PPT creation)。 |
+| `teb_13_sql_copilot_query_generation` | 有 | 对应 SQL copilot query generation，包含 `analytics.db`、`schema.md` 和数据库生成脚本。 |
+| `teb_14_experiment_analysis_report_generation` | 有 | 对应 experiment analysis report writing，包含实验分析所需的 CSV 数据文件和数据生成脚本。 |
+| `teb_15_text_api_procurement_decision` | 无 | 对应 procurement decision-making with web retrieval，依赖公开 API 价格页面。 |
+| `teb_16_dapo_reproduction_feasibility` | 无 | 对应 research paper reproduction feasibility analysis，依赖公开论文、项目页和代码仓库。 |
 
 ## 注意事项
 
