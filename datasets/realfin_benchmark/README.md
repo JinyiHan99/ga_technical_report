@@ -4,7 +4,7 @@
 
 ## 数据格式
 
-数据以 JSONL (JSON Lines) 格式存储在 `tasks.jsonl` 文件中，每行一个 JSON 对象代表一个任务。
+数据以 JSONL (JSON Lines) 格式存储在 `tasks_finance.jsonl` 文件中，每行一个 JSON 对象代表一个任务。
 
 ## 字段说明
 
@@ -37,6 +37,11 @@
 
 - **workspace_files** (array): 任务所需的预置文件列表（当前所有任务均为空数组）
 
+- **reference_ans** (string): 参考答案，包含任务的标准输出结果
+  - 从 agent consensus 系统生成的高质量结果中提取
+  - 格式与任务要求的输出文件格式一致
+  - 详见下方"参考答案来源"章节
+
 ### 评分标准
 
 - **grading_criteria** (array of strings): 评分检查点列表，每个元素是一个评分维度的描述
@@ -51,6 +56,39 @@
 - **llm_judge_criteria** (array of objects): LLM 评审标准（仅 hybrid 类型）
   - `name` (string): 评审维度名称
   - `weight` (float): 该维度权重，范围 0.0-1.0
+
+## 参考答案来源
+
+数据集中的 `reference_ans` 字段来自 agent consensus 系统生成的高质量结果。
+
+### 生成流程
+
+1. **多 Agent 协作**: 使用 agent consensus 框架，每个任务由多个独立 agent 并行执行
+2. **交叉评审**: Agent 之间进行交叉评审，识别潜在问题和改进点
+3. **迭代优化**: 基于评审意见进行代码和结果的迭代优化
+4. **共识达成**: 通过多轮协商达成最终共识结果
+5. **结果提取**: 从 `default_run/task_XX/final_workspace/` 目录中提取最终输出文件
+
+### 质量保证
+
+- **多视角验证**: 每个结果经过多个 agent 的独立验证
+- **代码审查**: 生成的分析代码经过同行评审
+- **数据一致性**: 确保计算逻辑符合任务要求的技术指标定义
+- **格式规范**: 输出格式严格遵循任务 prompt 中的要求
+
+### 提取方法
+
+参考答案通过以下步骤自动提取：
+
+1. 从每个任务的 `task.md` 中解析出结果文件名（如 `result.txt`, `correlation_report.txt` 等）
+2. 读取 `final_workspace/` 目录下对应的结果文件内容
+3. 将文件内容作为 `reference_ans` 字段添加到数据集中
+
+### 覆盖情况
+
+- **总任务数**: 40
+- **有参考答案**: 40 个任务（100%）
+- **数据来源**: `yfd-agent-consensus/results/agent_consensus_batch/default_run/`
 
 ## 任务分类
 
@@ -128,6 +166,7 @@
 ## 统计信息
 
 - **任务总数**: 40
+- **有参考答案**: 40 个任务（100%）
 - **评分类型分布**:
   - Hybrid (混合评分): 32 个任务
   - Automated (纯自动化): 8 个任务
@@ -141,12 +180,21 @@
 import json
 
 tasks = []
-with open('tasks.jsonl', 'r', encoding='utf-8') as f:
+with open('tasks_finance.jsonl', 'r', encoding='utf-8') as f:
     for line in f:
         task = json.loads(line)
         tasks.append(task)
 
 print(f"加载了 {len(tasks)} 个任务")
+```
+
+### 访问参考答案
+
+```python
+# 读取某个任务的参考答案
+task = tasks[0]
+print(f"任务: {task['name']}")
+print(f"参考答案:\n{task['reference_ans']}")
 ```
 
 ### 按类别筛选
@@ -171,6 +219,27 @@ def run_automated_grading(task, transcript, workspace_path):
     return {}
 ```
 
+### 比较 Agent 输出与参考答案
+
+```python
+from pathlib import Path
+
+def compare_with_reference(task, agent_output_path):
+    """比较 Agent 输出与参考答案"""
+    reference = task['reference_ans']
+    
+    # 读取 Agent 输出
+    agent_output = Path(agent_output_path).read_text(encoding='utf-8').strip()
+    
+    # 简单比较（实际应用中可能需要更复杂的比较逻辑）
+    if agent_output == reference:
+        print("✓ 输出与参考答案完全一致")
+    else:
+        print("✗ 输出与参考答案不一致")
+        print(f"参考答案:\n{reference}")
+        print(f"Agent 输出:\n{agent_output}")
+```
+
 ## 时间基准说明
 
 所有任务使用统一的时间基准：
@@ -180,10 +249,12 @@ def run_automated_grading(task, transcript, workspace_path):
 
 ## 数据来源
 
-任务由原始 Markdown 文件转换而来，使用 `convert_to_jsonl.py` 脚本进行转换。
+- **任务定义**: 由原始 Markdown 文件转换而来，使用 `convert_to_jsonl.py` 脚本进行转换
+- **参考答案**: 从 `yfd-agent-consensus` 项目的 agent consensus 系统生成结果中提取
 
 ## 版本信息
 
-- **版本**: v1
+- **版本**: v1.1
 - **创建日期**: 2026-04
 - **任务数量**: 40
+- **更新内容**: 新增 `reference_ans` 字段，包含所有任务的参考答案
