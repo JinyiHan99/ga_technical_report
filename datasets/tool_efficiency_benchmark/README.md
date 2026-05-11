@@ -1,0 +1,50 @@
+# Tool-use efficiency benchmark
+
+本目录整理了论文 Section 4.2 “Tool-use efficiency” 中实际使用的 16 条 benchmark 任务。该数据集只包含任务定义、输入资产和 grader，不包含历史运行结果、模型输出、token 统计或工具调用轨迹。
+
+## 文件结构
+
+- `tool_efficiency_tasks.jsonl`：任务数据，每行是一个 JSON 对象。
+- `assets/`：任务所需的本地输入资产，按 `task_id` 分目录存放，共 21 个文件。
+- `graders/`：从原始 benchmark 任务目录复制出的 Python 自动评估脚本。
+
+## 任务数量
+
+| 任务类型 | 数量 | 来源 |
+|---|---:|---|
+| `simple_tool_generalization` | 11 | 对应论文中的 simple tool-generalization tasks |
+| `long_horizon_complex` | 5 | 对应论文中的 long-horizon complex tasks |
+| 合计 | 16 | - |
+
+## JSONL 字段说明
+
+| 字段 | 类型 | 含义 |
+|---|---|---|
+| `task_id` | string | 数据集内任务唯一标识，使用 `teb_01` 到 `teb_16` 的连续编号。 |
+| `task_type` | string | 任务类型，取值为 `simple_tool_generalization` 或 `long_horizon_complex`，分别对应论文中的 simple tool-generalization tasks 和 long-horizon complex tasks。 |
+| `source_suite` | string | 任务来源或设计参照；简单任务对应 `claude_code` 或 `openclaw`，长程任务对应 `dimension4_long`。 |
+| `target_tool_or_capability` | string | 该任务希望覆盖或对照的 baseline 工具/能力。 |
+| `prompt` | string | 交给 agent 执行的任务指令。 |
+| `assets` | list[string] | 任务需要的本地输入资产路径，路径相对于当前数据集目录；如果没有额外输入资产则为空列表。 |
+| `expected_outputs` | list[string] | 期望生成的输出文件；对于直接回答型简单任务，使用 `final_response` 表示最终回答。 |
+| `grader` | string or null | 对应的自动评估脚本路径，路径相对于当前数据集目录。 |
+
+## 资产说明
+
+`assets` 字段列出了任务运行前需要放入工作区的本地输入文件。没有本地输入文件的任务，其 `assets` 字段为空列表；这类任务可能依赖公开网页信息，或只需要直接生成最终回答。
+
+简单工具任务的输入资产来自原始 `benchmark/tools_task` 中对应任务目录，整理后统一放在本数据集的 `assets/<task_id>/` 下。长程任务的本地输入资产来自原始 `benchmark/assets` 中对应任务目录，整理后同样放在 `assets/<task_id>/` 下。
+
+长程任务的本地输入资产情况如下：
+
+| 任务 | 本地输入资产 | 说明 |
+|---|---:|---|
+| `teb_12_paper_ppt_generation` | 无 | 对应 document generation (PDF/PPT creation)。 |
+| `teb_13_sql_copilot_query_generation` | 有 | 对应 SQL copilot query generation，包含 `analytics.db`、`schema.md` 和数据库生成脚本。 |
+| `teb_14_experiment_analysis_report_generation` | 有 | 对应 experiment analysis report writing，包含实验分析所需的 CSV 数据文件和数据生成脚本。 |
+| `teb_15_text_api_procurement_decision` | 无 | 对应 procurement decision-making with web retrieval，依赖公开 API 价格页面。 |
+| `teb_16_dapo_reproduction_feasibility` | 无 | 对应 research paper reproduction feasibility analysis，依赖公开论文、项目页和代码仓库。 |
+
+## 注意事项
+
+本数据集只保留最终报告中实际使用的任务，不包含早期候选任务。运行产物如 `run_summary.json`、`tool_trace.jsonl`、`final_response.txt`、token 统计等均未纳入本目录。
